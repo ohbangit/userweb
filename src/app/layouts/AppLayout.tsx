@@ -1,0 +1,19 @@
+import { ReactNode } from 'react'
+import { Header } from '../components/Header'
+import { ContactPanel } from '../../features/contact/components/ContactPanel'
+
+interface LayoutProps {
+    children: ReactNode
+}
+
+export function AppLayout({ children }: LayoutProps) {
+    return (
+        <div className="min-h-screen bg-bg">
+            <Header />
+            <main className="mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-6">
+                {children}
+            </main>
+            <ContactPanel />
+        </div>
+    )
+}
