@@ -1,5 +1,7 @@
 import type { Broadcast } from './schedule'
 
+export type BroadcastDetailResponse = Broadcast
+
 interface ScheduleDayEntry {
     date: string
     totalCount: number
@@ -32,7 +34,3 @@ export type ScheduleResponse =
     | ScheduleDailyResponse
     | ScheduleWeeklyResponse
     | ScheduleMonthlyResponse
-
-export interface BroadcastDetailResponse extends Broadcast {
-    streamerChannelUrl?: string
-}

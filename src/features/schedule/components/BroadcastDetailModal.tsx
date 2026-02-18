@@ -1,19 +1,10 @@
 import { useEffect, useCallback } from 'react'
 import dayjs from 'dayjs'
-import {
-    X,
-    ExternalLink,
-    Calendar,
-    Clock,
-    Gamepad2,
-    Hash,
-    Tv,
-    Users,
-} from 'lucide-react'
+import { X, Calendar, Clock, Gamepad2, Hash, Users } from 'lucide-react'
 import { Broadcast, Participant } from '../types/schedule'
-import type { BroadcastDetailResponse } from '../types/api'
 import { useBroadcastDetail } from '../hooks/useBroadcastDetail'
 import { formatTime, getDayName } from '../utils/date'
+import chzzkIcon from '../../../assets/chzzk_icon.png'
 
 interface BroadcastDetailModalProps {
     broadcast: Broadcast | null
@@ -23,17 +14,6 @@ interface BroadcastDetailModalProps {
 const getInitial = (name: string) => name.trim().slice(0, 1)
 
 function StatusIndicator({ broadcast }: { broadcast: Broadcast }) {
-    if (broadcast.isLive) {
-        return (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-live/30 bg-live/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-live shadow-[0_0_12px_rgba(255,70,84,0.3)]">
-                <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-live opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-live" />
-                </span>
-                LIVE
-            </span>
-        )
-    }
     if (broadcast.isCollab) {
         return (
             <span className="inline-flex items-center gap-1 rounded-full border border-collab/30 bg-collab/15 px-2.5 py-1 text-xs font-medium text-collab">
@@ -48,13 +28,22 @@ function StatusIndicator({ broadcast }: { broadcast: Broadcast }) {
     )
 }
 
-function ParticipantRow({ participant }: { participant: Participant }) {
+function ParticipantRow({
+    participant,
+    channelUrl,
+    avatarFallbackUrl,
+}: {
+    participant: Participant
+    channelUrl?: string
+    avatarFallbackUrl?: string
+}) {
+    const avatarUrl = participant.avatarUrl ?? avatarFallbackUrl
     return (
         <div className="flex items-center gap-3 rounded-xl bg-bg-secondary/60 px-3 py-2.5">
             <div className="relative h-9 w-9 overflow-hidden rounded-full border border-border/60 bg-bg-secondary text-sm font-semibold text-text">
-                {participant.avatarUrl ? (
+                {avatarUrl ? (
                     <img
-                        src={participant.avatarUrl}
+                        src={avatarUrl}
                         alt={participant.name}
                         className="h-full w-full object-cover"
                         loading="lazy"
@@ -70,6 +59,22 @@ function ParticipantRow({ participant }: { participant: Participant }) {
                     {participant.name}
                 </span>
             </div>
+            {channelUrl && (
+                <a
+                    href={channelUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
+                    aria-label={`${participant.name} 치지직 채널 열기`}
+                >
+                    <img
+                        src={chzzkIcon}
+                        alt="치지직"
+                        className="h-4 w-4"
+                        loading="lazy"
+                    />
+                </a>
+            )}
         </div>
     )
 }
@@ -101,9 +106,7 @@ export function BroadcastDetailModal({
     onClose,
 }: BroadcastDetailModalProps) {
     const { data: detailData } = useBroadcastDetail(broadcast?.id ?? null)
-    const displayBroadcast:
-        | (Broadcast & { streamerChannelUrl?: string })
-        | null = detailData ?? broadcast
+    const displayBroadcast: Broadcast | null = detailData ?? broadcast
 
     const handleKeyDown = useCallback(
         (e: KeyboardEvent) => {
@@ -131,16 +134,13 @@ export function BroadcastDetailModal({
         : undefined
     const dayName = getDayName(date)
     const dateLabel = `${date.month() + 1}월 ${date.date()}일 (${dayName})`
-    const gameTitle = displayBroadcast.gameTitle ?? displayBroadcast.category
+    const gameTitle = displayBroadcast.gameTitle ?? displayBroadcast.tags?.[0]
     const tags = displayBroadcast.tags ?? []
     const participants: Participant[] =
         displayBroadcast.participants &&
         displayBroadcast.participants.length > 0
             ? displayBroadcast.participants
             : [{ name: displayBroadcast.streamerName }]
-    const channelUrl =
-        (displayBroadcast as BroadcastDetailResponse).streamerChannelUrl ??
-        displayBroadcast.streamerProfileUrl
     const sortedParticipants = [...participants].sort((a, b) =>
         a.name.localeCompare(b.name, 'ko'),
     )
@@ -212,19 +212,6 @@ export function BroadcastDetailModal({
                                     </div>
                                 </InfoRow>
                             )}
-                            {channelUrl && (
-                                <InfoRow icon={Tv} label="방송국">
-                                    <a
-                                        href={channelUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary-dim"
-                                    >
-                                        {displayBroadcast.streamerName}
-                                        <ExternalLink className="h-3.5 w-3.5" />
-                                    </a>
-                                </InfoRow>
-                            )}
                         </div>
 
                         <div className="space-y-2.5">
@@ -238,6 +225,21 @@ export function BroadcastDetailModal({
                                         <ParticipantRow
                                             key={`${participant.name}-${index}`}
                                             participant={participant}
+                                            channelUrl={
+                                                participant.channelUrl ??
+                                                (participant.name ===
+                                                displayBroadcast.streamerName
+                                                    ? (displayBroadcast.streamerChannelUrl ??
+                                                      undefined)
+                                                    : undefined)
+                                            }
+                                            avatarFallbackUrl={
+                                                participant.name ===
+                                                displayBroadcast.streamerName
+                                                    ? (displayBroadcast.streamerProfileUrl ??
+                                                      undefined)
+                                                    : undefined
+                                            }
                                         />
                                     ),
                                 )}

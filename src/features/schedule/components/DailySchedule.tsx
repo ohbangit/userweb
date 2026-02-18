@@ -10,18 +10,6 @@ interface DailyScheduleProps {
     currentDate: Dayjs
 }
 
-function LiveBadge() {
-    return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-live/30 bg-live/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-live shadow-[0_0_10px_rgba(255,70,84,0.35)]">
-            <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-live opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
-            </span>
-            LIVE
-        </span>
-    )
-}
-
 const getInitial = (name: string) => name.trim().slice(0, 1)
 
 function ParticipantStack({ participants }: { participants: Participant[] }) {
@@ -72,14 +60,34 @@ function DailyBroadcastItem({
     const endTime = broadcast.endTime
         ? formatTime(broadcast.endTime)
         : undefined
-    const gameTitle = broadcast.gameTitle ?? broadcast.category
+    const gameTitle = broadcast.gameTitle ?? broadcast.tags?.[0]
     const tags = broadcast.tags ?? []
     const participants: Participant[] =
         broadcast.participants && broadcast.participants.length > 0
             ? broadcast.participants
-            : [{ name: broadcast.streamerName }]
-    const sortedParticipants = [...participants].sort((a, b) =>
-        a.name.localeCompare(b.name, 'ko'),
+            : [
+                  {
+                      name: broadcast.streamerName,
+                      avatarUrl: broadcast.streamerProfileUrl ?? undefined,
+                  },
+              ]
+    const participantsWithStreamerFallback = participants.map((participant) => {
+        if (participant.avatarUrl) {
+            return participant
+        }
+        if (
+            participant.name === broadcast.streamerName &&
+            broadcast.streamerProfileUrl
+        ) {
+            return {
+                ...participant,
+                avatarUrl: broadcast.streamerProfileUrl,
+            }
+        }
+        return participant
+    })
+    const sortedParticipants = [...participantsWithStreamerFallback].sort(
+        (a, b) => a.name.localeCompare(b.name, 'ko'),
     )
     const participantLabel =
         sortedParticipants.length > 1
@@ -94,17 +102,14 @@ function DailyBroadcastItem({
                 'group relative flex w-full cursor-pointer gap-3 overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card via-card to-bg-secondary/70 p-3 text-left transition-all sm:p-4',
                 'hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_14px_34px_rgba(0,0,0,0.35)]',
                 'before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:bg-[radial-gradient(circle_at_top,rgba(0,255,163,0.12),transparent_60%)] before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100',
-                broadcast.isLive ? 'border-live/40' : '',
             ].join(' ')}
         >
             <div
                 className={[
                     'w-1 shrink-0 self-stretch rounded-full bg-gradient-to-b',
-                    broadcast.isLive
-                        ? 'from-live/90 via-live/60 to-live/20'
-                        : broadcast.isCollab
-                          ? 'from-collab/90 via-collab/60 to-collab/20'
-                          : 'from-primary/90 via-primary/60 to-primary/20',
+                    broadcast.isCollab
+                        ? 'from-collab/90 via-collab/60 to-collab/20'
+                        : 'from-primary/90 via-primary/60 to-primary/20',
                 ].join(' ')}
             />
 
@@ -123,9 +128,6 @@ function DailyBroadcastItem({
                     <h3 className="text-base font-bold leading-snug text-text">
                         {broadcast.title}
                     </h3>
-                    <div className="flex items-center gap-2 pt-0.5">
-                        {broadcast.isLive && <LiveBadge />}
-                    </div>
                 </div>
 
                 <div className="flex items-center gap-3">

@@ -1,14 +1,16 @@
 export interface Participant {
     name: string
     avatarUrl?: string
+    channelUrl?: string | null
 }
 
 export interface Broadcast {
     id: string
     title: string
     streamerName: string
-    streamerProfileUrl?: string
-    category: string
+    streamerProfileUrl?: string | null
+    streamerChannelUrl?: string | null
+    streamerIsPartner?: boolean
     gameTitle?: string
     tags?: string[]
     participants?: Participant[]

@@ -118,7 +118,8 @@ interface Broadcast {
     title: string
     streamerName: string
     streamerProfileUrl?: string
-    category: string
+    streamerChannelUrl?: string
+    streamerIsPartner?: boolean
     gameTitle?: string
     tags?: string[]
     participants?: Participant[]
@@ -137,6 +138,7 @@ interface Broadcast {
 interface Participant {
     name: string
     avatarUrl?: string
+    channelUrl?: string
 }
 ```
 
@@ -162,7 +164,7 @@ type ViewMode = 'daily' | 'weekly' | 'monthly'
 
 - **카드 구성**: 컬러바 → 시간(시작 – 종료 인라인) → 제목(볼드) → 참여자 스택 + 레이블 → 카테고리/태그
 - **컬러바**: 상태별 그라디언트 (LIVE: 빨강, 합방: 보라, 일반: 녹색)
-- **참여자 스택**: 아바타 최대 3명 표시, 초과 시 `+N` 뱃지
+- **참여자 스택**: 아바타 최대 3명 표시, 초과 시 `+N` 뱃지 (대표 스트리머는 `streamerProfileUrl`을 썸네일로 폴백)
 - **참여자 레이블**: 1명이면 이름, 2명 이상이면 `홍길동 외 N명`
 - **카드 클릭**: 상세 모달 오픈
 - **빈 상태**: "예정된 방송이 없습니다" + "다른 날짜를 확인해 보세요"
@@ -253,18 +255,18 @@ type ViewMode = 'daily' | 'weekly' | 'monthly'
 
 #### 정보 항목
 
-| 아이콘   | 레이블   | 값                                            |
-| -------- | -------- | --------------------------------------------- |
-| Calendar | 날짜     | `2월 15일 (일)`                               |
-| Clock    | 시간     | `20:00 – 23:00` (시작 볼드, 종료 보조색)      |
-| Gamepad2 | 카테고리 | 뱃지 형태                                     |
-| Hash     | 태그     | `#태그1 #태그2` 뱃지 나열 (태그 있을 때만)    |
-| Tv       | 방송국   | 스트리머명 + 외부 링크 아이콘 (URL 있을 때만) |
+| 아이콘   | 레이블   | 값                                                           |
+| -------- | -------- | ------------------------------------------------------------ |
+| Calendar | 날짜     | `2월 15일 (일)`                                              |
+| Clock    | 시간     | `20:00 – 23:00` (시작 볼드, 종료 보조색)                     |
+| Gamepad2 | 카테고리 | 뱃지 형태                                                    |
+| Hash     | 태그     | `#태그1 #태그2` 뱃지 나열 (태그 있을 때만)                   |
+| Users    | 참여자   | 참여자 목록 표시 (매칭된 스트리머는 치지직 아이콘 링크 표시) |
 
 #### 참여자 목록 정책
 
 - **정렬**: 한국어 이름 기준 오름차순 (`localeCompare('ko')`)
-- **아바타 폴백**: 이름 첫 글자 이니셜
+- **아바타 폴백**: 매칭된 스트리머 썸네일(`channel_image_url`) 우선, 없으면 이름 첫 글자 이니셜
 - **레이아웃**: 세로 스택 (가로 스크롤 대비 발견성, 정보 가독성 우수)
 - **폴백**: 참여자 데이터 없으면 `streamerName`을 기본 참여자로 생성
 
