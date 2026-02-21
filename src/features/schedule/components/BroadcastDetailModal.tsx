@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react'
 import dayjs from 'dayjs'
 import { X, Calendar, Clock, Gamepad2, Hash, Users } from 'lucide-react'
-import { Broadcast, Participant } from '../types/schedule'
+import type { Broadcast, Participant } from '../types/schedule'
 import { useBroadcastDetail } from '../hooks/useBroadcastDetail'
 import { formatTime, getDayName } from '../utils/date'
 import chzzkIcon from '../../../assets/chzzk_icon.png'

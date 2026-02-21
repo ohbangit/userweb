@@ -1,132 +1,18 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
-import { ViewMode } from '../types/schedule'
-import { useSchedule } from '../hooks/useSchedule'
+import { RefreshCw } from 'lucide-react'
+import type { ViewMode } from '../types'
+import { useSchedule } from '../hooks'
+import { addDays, addMonths } from '../utils'
 import {
-    addDays,
-    addMonths,
-    getWeekNumber,
-    getWeekRange,
-    formatDate,
-    formatFullDate,
-} from '../utils/date'
-import { DailySchedule } from '../components/DailySchedule'
-import { WeeklySchedule } from '../components/WeeklySchedule'
-import { MonthlySchedule } from '../components/MonthlySchedule'
-
-function ViewToggle({
-    viewMode,
-    onChange,
-}: {
-    viewMode: ViewMode
-    onChange: (mode: ViewMode) => void
-}) {
-    return (
-        <div className="inline-flex rounded-lg border border-border/50 bg-bg-secondary p-0.5">
-            <button
-                onClick={() => onChange('daily')}
-                className={[
-                    'cursor-pointer rounded-md px-3 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
-                    viewMode === 'daily'
-                        ? 'bg-card text-text shadow-sm'
-                        : 'text-text-muted hover:text-text',
-                ].join(' ')}
-            >
-                일간
-            </button>
-            <button
-                onClick={() => onChange('weekly')}
-                className={[
-                    'cursor-pointer rounded-md px-3 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
-                    viewMode === 'weekly'
-                        ? 'bg-card text-text shadow-sm'
-                        : 'text-text-muted hover:text-text',
-                ].join(' ')}
-            >
-                주간
-            </button>
-            <button
-                onClick={() => onChange('monthly')}
-                className={[
-                    'cursor-pointer rounded-md px-3 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
-                    viewMode === 'monthly'
-                        ? 'bg-card text-text shadow-sm'
-                        : 'text-text-muted hover:text-text',
-                ].join(' ')}
-            >
-                월간
-            </button>
-        </div>
-    )
-}
-
-function NavButton({
-    direction,
-    onClick,
-}: {
-    direction: 'prev' | 'next'
-    onClick: () => void
-}) {
-    return (
-        <button
-            onClick={onClick}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-border/40 bg-card text-text-muted transition-colors hover:border-border hover:text-text sm:h-8 sm:w-8"
-        >
-            {direction === 'prev' ? (
-                <ChevronLeft className="h-4 w-4" />
-            ) : (
-                <ChevronRight className="h-4 w-4" />
-            )}
-        </button>
-    )
-}
-
-function PeriodDisplay({
-    currentDate,
-    viewMode,
-}: {
-    currentDate: Dayjs
-    viewMode: ViewMode
-}) {
-    const year = String(currentDate.year()).slice(-2)
-    const month = currentDate.month() + 1
-    const containerClass = 'flex min-h-12 flex-col justify-center'
-
-    if (viewMode === 'daily') {
-        return (
-            <div className={containerClass}>
-                <h2 className="text-base font-semibold text-text sm:text-lg">
-                    {formatFullDate(currentDate)}
-                </h2>
-            </div>
-        )
-    }
-
-    if (viewMode === 'weekly') {
-        const weekNum = getWeekNumber(currentDate)
-        const range = getWeekRange(currentDate)
-        return (
-            <div className={containerClass}>
-                <h2 className="text-base font-semibold text-text sm:text-lg">
-                    {year}년 {month}월 {weekNum}주차
-                </h2>
-                <p className="mt-0.5 text-xs text-text-dim">
-                    {formatDate(range.start)} – {formatDate(range.end)}
-                </p>
-            </div>
-        )
-    }
-
-    return (
-        <div className={containerClass}>
-            <h2 className="text-base font-semibold text-text sm:text-lg">
-                {year}년 {month}월
-            </h2>
-        </div>
-    )
-}
+    DailySchedule,
+    WeeklySchedule,
+    MonthlySchedule,
+    ViewToggle,
+    NavButton,
+    PeriodDisplay,
+} from '../components'
 
 export default function SchedulePage() {
     const [viewMode, setViewMode] = useState<ViewMode>('weekly')

@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react'
 import type { Dayjs } from 'dayjs'
 import { X } from 'lucide-react'
-import { Broadcast } from '../types/schedule'
+import type { Broadcast } from '../types/schedule'
 import { getDayName } from '../utils/date'
 import { BroadcastCard } from './BroadcastCard'
 

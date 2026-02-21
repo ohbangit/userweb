@@ -1,11 +1,31 @@
+import { lazy, Suspense } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from './layouts/AppLayout'
 import SchedulePage from '../features/schedule/pages/SchedulePage'
 
+const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
+
 function App() {
     return (
-        <AppLayout>
-            <SchedulePage />
-        </AppLayout>
+        <Routes>
+            <Route
+                path="/"
+                element={
+                    <AppLayout>
+                        <SchedulePage />
+                    </AppLayout>
+                }
+            />
+            <Route
+                path="/admin/*"
+                element={
+                    <Suspense fallback={null}>
+                        <AdminRoutes />
+                    </Suspense>
+                }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
     )
 }
 

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import { useState } from 'react'
-import { Broadcast } from '../types/schedule'
+import type { Broadcast } from '../types/schedule'
 import { getWeekDays, getDayName, isSameDay, isToday } from '../utils/date'
 import { BroadcastCard } from './BroadcastCard'
 import { BroadcastDetailModal } from './BroadcastDetailModal'

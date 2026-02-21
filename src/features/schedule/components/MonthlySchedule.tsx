@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
-import { Broadcast } from '../types/schedule'
+import type { Broadcast } from '../types/schedule'
 import {
     getMonthDays,
     getDayName,

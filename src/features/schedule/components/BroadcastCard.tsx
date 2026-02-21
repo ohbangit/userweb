@@ -1,4 +1,4 @@
-import { Broadcast, Participant } from '../types/schedule'
+import type { Broadcast, Participant } from '../types/schedule'
 import { formatTime } from '../utils/date'
 
 interface BroadcastCardProps {

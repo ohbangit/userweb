@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import { useState } from 'react'
-import { Broadcast, Participant } from '../types/schedule'
+import type { Broadcast, Participant } from '../types/schedule'
 import { isSameDay, formatTime } from '../utils/date'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
 
