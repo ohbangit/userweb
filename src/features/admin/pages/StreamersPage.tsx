@@ -343,6 +343,14 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                         )}
                     </FieldRow>
 
+                    <FieldRow label="팔로워 수">
+                        <span className="text-sm text-gray-900 dark:text-[#efeff1]">
+                            {streamer.followerCount != null
+                                ? streamer.followerCount.toLocaleString()
+                                : '—'}
+                        </span>
+                    </FieldRow>
+
                     <FieldRow label="ID">
                         <span className="font-mono text-xs text-gray-400 dark:text-[#848494]">
                             {streamer.id}
@@ -456,6 +464,12 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                                 />
                             )}
                         </div>
+                        <span className="mt-0.5 block text-xs text-gray-400 dark:text-[#848494]">
+                            팔로워{' '}
+                            {streamer.followerCount != null
+                                ? streamer.followerCount.toLocaleString()
+                                : '—'}
+                        </span>
                         {!streamer.channelId && (
                             <span className="mt-0.5 block text-xs text-red-400 dark:text-red-400">
                                 채널 미연결

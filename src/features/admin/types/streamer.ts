@@ -4,6 +4,7 @@ export interface StreamerItem {
     channelId: string | null
     isPartner: boolean
     channelImageUrl: string | null
+    followerCount: number | null
     youtubeUrl: string | null
     fanCafeUrl: string | null
 }

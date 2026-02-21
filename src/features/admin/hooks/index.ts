@@ -8,6 +8,7 @@ export {
     useRefreshStreamer,
     useDeleteStreamer,
 } from './useStreamers'
+export { useAdminToast } from './useAdminToast'
 export {
     useRunDiscovery,
     useRegisterDiscoveryCandidates,
