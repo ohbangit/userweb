@@ -91,3 +91,17 @@ export function useUpdateFanCafeUrl(channelId: string) {
         },
     })
 }
+
+export function useRefreshStreamer(streamerId: string) {
+    const queryClient = useQueryClient()
+    return useMutation<StreamerItem, Error, void>({
+        mutationFn: () =>
+            adminApiPost<StreamerItem>(
+                `/api/admin/streamers/${streamerId}/refresh`,
+                {},
+            ),
+        onSuccess: () => {
+            void queryClient.invalidateQueries({ queryKey: STREAMERS_KEY })
+        },
+    })
+}

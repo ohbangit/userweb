@@ -6,6 +6,7 @@ import {
     useSyncStreamer,
     useUpdateYoutubeUrl,
     useUpdateFanCafeUrl,
+    useRefreshStreamer,
 } from '../hooks'
 import type { StreamerItem } from '../types'
 import { ApiError } from '../../../lib/apiClient'
@@ -39,7 +40,7 @@ function StreamerAvatar({ src, name, size }: AvatarProps) {
     }
     return (
         <div
-            className="flex shrink-0 items-center justify-center rounded-full bg-gray-100"
+            className="flex shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-[#26262e]"
             style={{ width: size, height: size }}
         >
             <svg
@@ -47,7 +48,7 @@ function StreamerAvatar({ src, name, size }: AvatarProps) {
                 height={size * 0.5}
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="text-gray-400"
+                className="text-gray-400 dark:text-[#848494]"
             >
                 <path d="M12 12c2.67 0 4.8-2.13 4.8-4.8S14.67 2.4 12 2.4 7.2 4.53 7.2 7.2 9.33 12 12 12zm0 2.4c-3.2 0-9.6 1.61-9.6 4.8v2.4h19.2v-2.4c0-3.19-6.4-4.8-9.6-4.8z" />
             </svg>
@@ -87,25 +88,27 @@ function InlineEditForm({
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className="h-8 flex-1 rounded-md border border-gray-200 bg-gray-50 px-2.5 font-mono text-xs text-gray-900 outline-none transition focus:border-gray-400 focus:bg-white"
+                    className="h-8 flex-1 rounded-md border border-gray-200 bg-gray-50 px-2.5 font-mono text-xs text-gray-900 outline-none transition focus:border-gray-400 focus:bg-white dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-[#848494] dark:focus:bg-[#2e2e38]"
                 />
                 <button
                     type="submit"
                     disabled={isPending || value.trim().length === 0}
-                    className="h-8 rounded-md bg-gray-900 px-3 text-xs font-medium text-white transition hover:bg-gray-700 disabled:opacity-40"
+                    className="h-8 rounded-md bg-gray-900 px-3 text-xs font-medium text-white transition hover:bg-gray-700 disabled:opacity-40 dark:bg-[#efeff1] dark:text-[#0e0e10] dark:hover:bg-[#adadb8]"
                 >
                     {isPending ? '…' : saveLabel}
                 </button>
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="h-8 rounded-md border border-gray-200 px-3 text-xs font-medium text-gray-500 transition hover:bg-gray-50"
+                    className="h-8 rounded-md border border-gray-200 px-3 text-xs font-medium text-gray-500 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#2e2e38]"
                 >
                     취소
                 </button>
             </div>
             {errMsg(error) && (
-                <p className="text-[11px] text-red-500">{errMsg(error)}</p>
+                <p className="text-[11px] text-red-500 dark:text-red-400">
+                    {errMsg(error)}
+                </p>
             )}
         </form>
     )
@@ -119,7 +122,7 @@ interface FieldRowProps {
 function FieldRow({ label, children }: FieldRowProps) {
     return (
         <div className="px-5 py-3.5">
-            <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-gray-400">
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-[#848494]">
                 {label}
             </p>
             {children}
@@ -154,13 +157,13 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 dark:bg-black/70"
             onClick={(e) => {
                 if (e.target === e.currentTarget) onClose()
             }}
         >
-            <div className="w-full max-w-md overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl">
-                <div className="flex items-center gap-3.5 border-b border-gray-100 px-5 py-4">
+            <div className="w-full max-w-md overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                <div className="flex items-center gap-3.5 border-b border-gray-100 px-5 py-4 dark:border-[#3a3a44]">
                     <StreamerAvatar
                         src={streamer.channelImageUrl}
                         name={streamer.name}
@@ -168,7 +171,7 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                     />
                     <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
-                            <span className="truncate text-base font-semibold text-gray-900">
+                            <span className="truncate text-base font-semibold text-gray-900 dark:text-[#efeff1]">
                                 {streamer.name}
                             </span>
                             {streamer.isPartner && (
@@ -179,13 +182,13 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                 />
                             )}
                         </div>
-                        <p className="mt-0.5 truncate font-mono text-xs text-gray-400">
+                        <p className="mt-0.5 truncate font-mono text-xs text-gray-400 dark:text-[#848494]">
                             {streamer.channelId ?? '채널 미연결'}
                         </p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="shrink-0 rounded-md p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+                        className="shrink-0 rounded-md p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 dark:text-[#848494] dark:hover:bg-[#26262e] dark:hover:text-[#adadb8]"
                         aria-label="닫기"
                     >
                         <svg
@@ -204,7 +207,7 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                     </button>
                 </div>
 
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-gray-100 dark:divide-[#3a3a44]">
                     <FieldRow label="채널 ID">
                         {editing === 'channel' ? (
                             <InlineEditForm
@@ -230,15 +233,15 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                     className={[
                                         'font-mono text-sm',
                                         streamer.channelId
-                                            ? 'text-gray-900'
-                                            : 'text-red-400',
+                                            ? 'text-gray-900 dark:text-[#efeff1]'
+                                            : 'text-red-400 dark:text-red-400',
                                     ].join(' ')}
                                 >
                                     {streamer.channelId ?? '미연결'}
                                 </span>
                                 <button
                                     onClick={() => setEditing('channel')}
-                                    className="ml-3 shrink-0 text-xs text-gray-400 transition hover:text-gray-700"
+                                    className="ml-3 shrink-0 text-xs text-gray-400 transition hover:text-gray-700 dark:text-[#848494] dark:hover:text-[#efeff1]"
                                 >
                                     {streamer.channelId
                                         ? '변경'
@@ -274,19 +277,19 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                         href={streamer.youtubeUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="truncate font-mono text-xs text-blue-500 hover:underline"
+                                        className="truncate font-mono text-xs text-blue-500 hover:underline dark:text-blue-400"
                                     >
                                         {streamer.youtubeUrl}
                                     </a>
                                 ) : (
-                                    <span className="text-sm text-gray-400">
+                                    <span className="text-sm text-gray-400 dark:text-[#848494]">
                                         —
                                     </span>
                                 )}
                                 {streamer.channelId && (
                                     <button
                                         onClick={() => setEditing('youtube')}
-                                        className="ml-3 shrink-0 text-xs text-gray-400 transition hover:text-gray-700"
+                                        className="ml-3 shrink-0 text-xs text-gray-400 transition hover:text-gray-700 dark:text-[#848494] dark:hover:text-[#efeff1]"
                                     >
                                         수정
                                     </button>
@@ -321,19 +324,19 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                         href={streamer.fanCafeUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="truncate font-mono text-xs text-blue-500 hover:underline"
+                                        className="truncate font-mono text-xs text-blue-500 hover:underline dark:text-blue-400"
                                     >
                                         {streamer.fanCafeUrl}
                                     </a>
                                 ) : (
-                                    <span className="text-sm text-gray-400">
+                                    <span className="text-sm text-gray-400 dark:text-[#848494]">
                                         —
                                     </span>
                                 )}
                                 {streamer.channelId && (
                                     <button
                                         onClick={() => setEditing('fanCafe')}
-                                        className="ml-3 shrink-0 text-xs text-gray-400 transition hover:text-gray-700"
+                                        className="ml-3 shrink-0 text-xs text-gray-400 transition hover:text-gray-700 dark:text-[#848494] dark:hover:text-[#efeff1]"
                                     >
                                         수정
                                     </button>
@@ -343,7 +346,7 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                     </FieldRow>
 
                     <FieldRow label="ID">
-                        <span className="font-mono text-xs text-gray-400">
+                        <span className="font-mono text-xs text-gray-400 dark:text-[#848494]">
                             {streamer.id}
                         </span>
                     </FieldRow>
@@ -368,12 +371,12 @@ function RegisterModal({ onClose }: RegisterModalProps) {
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-                <h2 className="mb-1 text-base font-bold text-gray-900">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 dark:bg-black/70">
+            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-[#1a1a23]">
+                <h2 className="mb-1 text-base font-bold text-gray-900 dark:text-[#efeff1]">
                     스트리머 등록
                 </h2>
-                <p className="mb-4 text-sm text-gray-500">
+                <p className="mb-4 text-sm text-gray-500 dark:text-[#adadb8]">
                     치지직 채널 ID로 스트리머를 등록합니다.
                 </p>
 
@@ -383,11 +386,11 @@ function RegisterModal({ onClose }: RegisterModalProps) {
                         value={channelId}
                         onChange={(e) => setChannelId(e.target.value)}
                         placeholder="채널 ID"
-                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
                     />
 
                     {register.error && (
-                        <p className="text-xs text-red-500">
+                        <p className="text-xs text-red-500 dark:text-red-400">
                             {errMsg(register.error)}
                         </p>
                     )}
@@ -396,7 +399,7 @@ function RegisterModal({ onClose }: RegisterModalProps) {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                            className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                         >
                             취소
                         </button>
@@ -406,7 +409,7 @@ function RegisterModal({ onClose }: RegisterModalProps) {
                                 register.isPending ||
                                 channelId.trim().length === 0
                             }
-                            className="flex-1 rounded-xl bg-blue-500 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-50"
+                            className="flex-1 rounded-xl bg-blue-500 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500"
                         >
                             {register.isPending ? '등록 중…' : '등록'}
                         </button>
@@ -423,9 +426,11 @@ interface StreamerRowProps {
 }
 
 function StreamerRow({ streamer, onClick }: StreamerRowProps) {
+    const refresh = useRefreshStreamer(streamer.id)
+
     return (
         <tr
-            className="cursor-pointer border-b border-gray-100 last:border-0 transition hover:bg-gray-50"
+            className="cursor-pointer border-b border-gray-100 last:border-0 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:hover:bg-[#26262e]"
             onClick={onClick}
         >
             <td className="px-4 py-3.5">
@@ -436,7 +441,7 @@ function StreamerRow({ streamer, onClick }: StreamerRowProps) {
                         size={32}
                     />
                     <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-gray-900 dark:text-[#efeff1]">
                             {streamer.name}
                         </span>
                         {streamer.isPartner && (
@@ -451,17 +456,48 @@ function StreamerRow({ streamer, onClick }: StreamerRowProps) {
             </td>
             <td className="px-4 py-3.5">
                 {streamer.channelId ? (
-                    <span className="font-mono text-xs text-gray-500">
+                    <span className="font-mono text-xs text-gray-500 dark:text-[#adadb8]">
                         {streamer.channelId}
                     </span>
                 ) : (
-                    <span className="rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-400">
+                    <span className="rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-400 dark:bg-red-900/20">
                         채널 미등록
                     </span>
                 )}
             </td>
             <td className="px-4 py-3.5 text-right">
-                <span className="text-xs text-gray-300">›</span>
+                <div className="flex items-center justify-end gap-2">
+                    <button
+                        type="button"
+                        disabled={!streamer.channelId || refresh.isPending}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            refresh.mutate()
+                        }}
+                        title="채널 정보 갱신"
+                        className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-[#848494] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
+                    >
+                        <svg
+                            className={[
+                                'h-4 w-4',
+                                refresh.isPending ? 'animate-spin' : '',
+                            ].join(' ')}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            />
+                        </svg>
+                    </button>
+                    <span className="text-xs text-gray-300 dark:text-[#848494]">
+                        ›
+                    </span>
+                </div>
             </td>
         </tr>
     )
@@ -480,21 +516,23 @@ function StreamerTable({
 }: StreamerTableProps) {
     if (streamers.length === 0) {
         return (
-            <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-gray-200">
-                <p className="text-sm text-gray-400">{emptyMessage}</p>
+            <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-gray-200 dark:border-[#3a3a44]">
+                <p className="text-sm text-gray-400 dark:text-[#848494]">
+                    {emptyMessage}
+                </p>
             </div>
         )
     }
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
             <table className="w-full">
                 <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50">
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500">
+                    <tr className="border-b border-gray-200 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[#848494]">
                             이름
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500">
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[#848494]">
                             채널 ID
                         </th>
                         <th className="w-8" />
@@ -540,10 +578,10 @@ export default function StreamersPage() {
         <div>
             <div className="mb-6 flex items-center justify-between">
                 <div>
-                    <h1 className="text-xl font-bold text-gray-900">
+                    <h1 className="text-xl font-bold text-gray-900 dark:text-[#efeff1]">
                         스트리머 관리
                     </h1>
-                    <p className="mt-0.5 text-sm text-gray-500">
+                    <p className="mt-0.5 text-sm text-gray-500 dark:text-[#adadb8]">
                         스트리머 등록 및 채널 정보를 관리합니다.
                     </p>
                 </div>
@@ -556,7 +594,7 @@ export default function StreamersPage() {
             </div>
 
             <div className="mb-4 flex items-center gap-3">
-                <div className="flex rounded-xl border border-gray-200 bg-white p-1">
+                <div className="flex rounded-xl border border-gray-200 bg-white p-1 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
                     {(['all', 'missing'] as const).map((t) => (
                         <button
                             key={t}
@@ -567,8 +605,8 @@ export default function StreamersPage() {
                             className={[
                                 'rounded-lg px-3 py-1.5 text-sm font-medium transition',
                                 tab === t
-                                    ? 'bg-blue-500 text-white'
-                                    : 'text-gray-600 hover:text-gray-900',
+                                    ? 'bg-blue-500 text-white dark:bg-blue-600'
+                                    : 'text-gray-600 hover:text-gray-900 dark:text-[#adadb8] dark:hover:text-[#efeff1]',
                             ].join(' ')}
                         >
                             {t === 'all' ? '전체' : '채널 미등록'}
@@ -582,20 +620,22 @@ export default function StreamersPage() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="이름 검색"
-                        className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
                     />
                 )}
             </div>
 
             {isLoading && (
                 <div className="flex h-32 items-center justify-center">
-                    <p className="text-sm text-gray-400">불러오는 중…</p>
+                    <p className="text-sm text-gray-400 dark:text-[#848494]">
+                        불러오는 중…
+                    </p>
                 </div>
             )}
 
             {isError && (
-                <div className="flex h-32 items-center justify-center rounded-2xl border border-red-100 bg-red-50">
-                    <p className="text-sm text-red-500">
+                <div className="flex h-32 items-center justify-center rounded-2xl border border-red-100 bg-red-50 dark:border-red-900/20 dark:bg-red-900/10">
+                    <p className="text-sm text-red-500 dark:text-red-400">
                         데이터를 불러오지 못했습니다.
                     </p>
                 </div>

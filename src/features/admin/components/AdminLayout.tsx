@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAdminAuth } from '../hooks'
+import { useTheme } from '../../../hooks/useTheme'
 
 interface AdminLayoutProps {
     children: ReactNode
@@ -18,6 +19,7 @@ const NAV_ITEMS: NavItem[] = [
 export function AdminLayout({ children }: AdminLayoutProps) {
     const { logout } = useAdminAuth()
     const navigate = useNavigate()
+    const { theme, toggleTheme } = useTheme()
 
     function handleLogout() {
         logout()
@@ -25,12 +27,51 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     }
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
-            <aside className="flex w-56 flex-col border-r border-gray-200 bg-white">
-                <div className="flex h-14 items-center border-b border-gray-200 px-5">
-                    <span className="text-sm font-bold text-gray-900">
+        <div className="flex min-h-screen bg-gray-50 dark:bg-[#0e0e10]">
+            <aside className="flex w-56 flex-col border-r border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                <div className="flex h-14 items-center justify-between border-b border-gray-200 px-5 dark:border-[#3a3a44]">
+                    <span className="text-sm font-bold text-gray-900 dark:text-[#efeff1]">
                         어드민
                     </span>
+                    <button
+                        onClick={toggleTheme}
+                        title={
+                            theme === 'dark'
+                                ? '라이트 모드로 전환'
+                                : '다크 모드로 전환'
+                        }
+                        className="rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
+                    >
+                        {theme === 'dark' ? (
+                            <svg
+                                className="h-4 w-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                <circle cx="12" cy="12" r="5" />
+                                <path
+                                    strokeLinecap="round"
+                                    d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                                />
+                            </svg>
+                        ) : (
+                            <svg
+                                className="h-4 w-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+                                />
+                            </svg>
+                        )}
+                    </button>
                 </div>
 
                 <nav className="flex flex-1 flex-col gap-0.5 px-3 py-3">
@@ -42,8 +83,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                 [
                                     'rounded-lg px-3 py-2 text-sm font-medium transition',
                                     isActive
-                                        ? 'bg-blue-50 text-blue-600'
-                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+                                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]',
                                 ].join(' ')
                             }
                         >
@@ -52,10 +93,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     ))}
                 </nav>
 
-                <div className="border-t border-gray-200 px-3 py-3">
+                <div className="border-t border-gray-200 px-3 py-3 dark:border-[#3a3a44]">
                     <button
                         onClick={handleLogout}
-                        className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+                        className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
                     >
                         로그아웃
                     </button>
