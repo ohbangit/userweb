@@ -3,6 +3,7 @@ import {
     adminApiGet,
     adminApiPost,
     adminApiPatch,
+    adminApiDelete,
 } from '../../../lib/apiClient'
 import type {
     StreamerItem,
@@ -100,6 +101,17 @@ export function useRefreshStreamer(streamerId: string) {
                 `/api/admin/streamers/${streamerId}/refresh`,
                 {},
             ),
+        onSuccess: () => {
+            void queryClient.invalidateQueries({ queryKey: STREAMERS_KEY })
+        },
+    })
+}
+
+export function useDeleteStreamer() {
+    const queryClient = useQueryClient()
+    return useMutation<void, Error, string>({
+        mutationFn: (streamerId) =>
+            adminApiDelete(`/api/admin/streamers/${streamerId}`),
         onSuccess: () => {
             void queryClient.invalidateQueries({ queryKey: STREAMERS_KEY })
         },

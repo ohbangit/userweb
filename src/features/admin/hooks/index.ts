@@ -6,4 +6,5 @@ export {
     useUpdateYoutubeUrl,
     useUpdateFanCafeUrl,
     useRefreshStreamer,
+    useDeleteStreamer,
 } from './useStreamers'

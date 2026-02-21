@@ -7,6 +7,7 @@ import {
     useUpdateYoutubeUrl,
     useUpdateFanCafeUrl,
     useRefreshStreamer,
+    useDeleteStreamer,
 } from '../hooks'
 import type { StreamerItem } from '../types'
 import { ApiError } from '../../../lib/apiClient'
@@ -182,9 +183,6 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                 />
                             )}
                         </div>
-                        <p className="mt-0.5 truncate font-mono text-xs text-gray-400 dark:text-[#848494]">
-                            {streamer.channelId ?? '채널 미연결'}
-                        </p>
                     </div>
                     <button
                         onClick={onClose}
@@ -423,80 +421,140 @@ function RegisterModal({ onClose }: RegisterModalProps) {
 interface StreamerRowProps {
     streamer: StreamerItem
     onClick: () => void
+    onDeleted: () => void
 }
 
-function StreamerRow({ streamer, onClick }: StreamerRowProps) {
+function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
+    const [confirmDelete, setConfirmDelete] = useState(false)
     const refresh = useRefreshStreamer(streamer.id)
+    const remove = useDeleteStreamer()
 
     return (
         <tr
-            className="cursor-pointer border-b border-gray-100 last:border-0 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:hover:bg-[#26262e]"
-            onClick={onClick}
+            className="border-b border-gray-100 last:border-0 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:hover:bg-[#26262e]"
+            onClick={() => {
+                if (!confirmDelete) onClick()
+            }}
         >
-            <td className="px-4 py-3.5">
+            <td className="cursor-pointer px-4 py-3.5">
                 <div className="flex items-center gap-3">
                     <StreamerAvatar
                         src={streamer.channelImageUrl}
                         name={streamer.name}
-                        size={32}
+                        size={36}
                     />
-                    <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-medium text-gray-900 dark:text-[#efeff1]">
-                            {streamer.name}
-                        </span>
-                        {streamer.isPartner && (
-                            <img
-                                src={partnerMark}
-                                alt="파트너"
-                                className="h-4 w-4"
-                            />
+                    <div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-medium text-gray-900 dark:text-[#efeff1]">
+                                {streamer.name}
+                            </span>
+                            {streamer.isPartner && (
+                                <img
+                                    src={partnerMark}
+                                    alt="파트너"
+                                    className="h-4 w-4"
+                                />
+                            )}
+                        </div>
+                        {!streamer.channelId && (
+                            <span className="mt-0.5 block text-xs text-red-400 dark:text-red-400">
+                                채널 미연결
+                            </span>
                         )}
                     </div>
                 </div>
             </td>
-            <td className="px-4 py-3.5">
-                {streamer.channelId ? (
-                    <span className="font-mono text-xs text-gray-500 dark:text-[#adadb8]">
-                        {streamer.channelId}
-                    </span>
-                ) : (
-                    <span className="rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-400 dark:bg-red-900/20">
-                        채널 미등록
-                    </span>
-                )}
-            </td>
             <td className="px-4 py-3.5 text-right">
                 <div className="flex items-center justify-end gap-2">
-                    <button
-                        type="button"
-                        disabled={!streamer.channelId || refresh.isPending}
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            refresh.mutate()
-                        }}
-                        title="채널 정보 갱신"
-                        className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-[#848494] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
-                    >
-                        <svg
-                            className={[
-                                'h-4 w-4',
-                                refresh.isPending ? 'animate-spin' : '',
-                            ].join(' ')}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                            />
-                        </svg>
-                    </button>
-                    <span className="text-xs text-gray-300 dark:text-[#848494]">
-                        ›
-                    </span>
+                    {confirmDelete ? (
+                        <>
+                            <span className="text-xs text-gray-500 dark:text-[#adadb8]">
+                                삭제할까요?
+                            </span>
+                            <button
+                                type="button"
+                                disabled={remove.isPending}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    remove.mutate(streamer.id, {
+                                        onSuccess: onDeleted,
+                                    })
+                                }}
+                                className="rounded-md bg-red-500 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-red-600 disabled:opacity-50 dark:bg-red-600 dark:hover:bg-red-500"
+                            >
+                                {remove.isPending ? '…' : '삭제'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setConfirmDelete(false)
+                                    remove.reset()
+                                }}
+                                className="rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#2e2e38]"
+                            >
+                                취소
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                type="button"
+                                disabled={
+                                    !streamer.channelId || refresh.isPending
+                                }
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    refresh.mutate()
+                                }}
+                                title="채널 정보 갱신"
+                                className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-[#848494] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
+                            >
+                                <svg
+                                    className={[
+                                        'h-4 w-4',
+                                        refresh.isPending ? 'animate-spin' : '',
+                                    ].join(' ')}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2.5}
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                    />
+                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setConfirmDelete(true)
+                                }}
+                                title="스트리머 삭제"
+                                className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition hover:border-red-300 hover:bg-red-50 hover:text-red-500 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-red-800 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                            >
+                                <svg
+                                    className="h-4 w-4"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                </svg>
+                            </button>
+                            <span className="text-xs text-gray-300 dark:text-[#848494]">
+                                ›
+                            </span>
+                        </>
+                    )}
                 </div>
             </td>
         </tr>
@@ -507,12 +565,14 @@ interface StreamerTableProps {
     streamers: StreamerItem[]
     emptyMessage?: string
     onSelect: (streamer: StreamerItem) => void
+    onDeleted: () => void
 }
 
 function StreamerTable({
     streamers,
     emptyMessage = '스트리머가 없습니다.',
     onSelect,
+    onDeleted,
 }: StreamerTableProps) {
     if (streamers.length === 0) {
         return (
@@ -530,12 +590,9 @@ function StreamerTable({
                 <thead>
                     <tr className="border-b border-gray-200 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[#848494]">
-                            이름
+                            스트리머
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[#848494]">
-                            채널 ID
-                        </th>
-                        <th className="w-8" />
+                        <th className="w-40" />
                     </tr>
                 </thead>
                 <tbody>
@@ -544,6 +601,7 @@ function StreamerTable({
                             key={s.id}
                             streamer={s}
                             onClick={() => onSelect(s)}
+                            onDeleted={onDeleted}
                         />
                     ))}
                 </tbody>
@@ -646,6 +704,7 @@ export default function StreamersPage() {
                     streamers={data}
                     emptyMessage={emptyMessage}
                     onSelect={setSelected}
+                    onDeleted={() => setSelected(null)}
                 />
             )}
 
