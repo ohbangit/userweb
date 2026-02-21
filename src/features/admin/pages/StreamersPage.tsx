@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import partnerMark from '../../../assets/mark.png'
 import {
     useStreamers,
@@ -615,6 +615,8 @@ export default function StreamersPage() {
     const [search, setSearch] = useState('')
     const [showRegister, setShowRegister] = useState(false)
     const [selected, setSelected] = useState<StreamerItem | null>(null)
+    const [page, setPage] = useState(1)
+    const size = 20
 
     const queryParams =
         tab === 'missing'
@@ -623,7 +625,18 @@ export default function StreamersPage() {
               ? { name: search.trim() }
               : {}
 
-    const { data = [], isLoading, isError } = useStreamers(queryParams)
+    const { data, isLoading, isError } = useStreamers({
+        ...queryParams,
+        page,
+        size,
+    })
+    const items = data?.items ?? []
+    const total = data?.total ?? 0
+    const totalPages = Math.max(1, Math.ceil(total / size))
+
+    useEffect(() => {
+        setPage(1)
+    }, [tab, search])
 
     const emptyMessage =
         tab === 'missing'
@@ -701,11 +714,44 @@ export default function StreamersPage() {
 
             {!isLoading && !isError && (
                 <StreamerTable
-                    streamers={data}
+                    streamers={items}
                     emptyMessage={emptyMessage}
                     onSelect={setSelected}
                     onDeleted={() => setSelected(null)}
                 />
+            )}
+
+            {!isLoading && !isError && items.length > 0 && (
+                <div className="mt-4 flex items-center justify-between">
+                    <p className="text-xs text-gray-400 dark:text-[#848494]">
+                        총 {total.toLocaleString()}명 · {page} / {totalPages}{' '}
+                        페이지
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setPage((prev) => Math.max(1, prev - 1))
+                            }
+                            disabled={page <= 1}
+                            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
+                        >
+                            이전
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setPage((prev) =>
+                                    Math.min(totalPages, prev + 1),
+                                )
+                            }
+                            disabled={page >= totalPages}
+                            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
+                        >
+                            다음
+                        </button>
+                    </div>
+                </div>
             )}
 
             {showRegister && (

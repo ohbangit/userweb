@@ -65,7 +65,14 @@ async function handleResponse<T>(response: Response): Promise<T> {
             details: errorBody?.error?.details,
         })
     }
-    return response.json() as Promise<T>
+    if (response.status === 204) {
+        return undefined as T
+    }
+    const rawBody = await response.text()
+    if (rawBody.trim().length === 0) {
+        return undefined as T
+    }
+    return JSON.parse(rawBody) as T
 }
 
 export async function apiGet<T>(

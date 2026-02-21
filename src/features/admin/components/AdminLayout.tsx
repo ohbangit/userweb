@@ -14,6 +14,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
     { to: '/admin/streamers', label: '스트리머 관리' },
+    { to: '/admin/streamer-discovery', label: '스트리머 발굴' },
 ]
 
 export function AdminLayout({ children }: AdminLayoutProps) {

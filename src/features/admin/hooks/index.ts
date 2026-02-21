@@ -8,3 +8,11 @@ export {
     useRefreshStreamer,
     useDeleteStreamer,
 } from './useStreamers'
+export {
+    useRunDiscovery,
+    useRegisterDiscoveryCandidates,
+    useStreamerExclusions,
+    useCreateStreamerExclusion,
+    useCreateStreamerExclusions,
+    useDeleteStreamerExclusion,
+} from './useDiscovery'

@@ -13,11 +13,18 @@ import type {
     UpdateFanCafeUrlRequest,
 } from '../types'
 
-type StreamerListResponse = { items: StreamerItem[] }
+type StreamerListResponse = {
+    items: StreamerItem[]
+    total: number
+    page?: number
+    size?: number
+}
 
 type StreamersParams = {
     name?: string
     hasChannel?: boolean
+    page?: number
+    size?: number
 }
 
 const STREAMERS_KEY = ['admin', 'streamers'] as const
@@ -30,13 +37,19 @@ export function useStreamers(params: StreamersParams = {}) {
     if (params.hasChannel === false) {
         queryParams['hasChannel'] = 'false'
     }
-    return useQuery<StreamerItem[]>({
+    if (params.page !== undefined) {
+        queryParams['page'] = String(params.page)
+    }
+    if (params.size !== undefined) {
+        queryParams['size'] = String(params.size)
+    }
+    return useQuery<StreamerListResponse>({
         queryKey: [...STREAMERS_KEY, queryParams],
         queryFn: () =>
             adminApiGet<StreamerListResponse>(
                 '/api/admin/streamers',
                 queryParams,
-            ).then((res) => res.items),
+            ),
     })
 }
 
