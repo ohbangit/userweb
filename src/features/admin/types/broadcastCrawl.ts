@@ -10,7 +10,6 @@ export interface CrawledParticipant {
 export interface CrawledBroadcast {
     sourceEventId: string
     title: string
-    gameTitle: string | null
     tags: string[]
     broadcastType: string
     startTime: string

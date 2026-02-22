@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ApiError } from '../../../lib/apiClient'
 import {
     useAdminToast,
+    useCategories,
     useCreateBroadcast,
     useDeleteBroadcast,
     useScheduleBroadcasts,
@@ -108,7 +109,7 @@ function toParticipantDrafts(
 interface BroadcastFormState {
     title: string
     broadcastType: string
-    gameTitle: string
+    categoryId: number | null
     startTime: string
     endTime: string
     tags: string
@@ -121,7 +122,7 @@ function initFormState(broadcast?: Broadcast): BroadcastFormState {
         return {
             title: '',
             broadcastType: '합방',
-            gameTitle: '',
+            categoryId: null,
             startTime: '',
             endTime: '',
             tags: '',
@@ -132,7 +133,7 @@ function initFormState(broadcast?: Broadcast): BroadcastFormState {
     return {
         title: broadcast.title,
         broadcastType: broadcast.broadcastType ?? '합방',
-        gameTitle: broadcast.gameTitle ?? '',
+        categoryId: broadcast.category?.id ?? null,
         startTime: toLocalDatetimeInput(broadcast.startTime),
         endTime:
             broadcast.endTime !== undefined && broadcast.endTime !== null
@@ -186,6 +187,8 @@ function BroadcastFormModal({
             ? { name: editingInput.trim(), size: 5 }
             : { size: 0 },
     )
+    const { data: categoriesData } = useCategories()
+    const categories = categoriesData?.categories ?? []
     const isPending = createMutation.isPending || updateMutation.isPending
     const [initialFormSnapshot] = useState<string>(() =>
         JSON.stringify(initFormState(broadcast)),
@@ -395,8 +398,8 @@ function BroadcastFormModal({
                     startTime: localDatetimeToISO(form.startTime),
                     broadcastType: form.broadcastType,
                     isVisible: form.isVisible,
-                    ...(form.gameTitle.trim().length > 0 && {
-                        gameTitle: form.gameTitle.trim(),
+                    ...(form.categoryId !== null && {
+                        categoryId: form.categoryId,
                     }),
                     ...(form.endTime.length > 0 && {
                         endTime: localDatetimeToISO(form.endTime),
@@ -418,9 +421,9 @@ function BroadcastFormModal({
                     ...(primaryStreamerId !== undefined && {
                         streamerId: primaryStreamerId,
                     }),
-                    gameTitle:
-                        form.gameTitle.trim().length > 0
-                            ? form.gameTitle.trim()
+                    categoryId:
+                        form.categoryId !== null
+                            ? form.categoryId
                             : undefined,
                     endTime:
                         form.endTime.length > 0
@@ -547,15 +550,28 @@ function BroadcastFormModal({
                                 </svg>
                                 게임 / 카테고리
                             </p>
-                            <input
-                                type="text"
-                                value={form.gameTitle}
+                            <select
+                                value={form.categoryId ?? ''}
                                 onChange={(e) =>
-                                    updateField('gameTitle', e.target.value)
+                                    updateField(
+                                        'categoryId',
+                                        e.target.value === ''
+                                            ? null
+                                            : Number(e.target.value),
+                                    )
                                 }
-                                placeholder="게임 / 카테고리"
                                 className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                            />
+                            >
+                                <option value="">카테고리 없음</option>
+                                {categories.map((category) => (
+                                    <option
+                                        key={category.id}
+                                        value={category.id}
+                                    >
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
                             <p className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
                                 <svg
                                     className="h-3.5 w-3.5"

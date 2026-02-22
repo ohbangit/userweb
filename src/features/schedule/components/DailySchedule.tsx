@@ -60,7 +60,7 @@ function DailyBroadcastItem({
     const endTime = broadcast.endTime
         ? formatTime(broadcast.endTime)
         : undefined
-    const gameTitle = broadcast.gameTitle ?? broadcast.tags?.[0]
+    const categoryName = broadcast.category?.name ?? undefined
     const tags = broadcast.tags ?? []
     const participants: Participant[] =
         broadcast.participants && broadcast.participants.length > 0
@@ -138,9 +138,11 @@ function DailyBroadcastItem({
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-md border border-border/40 bg-category px-2 py-0.5 text-[10px] font-semibold text-text-muted">
-                        {gameTitle}
-                    </span>
+                    {categoryName !== undefined && (
+                        <span className="rounded-md border border-border/40 bg-category px-2 py-0.5 text-[10px] font-semibold text-text-muted">
+                            {categoryName}
+                        </span>
+                    )}
                     {tags.map((tag) => (
                         <span
                             key={tag}

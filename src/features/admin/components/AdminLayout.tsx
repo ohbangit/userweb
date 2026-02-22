@@ -24,6 +24,7 @@ const NAV_SECTIONS: NavSection[] = [
         items: [
             { to: '/admin/streamers', label: '스트리머 관리' },
             { to: '/admin/schedule', label: '일정 관리' },
+            { to: '/admin/categories', label: '카테고리 관리' },
         ],
     },
     {

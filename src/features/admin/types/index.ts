@@ -33,3 +33,15 @@ export type {
     AdminBroadcastParticipantInput,
     BroadcastMutationResponse,
 } from './broadcastSchedule'
+
+export type {
+    CategoryItem,
+    ListCategoriesResponse,
+    CreateCategoryRequest,
+    UpdateCategoryRequest,
+    CrawledCategoryItem,
+    CrawlCategoriesRequest,
+    CrawlCategoriesResponse,
+    InsertCategoriesRequest,
+    InsertCategoriesResponse,
+} from './category'

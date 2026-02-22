@@ -19,7 +19,8 @@ export interface AdminBroadcastItem {
     streamerProfileUrl: string | null
     streamerChannelUrl: string | null
     streamerIsPartner: boolean
-    gameTitle: string | null
+    categoryId: number | null
+    categoryName: string | null
     tags: string[]
     participants: AdminScheduleParticipant[]
     startTime: string
@@ -46,7 +47,7 @@ export interface CreateBroadcastRequest {
     title: string
     streamerId: string
     broadcastType?: string
-    gameTitle?: string
+    categoryId?: number
     startTime: string
     endTime?: string
     thumbnailUrl?: string
@@ -62,7 +63,7 @@ export interface UpdateBroadcastRequest {
     title?: string
     streamerId?: string
     broadcastType?: string
-    gameTitle?: string
+    categoryId?: number
     startTime?: string
     endTime?: string
     thumbnailUrl?: string

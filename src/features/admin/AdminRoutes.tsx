@@ -9,6 +9,7 @@ const BroadcastCrawlPage = lazy(() => import('./pages/BroadcastCrawlPage'))
 const BroadcastSchedulePage = lazy(
     () => import('./pages/BroadcastSchedulePage'),
 )
+const CategoryManagePage = lazy(() => import('./pages/CategoryManagePage'))
 
 export default function AdminRoutes() {
     return (
@@ -28,6 +29,10 @@ export default function AdminRoutes() {
                         <Route
                             path="schedule"
                             element={<BroadcastSchedulePage />}
+                        />
+                        <Route
+                            path="categories"
+                            element={<CategoryManagePage />}
                         />
                         <Route
                             path="*"

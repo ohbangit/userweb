@@ -121,7 +121,7 @@ interface Broadcast {
     streamerProfileUrl?: string
     streamerChannelUrl?: string
     streamerIsPartner?: boolean
-    gameTitle?: string
+    category?: { id: number; name: string; thumbnailUrl: string | null } | null
     tags?: string[]
     participants?: Participant[]
     startTime: string // ISO 8601
@@ -402,6 +402,45 @@ type ViewMode = 'daily' | 'weekly' | 'monthly'
 | 후보 조회(월) | `POST /api/admin/broadcast-crawl/run`    |
 | 선택 반영     | `POST /api/admin/broadcast-crawl/insert` |
 
+### 6.13. 관리자 — 카테고리 관리
+
+#### 목적
+
+- 방송 일정에 연결할 카테고리를 운영자가 생성/조회/삭제한다.
+- 카테고리는 일정 등록/수정의 선택형 입력으로 사용되며, 텍스트 태그와 역할을 분리한다.
+
+#### 화면 구성
+
+| 영역        | 내용                                                |
+| ----------- | --------------------------------------------------- |
+| 상단 헤더   | 페이지 타이틀 + 설명                                |
+| 생성 폼     | 카테고리명(필수), 썸네일 URL(선택), `카테고리 추가` |
+| 목록 헤더   | 전체 개수 배지 + 검색 입력                          |
+| 목록 아이템 | 썸네일/이름/썸네일 URL + `수정`/`삭제` 버튼         |
+| 수정 모달   | 이름/썸네일 URL 편집 + 취소/수정                    |
+| 삭제 모달   | 카테고리명 확인 + 취소/삭제                         |
+
+#### 동작
+
+- 카테고리 생성 성공 시 토스트를 표시하고 입력값을 초기화한다.
+- 목록 검색은 카테고리명 기준 클라이언트 필터로 동작한다.
+- 카테고리 수정은 모달에서 이름/썸네일 URL을 변경하며, 빈 썸네일 값은 해제(null)로 저장한다.
+- 카테고리 크롤링은 어드민 백엔드 `run` API를 호출해 후보 목록을 조회한다.
+- 크롤링 후보는 체크박스로 선택 후 어드민 백엔드 `insert` API로 일괄 반영한다.
+- 삭제는 확인 모달에서 최종 확정하며, 성공 시 토스트를 표시한다.
+- 카테고리가 연결된 방송이 있는 경우 삭제 시 해당 방송의 카테고리는 해제된다.
+
+#### API 연동
+
+| 기능                 | 엔드포인트                              |
+| -------------------- | --------------------------------------- |
+| 목록 조회            | `GET /api/admin/categories`             |
+| 카테고리 생성        | `POST /api/admin/categories`            |
+| 카테고리 수정        | `PATCH /api/admin/categories/:id`       |
+| 카테고리 삭제        | `DELETE /api/admin/categories/:id`      |
+| 카테고리 크롤링      | `POST /api/admin/category-crawl/run`    |
+| 카테고리 크롤링 반영 | `POST /api/admin/category-crawl/insert` |
+
 ### 6.8. Footer
 
 | 영역 | 내용                                                |
@@ -448,6 +487,16 @@ src/
 │       │   └── useSubmitInquiry.ts       # 문의 전송 hook (useMutation)
 │       └── types/
 │           └── api.ts                    # 문의 API 타입 (InquiryRequest 등)
+│   └── admin/
+│       ├── AdminRoutes.tsx               # 어드민 라우트
+│       ├── components/
+│       │   └── AdminLayout.tsx           # 어드민 레이아웃 + 사이드 네비
+│       ├── hooks/
+│       │   └── useCategories.ts          # 카테고리 목록/생성/삭제 hook
+│       ├── pages/
+│       │   └── CategoryManagePage.tsx    # 카테고리 관리 페이지
+│       └── types/
+│           └── category.ts               # 카테고리 타입
 ├── hooks/
 │   └── useTheme.ts               # 테마 관리 훅
 ├── lib/
@@ -501,7 +550,9 @@ src/
         - 목적: 어드민에서 관리한 메타데이터(타입/주최자/파트너/태그)를 유저웹에서 일관되게 노출
         - 범위(초안):
             - 카드/모달에 `broadcastType`, `isHost`, `isPartner` 표시 강화
-            - `gameTitle`(카테고리)와 `tags` 표시 역할 분리(태그를 카테고리 fallback으로 사용하지 않음)
+            - `category`(카테고리 객체 {id, name, thumbnailUrl})와 `tags` 표시 역할 분리(태그를 카테고리 fallback으로 사용하지 않음)
+            - DB: `categories` 테이블 신규 생성, `broadcasts.category_id` FK로 조인
+            - 어드민: 방송 등록/수정 시 카테고리 드롭다운 셀렉터로 선택 (기존 텍스트 입력 → 셀렉트 박스)
             - 주/월/일 뷰 간 정보 밀도 기준 통일
         - 메모: "다른 선행 작업 이후" 착수
 - 현재 보류 항목:

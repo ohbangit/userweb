@@ -8,6 +8,12 @@ export interface Participant {
     isPartner?: boolean
 }
 
+export interface Category {
+    id: number
+    name: string
+    thumbnailUrl: string | null
+}
+
 export interface Broadcast {
     id: string
     title: string
@@ -16,7 +22,7 @@ export interface Broadcast {
     streamerProfileUrl?: string | null
     streamerChannelUrl?: string | null
     streamerIsPartner?: boolean
-    gameTitle?: string
+    category?: Category | null
     tags?: string[]
     participants?: Participant[]
     startTime: string

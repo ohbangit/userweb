@@ -40,7 +40,7 @@ export function BroadcastCard({
     const endTime = broadcast.endTime
         ? formatTime(broadcast.endTime)
         : undefined
-    const category = broadcast.gameTitle ?? broadcast.tags?.[0]
+    const category = broadcast.category?.name ?? undefined
     const participants: Participant[] =
         broadcast.participants && broadcast.participants.length > 0
             ? broadcast.participants

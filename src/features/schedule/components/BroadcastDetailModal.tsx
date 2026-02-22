@@ -134,7 +134,7 @@ export function BroadcastDetailModal({
         : undefined
     const dayName = getDayName(date)
     const dateLabel = `${date.month() + 1}월 ${date.date()}일 (${dayName})`
-    const gameTitle = displayBroadcast.gameTitle ?? displayBroadcast.tags?.[0]
+    const categoryName = displayBroadcast.category?.name ?? undefined
     const tags = displayBroadcast.tags ?? []
     const participants: Participant[] =
         displayBroadcast.participants &&
@@ -193,11 +193,13 @@ export function BroadcastDetailModal({
                                     </span>
                                 )}
                             </InfoRow>
-                            <InfoRow icon={Gamepad2} label="카테고리">
-                                <span className="inline-block rounded-md border border-border/40 bg-category px-2 py-0.5 text-xs font-semibold text-text-muted">
-                                    {gameTitle}
-                                </span>
-                            </InfoRow>
+                            {categoryName !== undefined && (
+                                <InfoRow icon={Gamepad2} label="카테고리">
+                                    <span className="inline-block rounded-md border border-border/40 bg-category px-2 py-0.5 text-xs font-semibold text-text-muted">
+                                        {categoryName}
+                                    </span>
+                                </InfoRow>
+                            )}
                             {tags.length > 0 && (
                                 <InfoRow icon={Hash} label="태그">
                                     <div className="flex flex-wrap gap-1.5">
