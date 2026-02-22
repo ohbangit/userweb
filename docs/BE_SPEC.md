@@ -257,19 +257,16 @@ backend/
 - `PATCH /api/admin/broadcasts/:id`
 - `DELETE /api/admin/broadcasts/:id`
 - `POST /api/admin/broadcasts/bulk`
-- `POST /api/admin/broadcast-crawl/runs`
-- `GET /api/admin/broadcast-crawl/runs/:runId`
-- `POST /api/admin/broadcast-crawl/runs/:runId/apply`
+- `POST /api/admin/broadcast-crawl/run`
+- `POST /api/admin/broadcast-crawl/insert`
 
-#### 방송 크롤링(run 기반) 계약
+#### 방송 크롤링(즉시형) 계약
 
-- `POST /api/admin/broadcast-crawl/runs`
+- `POST /api/admin/broadcast-crawl/run`
     - request: `{ monthStart: 'YYYY-MM', monthEnd: 'YYYY-MM' }`
-    - response: `{ runId, status, monthStart, monthEnd, broadcasts[] }`
-- `GET /api/admin/broadcast-crawl/runs/:runId`
-    - response: `{ runId, status, monthStart, monthEnd, broadcasts[] }`
-- `POST /api/admin/broadcast-crawl/runs/:runId/apply`
-    - request: `{ sourceEventIds: string[] }`
+    - response: `{ broadcasts[] }`
+- `POST /api/admin/broadcast-crawl/insert`
+    - request: `{ broadcasts: CrawledBroadcast[] }`
     - response: `{ insertedCount: number }`
 
 - 수집 소스는 dal.wiki agenda 월 페이지(`?date=YYYY-MM-01`) + 이벤트 상세(`GET /events/:id`) 조합을 사용한다.

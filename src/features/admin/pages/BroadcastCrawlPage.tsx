@@ -4,10 +4,9 @@ import partnerMark from '../../../assets/mark.png'
 import { ApiError } from '../../../lib/apiClient'
 import {
     useAdminToast,
-    useApplyBroadcastCrawlRun,
-    useGetBroadcastCrawlRun,
+    useCrawlBroadcasts,
+    useInsertBroadcasts,
     useRegisterStreamer,
-    useRunBroadcastCrawl,
 } from '../hooks'
 import type { CrawledBroadcast, CrawledParticipant } from '../types'
 
@@ -276,8 +275,7 @@ function BroadcastRow({
 }
 
 function getDefaultMonthRange(): { monthStart: string; monthEnd: string } {
-    const current = dayjs()
-    const month = current.format('YYYY-MM')
+    const month = dayjs().format('YYYY-MM')
     return {
         monthStart: month,
         monthEnd: month,
@@ -288,7 +286,6 @@ export default function BroadcastCrawlPage() {
     const defaults = getDefaultMonthRange()
     const [monthStart, setMonthStart] = useState(defaults.monthStart)
     const [monthEnd, setMonthEnd] = useState(defaults.monthEnd)
-    const [runId, setRunId] = useState<string | null>(null)
     const [broadcasts, setBroadcasts] = useState<CrawledBroadcast[]>([])
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [registeringParticipant, setRegisteringParticipant] =
@@ -297,23 +294,25 @@ export default function BroadcastCrawlPage() {
     const { addToast } = useAdminToast()
     const lastErrorRef = useRef<string | null>(null)
 
-    const runCrawl = useRunBroadcastCrawl()
-    const getRun = useGetBroadcastCrawlRun()
-    const applyRun = useApplyBroadcastCrawlRun()
+    const crawl = useCrawlBroadcasts()
+    const insertMutation = useInsertBroadcasts()
 
     const selectedBroadcasts = useMemo(
-        () => broadcasts.filter((b) => selectedIds.includes(b.sourceEventId)),
+        () =>
+            broadcasts.filter((broadcast) =>
+                selectedIds.includes(broadcast.sourceEventId),
+            ),
         [broadcasts, selectedIds],
     )
 
     const unmanagedInSelected = useMemo(() => {
         const seen = new Set<string>()
         const result: CrawledParticipant[] = []
-        selectedBroadcasts.forEach((b) => {
-            b.participants.forEach((p) => {
-                if (!p.isManaged && !seen.has(p.name)) {
-                    seen.add(p.name)
-                    result.push(p)
+        selectedBroadcasts.forEach((broadcast) => {
+            broadcast.participants.forEach((participant) => {
+                if (!participant.isManaged && !seen.has(participant.name)) {
+                    seen.add(participant.name)
+                    result.push(participant)
                 }
             })
         })
@@ -322,15 +321,14 @@ export default function BroadcastCrawlPage() {
 
     useEffect(() => {
         const errorMessage =
-            getErrorMessage(runCrawl.error) ??
-            getErrorMessage(getRun.error) ??
-            getErrorMessage(applyRun.error)
+            getErrorMessage(crawl.error) ??
+            getErrorMessage(insertMutation.error)
         if (errorMessage === null || errorMessage === lastErrorRef.current) {
             return
         }
         lastErrorRef.current = errorMessage
         addToast({ message: errorMessage, variant: 'error' })
-    }, [addToast, runCrawl.error, getRun.error, applyRun.error])
+    }, [addToast, crawl.error, insertMutation.error])
 
     function toggleSelected(sourceEventId: string) {
         setSelectedIds((prev) =>
@@ -343,17 +341,13 @@ export default function BroadcastCrawlPage() {
     const allChecked =
         broadcasts.length > 0 && selectedIds.length === broadcasts.length
 
-    async function handleRun(): Promise<void> {
+    async function handleCrawl(): Promise<void> {
         try {
-            const result = await runCrawl.mutateAsync({
-                monthStart,
-                monthEnd,
-            })
-            setRunId(result.runId)
+            const result = await crawl.mutateAsync({ monthStart, monthEnd })
             setBroadcasts(result.broadcasts)
             setSelectedIds([])
             addToast({
-                message: `run ${result.runId} 생성, 방송 ${result.broadcasts.length}건 수집`,
+                message: `방송 ${result.broadcasts.length}건을 가져왔습니다.`,
                 variant: 'success',
             })
         } catch (error) {
@@ -362,34 +356,11 @@ export default function BroadcastCrawlPage() {
         }
     }
 
-    async function handleRefreshRun(): Promise<void> {
-        if (runId === null) return
+    async function handleInsert(): Promise<void> {
+        if (selectedIds.length === 0) return
         try {
-            const result = await getRun.mutateAsync({ runId })
-            setBroadcasts(result.broadcasts)
-            setSelectedIds((prev) =>
-                prev.filter((id) =>
-                    result.broadcasts.some(
-                        (broadcast) => broadcast.sourceEventId === id,
-                    ),
-                ),
-            )
-            addToast({
-                message: `run ${runId}를 새로고침했습니다.`,
-                variant: 'success',
-            })
-        } catch (error) {
-            const message = getErrorMessage(error)
-            if (message !== null) addToast({ message, variant: 'error' })
-        }
-    }
-
-    async function handleApply(): Promise<void> {
-        if (runId === null || selectedIds.length === 0) return
-        try {
-            const result = await applyRun.mutateAsync({
-                runId,
-                body: { sourceEventIds: selectedIds },
+            const result = await insertMutation.mutateAsync({
+                broadcasts: selectedBroadcasts,
             })
             const insertedSet = new Set(selectedIds)
             setBroadcasts((prev) =>
@@ -412,8 +383,10 @@ export default function BroadcastCrawlPage() {
         setBroadcasts((prev) =>
             prev.map((broadcast) => ({
                 ...broadcast,
-                participants: broadcast.participants.map((p) =>
-                    p.name === name ? { ...p, isManaged: true } : p,
+                participants: broadcast.participants.map((participant) =>
+                    participant.name === name
+                        ? { ...participant, isManaged: true }
+                        : participant,
                 ),
             })),
         )
@@ -432,32 +405,20 @@ export default function BroadcastCrawlPage() {
                         방송 크롤링
                     </h1>
                     <p className="mt-0.5 text-sm text-gray-500 dark:text-[#adadb8]">
-                        dal.wiki agenda 월 페이지를 기준으로 run을 생성하고
+                        dal.wiki agenda 월 페이지를 기준으로 수집 후 즉시
                         반영합니다.
                     </p>
                 </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={() => {
-                            void handleRun()
-                        }}
-                        disabled={runCrawl.isPending}
-                        className="cursor-pointer rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-50"
-                    >
-                        {runCrawl.isPending ? '수집 중…' : 'run 생성'}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            void handleRefreshRun()
-                        }}
-                        disabled={runId === null || getRun.isPending}
-                        className="cursor-pointer rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
-                    >
-                        새로고침
-                    </button>
-                </div>
+                <button
+                    type="button"
+                    onClick={() => {
+                        void handleCrawl()
+                    }}
+                    disabled={crawl.isPending}
+                    className="cursor-pointer rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-50"
+                >
+                    {crawl.isPending ? '크롤링 중…' : '크롤링 실행'}
+                </button>
             </div>
 
             <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
@@ -479,11 +440,6 @@ export default function BroadcastCrawlPage() {
                     onChange={(e) => setMonthEnd(e.target.value)}
                     className="rounded-lg border border-gray-200 px-2 py-1 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                 />
-                {runId !== null && (
-                    <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-500 dark:bg-[#26262e] dark:text-[#adadb8]">
-                        run {runId.slice(0, 8)}
-                    </span>
-                )}
             </div>
 
             {unmanagedInSelected.length > 0 && (
@@ -493,21 +449,23 @@ export default function BroadcastCrawlPage() {
                         반영하거나 그대로 반영할 수 있습니다.
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {unmanagedInSelected.map((p) => (
+                        {unmanagedInSelected.map((participant) => (
                             <button
-                                key={p.name}
+                                key={participant.name}
                                 type="button"
-                                onClick={() => setRegisteringParticipant(p)}
+                                onClick={() =>
+                                    setRegisteringParticipant(participant)
+                                }
                                 className="cursor-pointer flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-2.5 py-1.5 text-xs font-medium text-amber-700 transition hover:bg-amber-50 dark:border-amber-700/50 dark:bg-[#1a1a23] dark:text-amber-400 dark:hover:bg-[#26262e]"
                             >
-                                {p.channelImageUrl !== null && (
+                                {participant.channelImageUrl !== null && (
                                     <img
-                                        src={p.channelImageUrl}
-                                        alt={p.name}
+                                        src={participant.channelImageUrl}
+                                        alt={participant.name}
                                         className="h-4 w-4 rounded-full"
                                     />
                                 )}
-                                <span>{p.name}</span>
+                                <span>{participant.name}</span>
                                 <span className="text-amber-500 dark:text-amber-500">
                                     + 등록
                                 </span>
@@ -521,16 +479,14 @@ export default function BroadcastCrawlPage() {
                 <button
                     type="button"
                     onClick={() => {
-                        void handleApply()
+                        void handleInsert()
                     }}
                     disabled={
-                        runId === null ||
-                        selectedIds.length === 0 ||
-                        applyRun.isPending
+                        selectedIds.length === 0 || insertMutation.isPending
                     }
                     className="cursor-pointer rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-40"
                 >
-                    {applyRun.isPending
+                    {insertMutation.isPending
                         ? '반영 중…'
                         : `선택 반영 (${selectedIds.length})`}
                 </button>
@@ -583,7 +539,8 @@ export default function BroadcastCrawlPage() {
                                     colSpan={3}
                                     className="px-4 py-10 text-center text-sm text-gray-400 dark:text-[#848494]"
                                 >
-                                    아직 결과가 없습니다. run 생성을 눌러주세요.
+                                    아직 결과가 없습니다. 크롤링 실행을
+                                    눌러주세요.
                                 </td>
                             </tr>
                         )}

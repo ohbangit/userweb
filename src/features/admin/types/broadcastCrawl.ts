@@ -23,31 +23,19 @@ export interface CrawledBroadcast {
     participants: CrawledParticipant[]
 }
 
-export interface RunBroadcastCrawlRequest {
+export interface CrawlBroadcastsRequest {
     monthStart: string
     monthEnd: string
 }
 
-export interface RunBroadcastCrawlResponse {
-    runId: string
-    status: string
-    monthStart: string
-    monthEnd: string
+export interface CrawlBroadcastsResponse {
     broadcasts: CrawledBroadcast[]
 }
 
-export interface GetBroadcastCrawlRunResponse {
-    runId: string
-    status: string
-    monthStart: string
-    monthEnd: string
+export interface InsertBroadcastsRequest {
     broadcasts: CrawledBroadcast[]
 }
 
-export interface ApplyBroadcastCrawlRunRequest {
-    sourceEventIds: string[]
-}
-
-export interface ApplyBroadcastCrawlRunResponse {
+export interface InsertBroadcastsResponse {
     insertedCount: number
 }

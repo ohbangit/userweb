@@ -17,11 +17,10 @@ export type {
 export type {
     CrawledParticipant,
     CrawledBroadcast,
-    RunBroadcastCrawlRequest,
-    RunBroadcastCrawlResponse,
-    GetBroadcastCrawlRunResponse,
-    ApplyBroadcastCrawlRunRequest,
-    ApplyBroadcastCrawlRunResponse,
+    CrawlBroadcastsRequest,
+    CrawlBroadcastsResponse,
+    InsertBroadcastsRequest,
+    InsertBroadcastsResponse,
 } from './broadcastCrawl'
 export type {
     BroadcastType,

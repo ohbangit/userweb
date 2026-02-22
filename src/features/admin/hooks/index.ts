@@ -17,11 +17,7 @@ export {
     useCreateStreamerExclusions,
     useDeleteStreamerExclusion,
 } from './useDiscovery'
-export {
-    useRunBroadcastCrawl,
-    useGetBroadcastCrawlRun,
-    useApplyBroadcastCrawlRun,
-} from './useBroadcastCrawl'
+export { useCrawlBroadcasts, useInsertBroadcasts } from './useBroadcastCrawl'
 export {
     useScheduleBroadcasts,
     useCreateBroadcast,

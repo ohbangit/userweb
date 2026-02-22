@@ -1,46 +1,32 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { adminApiGet, adminApiPost } from '../../../lib/apiClient'
+import { adminApiPost } from '../../../lib/apiClient'
 import type {
-    ApplyBroadcastCrawlRunRequest,
-    ApplyBroadcastCrawlRunResponse,
-    GetBroadcastCrawlRunResponse,
-    RunBroadcastCrawlRequest,
-    RunBroadcastCrawlResponse,
+    CrawlBroadcastsRequest,
+    CrawlBroadcastsResponse,
+    InsertBroadcastsRequest,
+    InsertBroadcastsResponse,
 } from '../types'
 
-export function useRunBroadcastCrawl() {
-    return useMutation<
-        RunBroadcastCrawlResponse,
-        Error,
-        RunBroadcastCrawlRequest
-    >({
+export function useCrawlBroadcasts() {
+    return useMutation<CrawlBroadcastsResponse, Error, CrawlBroadcastsRequest>({
         mutationFn: (body) =>
-            adminApiPost<RunBroadcastCrawlResponse>(
-                '/api/admin/broadcast-crawl/runs',
+            adminApiPost<CrawlBroadcastsResponse>(
+                '/api/admin/broadcast-crawl/run',
                 body,
             ),
     })
 }
 
-export function useGetBroadcastCrawlRun() {
-    return useMutation<GetBroadcastCrawlRunResponse, Error, { runId: string }>({
-        mutationFn: ({ runId }) =>
-            adminApiGet<GetBroadcastCrawlRunResponse>(
-                `/api/admin/broadcast-crawl/runs/${runId}`,
-            ),
-    })
-}
-
-export function useApplyBroadcastCrawlRun() {
+export function useInsertBroadcasts() {
     const queryClient = useQueryClient()
     return useMutation<
-        ApplyBroadcastCrawlRunResponse,
+        InsertBroadcastsResponse,
         Error,
-        { runId: string; body: ApplyBroadcastCrawlRunRequest }
+        InsertBroadcastsRequest
     >({
-        mutationFn: ({ runId, body }) =>
-            adminApiPost<ApplyBroadcastCrawlRunResponse>(
-                `/api/admin/broadcast-crawl/runs/${runId}/apply`,
+        mutationFn: (body) =>
+            adminApiPost<InsertBroadcastsResponse>(
+                '/api/admin/broadcast-crawl/insert',
                 body,
             ),
         onSuccess: () => {
