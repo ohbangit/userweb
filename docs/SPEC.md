@@ -390,17 +390,17 @@ type ViewMode = 'daily' | 'weekly' | 'monthly'
 
 ### 6.12. 관리자 — 방송 크롤링(즉시형)
 
-- dal.wiki `agenda?date=YYYY-MM-01` 월 페이지를 기준으로 월 범위를 지정해 방송 후보를 조회한다.
+- dal.wiki `agenda?date=YYYY-MM-01` 월 페이지를 기준으로 대상 월을 지정해 방송 후보를 조회한다.
 - 수집 흐름은 `크롤링 실행 -> 방송 후보 검토/선택 -> 선택 반영` 순서를 따른다.
 - 반영은 선택한 `sourceEventId`만 처리하며, 반영 시 일정 목록 캐시를 무효화한다.
 - 참여자 칩에서 미등록 스트리머를 즉시 등록할 수 있고, 등록 후 현재 후보 목록에 반영한다.
 
 #### API 연동
 
-| 기능               | 엔드포인트                               |
-| ------------------ | ---------------------------------------- |
-| 후보 조회(월 범위) | `POST /api/admin/broadcast-crawl/run`    |
-| 선택 반영          | `POST /api/admin/broadcast-crawl/insert` |
+| 기능          | 엔드포인트                               |
+| ------------- | ---------------------------------------- |
+| 후보 조회(월) | `POST /api/admin/broadcast-crawl/run`    |
+| 선택 반영     | `POST /api/admin/broadcast-crawl/insert` |
 
 ### 6.8. Footer
 

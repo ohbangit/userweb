@@ -263,7 +263,7 @@ backend/
 #### 방송 크롤링(즉시형) 계약
 
 - `POST /api/admin/broadcast-crawl/run`
-    - request: `{ monthStart: 'YYYY-MM', monthEnd: 'YYYY-MM' }`
+    - request: `{ month: 'YYYY-MM' }`
     - response: `{ broadcasts[] }`
 - `POST /api/admin/broadcast-crawl/insert`
     - request: `{ broadcasts: CrawledBroadcast[] }`

@@ -274,18 +274,12 @@ function BroadcastRow({
     )
 }
 
-function getDefaultMonthRange(): { monthStart: string; monthEnd: string } {
-    const month = dayjs().format('YYYY-MM')
-    return {
-        monthStart: month,
-        monthEnd: month,
-    }
+function getDefaultMonth(): string {
+    return dayjs().format('YYYY-MM')
 }
 
 export default function BroadcastCrawlPage() {
-    const defaults = getDefaultMonthRange()
-    const [monthStart, setMonthStart] = useState(defaults.monthStart)
-    const [monthEnd, setMonthEnd] = useState(defaults.monthEnd)
+    const [targetMonth, setTargetMonth] = useState(getDefaultMonth)
     const [broadcasts, setBroadcasts] = useState<CrawledBroadcast[]>([])
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [registeringParticipant, setRegisteringParticipant] =
@@ -343,7 +337,9 @@ export default function BroadcastCrawlPage() {
 
     async function handleCrawl(): Promise<void> {
         try {
-            const result = await crawl.mutateAsync({ monthStart, monthEnd })
+            const result = await crawl.mutateAsync({
+                month: targetMonth,
+            })
             setBroadcasts(result.broadcasts)
             setSelectedIds([])
             addToast({
@@ -423,21 +419,12 @@ export default function BroadcastCrawlPage() {
 
             <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
                 <span className="text-xs font-medium text-gray-500 dark:text-[#adadb8]">
-                    기간
+                    월
                 </span>
                 <input
                     type="month"
-                    value={monthStart}
-                    onChange={(e) => setMonthStart(e.target.value)}
-                    className="rounded-lg border border-gray-200 px-2 py-1 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                />
-                <span className="text-xs text-gray-400 dark:text-[#848494]">
-                    ~
-                </span>
-                <input
-                    type="month"
-                    value={monthEnd}
-                    onChange={(e) => setMonthEnd(e.target.value)}
+                    value={targetMonth}
+                    onChange={(e) => setTargetMonth(e.target.value)}
                     className="rounded-lg border border-gray-200 px-2 py-1 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                 />
             </div>

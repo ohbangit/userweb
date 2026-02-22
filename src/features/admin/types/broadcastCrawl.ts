@@ -24,8 +24,7 @@ export interface CrawledBroadcast {
 }
 
 export interface CrawlBroadcastsRequest {
-    monthStart: string
-    monthEnd: string
+    month: string
 }
 
 export interface CrawlBroadcastsResponse {
