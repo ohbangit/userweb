@@ -422,9 +422,7 @@ function BroadcastFormModal({
                         streamerId: primaryStreamerId,
                     }),
                     categoryId:
-                        form.categoryId !== null
-                            ? form.categoryId
-                            : undefined,
+                        form.categoryId !== null ? form.categoryId : undefined,
                     endTime:
                         form.endTime.length > 0
                             ? localDatetimeToISO(form.endTime)
@@ -1014,6 +1012,7 @@ function BroadcastCard({ broadcast, onEdit, onDelete }: BroadcastCardProps) {
     const hasRepresentativeStreamer = broadcast.streamerName.trim().length > 0
     const tags = broadcast.tags ?? []
     const typeGradientClass = readTypeGradientClass(broadcast.broadcastType)
+    const isVisible = broadcast.isVisible ?? true
 
     return (
         <div
@@ -1059,6 +1058,16 @@ function BroadcastCard({ broadcast, onEdit, onDelete }: BroadcastCardProps) {
                     )}
                 </div>
                 <div className="flex items-center gap-1.5">
+                    <span
+                        className={[
+                            'inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium',
+                            isVisible
+                                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400'
+                                : 'bg-gray-100 text-gray-600 dark:bg-[#26262e] dark:text-[#adadb8]',
+                        ].join(' ')}
+                    >
+                        {isVisible ? '노출' : '비노출'}
+                    </span>
                     <button
                         type="button"
                         onClick={(e) => {

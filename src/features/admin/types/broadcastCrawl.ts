@@ -4,7 +4,7 @@ export interface CrawledParticipant {
     channelImageUrl: string | null
     isPartner: boolean
     isManaged: boolean
-    streamerId: string | null
+    streamerId: number | null
 }
 
 export interface CrawledBroadcast {
