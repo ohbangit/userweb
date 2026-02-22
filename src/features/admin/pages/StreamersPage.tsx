@@ -630,6 +630,9 @@ export default function StreamersPage() {
     const [showRegister, setShowRegister] = useState(false)
     const [selected, setSelected] = useState<StreamerItem | null>(null)
     const [page, setPage] = useState(1)
+    const [sort, setSort] = useState<
+        'name_asc' | 'name_desc' | 'follower_desc'
+    >('name_asc')
     const size = 20
 
     const queryParams =
@@ -643,6 +646,7 @@ export default function StreamersPage() {
         ...queryParams,
         page,
         size,
+        sort,
     })
     const items = data?.items ?? []
     const total = data?.total ?? 0
@@ -650,7 +654,7 @@ export default function StreamersPage() {
 
     useEffect(() => {
         setPage(1)
-    }, [tab, search])
+    }, [tab, search, sort])
 
     const emptyMessage =
         tab === 'missing'
@@ -708,6 +712,23 @@ export default function StreamersPage() {
                         className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
                     />
                 )}
+
+                <select
+                    value={sort}
+                    onChange={(event) =>
+                        setSort(
+                            event.target.value as
+                                | 'name_asc'
+                                | 'name_desc'
+                                | 'follower_desc',
+                        )
+                    }
+                    className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
+                >
+                    <option value="name_asc">이름순</option>
+                    <option value="name_desc">이름 역순</option>
+                    <option value="follower_desc">팔로워순</option>
+                </select>
             </div>
 
             {isLoading && (

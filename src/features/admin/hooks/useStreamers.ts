@@ -25,6 +25,7 @@ type StreamersParams = {
     hasChannel?: boolean
     page?: number
     size?: number
+    sort?: 'name_asc' | 'name_desc' | 'follower_desc'
 }
 
 const STREAMERS_KEY = ['admin', 'streamers'] as const
@@ -42,6 +43,9 @@ export function useStreamers(params: StreamersParams = {}) {
     }
     if (params.size !== undefined) {
         queryParams['size'] = String(params.size)
+    }
+    if (params.sort !== undefined) {
+        queryParams['sort'] = params.sort
     }
     return useQuery<StreamerListResponse>({
         queryKey: [...STREAMERS_KEY, queryParams],

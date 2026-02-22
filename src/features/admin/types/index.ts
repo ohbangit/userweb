@@ -14,3 +14,23 @@ export type {
     CreateStreamerExclusionRequest,
     CreateStreamerExclusionsRequest,
 } from './discovery'
+export type {
+    CrawledParticipant,
+    CrawledBroadcast,
+    RunBroadcastCrawlRequest,
+    RunBroadcastCrawlResponse,
+    GetBroadcastCrawlRunResponse,
+    ApplyBroadcastCrawlRunRequest,
+    ApplyBroadcastCrawlRunResponse,
+} from './broadcastCrawl'
+export type {
+    BroadcastType,
+    AdminScheduleParticipant,
+    AdminBroadcastItem,
+    AdminScheduleResponse,
+    AdminScheduleDateGroup,
+    CreateBroadcastRequest,
+    UpdateBroadcastRequest,
+    AdminBroadcastParticipantInput,
+    BroadcastMutationResponse,
+} from './broadcastSchedule'

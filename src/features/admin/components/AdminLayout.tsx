@@ -13,9 +13,26 @@ interface NavItem {
     label: string
 }
 
-const NAV_ITEMS: NavItem[] = [
-    { to: '/admin/streamers', label: '스트리머 관리' },
-    { to: '/admin/streamer-discovery', label: '스트리머 발굴' },
+interface NavSection {
+    title: string
+    items: NavItem[]
+}
+
+const NAV_SECTIONS: NavSection[] = [
+    {
+        title: '관리',
+        items: [
+            { to: '/admin/streamers', label: '스트리머 관리' },
+            { to: '/admin/schedule', label: '일정 관리' },
+        ],
+    },
+    {
+        title: '운영',
+        items: [
+            { to: '/admin/streamer-discovery', label: '스트리머 발굴' },
+            { to: '/admin/broadcast-crawl', label: '방송 크롤링' },
+        ],
+    },
 ]
 
 export function AdminLayout({ children }: AdminLayoutProps) {
@@ -43,7 +60,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                     ? '라이트 모드로 전환'
                                     : '다크 모드로 전환'
                             }
-                            className="rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
+                            className="cursor-pointer rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
                         >
                             {theme === 'dark' ? (
                                 <svg
@@ -77,29 +94,41 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         </button>
                     </div>
 
-                    <nav className="flex flex-1 flex-col gap-0.5 px-3 py-3">
-                        {NAV_ITEMS.map((item) => (
-                            <NavLink
-                                key={item.to}
-                                to={item.to}
-                                className={({ isActive }) =>
-                                    [
-                                        'rounded-lg px-3 py-2 text-sm font-medium transition',
-                                        isActive
-                                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]',
-                                    ].join(' ')
-                                }
+                    <nav className="flex flex-1 flex-col px-3 py-3">
+                        {NAV_SECTIONS.map((section, sectionIndex) => (
+                            <div
+                                key={section.title}
+                                className={[
+                                    'space-y-1',
+                                    sectionIndex > 0
+                                        ? 'mt-3 border-t border-gray-200 pt-3 dark:border-[#3a3a44]'
+                                        : '',
+                                ].join(' ')}
                             >
-                                {item.label}
-                            </NavLink>
+                                {section.items.map((item) => (
+                                    <NavLink
+                                        key={item.to}
+                                        to={item.to}
+                                        className={({ isActive }) =>
+                                            [
+                                                'block w-full rounded-lg px-3 py-2 text-sm font-medium transition',
+                                                isActive
+                                                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]',
+                                            ].join(' ')
+                                        }
+                                    >
+                                        {item.label}
+                                    </NavLink>
+                                ))}
+                            </div>
                         ))}
                     </nav>
 
                     <div className="border-t border-gray-200 px-3 py-3 dark:border-[#3a3a44]">
                         <button
                             onClick={handleLogout}
-                            className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
+                            className="cursor-pointer w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
                         >
                             로그아웃
                         </button>

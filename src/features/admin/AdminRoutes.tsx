@@ -5,6 +5,10 @@ import { AdminLayout } from './components'
 
 const StreamersPage = lazy(() => import('./pages/StreamersPage'))
 const DiscoveryPage = lazy(() => import('./pages/DiscoveryPage'))
+const BroadcastCrawlPage = lazy(() => import('./pages/BroadcastCrawlPage'))
+const BroadcastSchedulePage = lazy(
+    () => import('./pages/BroadcastSchedulePage'),
+)
 
 export default function AdminRoutes() {
     return (
@@ -16,6 +20,14 @@ export default function AdminRoutes() {
                         <Route
                             path="streamer-discovery"
                             element={<DiscoveryPage />}
+                        />
+                        <Route
+                            path="broadcast-crawl"
+                            element={<BroadcastCrawlPage />}
+                        />
+                        <Route
+                            path="schedule"
+                            element={<BroadcastSchedulePage />}
                         />
                         <Route
                             path="*"

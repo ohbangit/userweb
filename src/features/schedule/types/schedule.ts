@@ -1,12 +1,17 @@
 export interface Participant {
+    id?: string
     name: string
     avatarUrl?: string
     channelUrl?: string | null
+    streamerId?: string | null
+    isHost?: boolean
+    isPartner?: boolean
 }
 
 export interface Broadcast {
     id: string
     title: string
+    broadcastType?: string | null
     streamerName: string
     streamerProfileUrl?: string | null
     streamerChannelUrl?: string | null
@@ -20,6 +25,7 @@ export interface Broadcast {
     isCollab: boolean
     collabPartners?: string[]
     thumbnailUrl?: string
+    isVisible?: boolean
 }
 
 export type ViewMode = 'daily' | 'weekly' | 'monthly'
