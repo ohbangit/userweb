@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react'
 import dayjs from 'dayjs'
-import { X, Calendar, Clock, Gamepad2, Hash, Users } from 'lucide-react'
+import { X, Calendar, Clock, Gamepad2, Hash, Users, Crown } from 'lucide-react'
 import type { Broadcast, Participant } from '../types/schedule'
 import { useBroadcastDetail } from '../hooks/useBroadcastDetail'
 import { formatTime, getDayName } from '../utils/date'
@@ -32,12 +32,14 @@ function StatusIndicator({ broadcast }: { broadcast: Broadcast }) {
 
 function ParticipantRow({
     participant,
+    isHost,
     channelUrl,
     youtubeUrl,
     fanCafeUrl,
     avatarFallbackUrl,
 }: {
     participant: Participant
+    isHost?: boolean
     channelUrl?: string
     youtubeUrl?: string
     fanCafeUrl?: string
@@ -61,9 +63,17 @@ function ParticipantRow({
                 )}
             </div>
             <div className="flex min-w-0 flex-1 flex-col">
-                <span className="text-sm font-semibold text-text">
-                    {participant.name}
-                </span>
+                <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-semibold text-text">
+                        {participant.name}
+                    </span>
+                    {isHost && (
+                        <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                            <Crown className="h-2.5 w-2.5" />
+                            주최
+                        </span>
+                    )}
+                </div>
             </div>
             <div className="flex items-center gap-1.5">
                 {channelUrl && (
@@ -176,9 +186,11 @@ export function BroadcastDetailModal({
         displayBroadcast.participants.length > 0
             ? displayBroadcast.participants
             : [{ name: displayBroadcast.streamerName }]
-    const sortedParticipants = [...participants].sort((a, b) =>
-        a.name.localeCompare(b.name, 'ko'),
-    )
+    const sortedParticipants = [...participants].sort((a, b) => {
+        if (a.isHost && !b.isHost) return -1
+        if (!a.isHost && b.isHost) return 1
+        return a.name.localeCompare(b.name, 'ko')
+    })
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
@@ -269,6 +281,10 @@ export function BroadcastDetailModal({
                                                     ? (displayBroadcast.streamerChannelUrl ??
                                                       undefined)
                                                     : undefined)
+                                            }
+                                            isHost={
+                                                participant.isHost ??
+                                                false
                                             }
                                             youtubeUrl={
                                                 participant.youtubeUrl ??

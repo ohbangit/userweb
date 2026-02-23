@@ -65,7 +65,7 @@ export interface UpdateBroadcastRequest {
     broadcastType?: string
     categoryId?: number
     startTime?: string
-    endTime?: string
+    endTime?: string | null
     thumbnailUrl?: string
     participantIds?: number[]
     participants?: AdminBroadcastParticipantInput[]

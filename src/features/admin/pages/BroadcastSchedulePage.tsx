@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import partnerMark from '../../../assets/mark.png'
 import { ApiError } from '../../../lib/apiClient'
 import {
     useAdminToast,
@@ -408,7 +409,7 @@ function BroadcastFormModal({
                     endTime:
                         form.endTime.length > 0
                             ? localDatetimeToISO(form.endTime)
-                            : undefined,
+                            : null,
                     tags,
                     participants,
                 }
@@ -573,22 +574,80 @@ function BroadcastFormModal({
                                 시간
                             </p>
                             <div className="grid grid-cols-2 gap-2">
-                                <input
-                                    type="datetime-local"
-                                    value={form.startTime}
-                                    onChange={(e) =>
-                                        updateField('startTime', e.target.value)
-                                    }
-                                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                                />
-                                <input
-                                    type="datetime-local"
-                                    value={form.endTime}
-                                    onChange={(e) =>
-                                        updateField('endTime', e.target.value)
-                                    }
-                                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                                />
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-gray-400 dark:text-[#848494]">
+                                        시작
+                                    </p>
+                                    <div className="relative">
+                                        <input
+                                            type="datetime-local"
+                                            value={form.startTime}
+                                            onChange={(e) =>
+                                                updateField(
+                                                    'startTime',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                updateField('startTime', '')
+                                            }
+                                            disabled={
+                                                form.startTime.length === 0
+                                            }
+                                            className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-40 dark:text-[#848494] dark:hover:bg-[#2f2f39] dark:hover:text-[#adadb8]"
+                                            aria-label="시작 시간 초기화"
+                                        >
+                                            <svg
+                                                className="h-3.5 w-3.5"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                                aria-hidden="true"
+                                            >
+                                                <path d="M6.28 5.22a.75.75 0 10-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 10-1.06-1.06L10 8.94 6.28 5.22z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-gray-400 dark:text-[#848494]">
+                                        종료
+                                    </p>
+                                    <div className="relative">
+                                        <input
+                                            type="datetime-local"
+                                            value={form.endTime}
+                                            onChange={(e) =>
+                                                updateField(
+                                                    'endTime',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                updateField('endTime', '')
+                                            }
+                                            disabled={form.endTime.length === 0}
+                                            className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-40 dark:text-[#848494] dark:hover:bg-[#2f2f39] dark:hover:text-[#adadb8]"
+                                            aria-label="종료 시간 초기화"
+                                        >
+                                            <svg
+                                                className="h-3.5 w-3.5"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                                aria-hidden="true"
+                                            >
+                                                <path d="M6.28 5.22a.75.75 0 10-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 10-1.06-1.06L10 8.94 6.28 5.22z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <p className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
                                 <svg
@@ -773,9 +832,13 @@ function BroadcastFormModal({
                                                                     }
                                                                 </p>
                                                                 {participant.isPartner && (
-                                                                    <span className="shrink-0 rounded bg-violet-50 px-1 py-0.5 text-[9px] font-bold text-violet-600 dark:bg-violet-900/20 dark:text-violet-400">
-                                                                        파트너
-                                                                    </span>
+                                                                    <img
+                                                                        src={
+                                                                            partnerMark
+                                                                        }
+                                                                        alt="파트너"
+                                                                        className="h-3.5 w-3.5 shrink-0"
+                                                                    />
                                                                 )}
                                                             </div>
                                                         )}
