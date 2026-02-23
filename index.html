@@ -1,24 +1,57 @@
 <!doctype html>
 <html lang="ko">
-  <head>
-    <script>
-      ;(function () {
-        var t = localStorage.getItem('ohbangit-theme')
-        if (
-          t === 'dark' ||
-          (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)
-        ) {
-          document.documentElement.classList.add('dark')
-        }
-      })()
-    </script>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>오뱅잇 — 스트리밍 스케줄</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <head>
+        <script>
+            ;(function () {
+                var t = localStorage.getItem('ohbangit-theme')
+                if (
+                    t === 'dark' ||
+                    (!t &&
+                        window.matchMedia('(prefers-color-scheme:dark)')
+                            .matches)
+                ) {
+                    document.documentElement.classList.add('dark')
+                }
+            })()
+        </script>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>오뱅잇 - 스트리밍 스케줄</title>
+        <meta
+            name="description"
+            content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://ohbang-it.kr/" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="오뱅잇" />
+        <meta property="og:locale" content="ko_KR" />
+        <meta property="og:title" content="오뱅잇 - 스트리밍 스케줄" />
+        <meta
+            property="og:description"
+            content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."
+        />
+        <meta property="og:url" content="https://ohbang-it.kr/" />
+        <meta
+            property="og:image"
+            content="https://ohbang-it.kr/og-default.svg"
+        />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="오뱅잇 - 스트리밍 스케줄" />
+        <meta
+            name="twitter:description"
+            content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."
+        />
+        <meta
+            name="twitter:image"
+            content="https://ohbang-it.kr/og-default.svg"
+        />
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
 </html>

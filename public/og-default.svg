@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+    <title id="title">오뱅잇</title>
+    <desc id="desc">오뱅잇 스트리밍 스케줄 공유 이미지</desc>
+    <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0f172a" />
+            <stop offset="100%" stop-color="#111827" />
+        </linearGradient>
+        <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00dc82" />
+            <stop offset="100%" stop-color="#00b368" />
+        </linearGradient>
+    </defs>
+
+    <rect width="1200" height="630" fill="url(#bg)" />
+    <circle cx="1080" cy="120" r="220" fill="url(#accent)" fill-opacity="0.18" />
+    <circle cx="120" cy="520" r="220" fill="url(#accent)" fill-opacity="0.14" />
+
+    <g transform="translate(96 170)">
+        <text x="0" y="0" font-size="82" font-family="Pretendard, Inter, sans-serif" font-weight="800" fill="#f8fafc">
+            오뱅잇
+        </text>
+        <text x="0" y="86" font-size="44" font-family="Pretendard, Inter, sans-serif" font-weight="600" fill="#00dc82">
+            스트리밍 스케줄
+        </text>
+        <text x="0" y="152" font-size="30" font-family="Pretendard, Inter, sans-serif" font-weight="400" fill="#cbd5e1">
+            일간 · 주간 · 월간 방송 일정 한눈에 보기
+        </text>
+        <text x="0" y="230" font-size="26" font-family="Inter, sans-serif" font-weight="500" fill="#94a3b8">
+            ohbang-it.kr
+        </text>
+    </g>
+</svg>
