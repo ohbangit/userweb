@@ -142,7 +142,7 @@ interface Participant {
     name: string
     avatarUrl?: string
     channelUrl?: string
-    streamerId?: string | null
+    streamerId?: number | null
     isHost?: boolean
 }
 ```
@@ -178,6 +178,7 @@ type ViewMode = 'daily' | 'weekly' | 'monthly'
 ### 6.3. 주간 뷰 (WeeklySchedule)
 
 - **레이아웃**: 요일별 컬럼 (월–일)
+- **컬럼 높이**: 주간 요일 컬럼 최소 높이 상향 (`min-h-[300px]`, `sm:min-h-[360px]`)
 - **카드 구성**: 컬러바 → 시간(인라인) → 제목(1줄 말줄임 `...`) → 참여자 텍스트 → 카테고리 뱃지
 - **오늘 표시**: 날짜 원형 뱃지 녹색, 컬럼 배경 미세 녹색 틴트
 - **카드 클릭**: 상세 모달 오픈
@@ -381,6 +382,8 @@ type ViewMode = 'daily' | 'weekly' | 'monthly'
     - 우측: 참석자 관리(리스트 우선 + 하단 추가, 이름 클릭 인라인 편집 + 자동완성 연결)
 - 참석자는 이름만 저장할 수 있으며, 필요 시 관리 스트리머에 연결(`streamerId`)할 수 있다.
 - 주최자는 참석자 중 0~1명으로 선택 가능하며, 저장 시 `isHost`로 전달한다.
+- 방송 생성은 대표 스트리머를 필수로 요구하지 않고, 참석자/주최자 기반으로 저장한다.
+- 일정 수동 추가의 기본 저장 상태는 `비노출(isVisible=false)`이며, 모달 스위치로 변경할 수 있다.
 - 일정 목록 카드는 카드 클릭으로 수정 모달을 열고, 삭제 버튼만 별도 제공한다.
 - 카드 시각 규칙:
     - 타입은 라벨 대신 카드 배경 그라데이션으로 표현한다.
@@ -393,6 +396,7 @@ type ViewMode = 'daily' | 'weekly' | 'monthly'
 - dal.wiki `agenda?date=YYYY-MM-01` 월 페이지를 기준으로 대상 월을 지정해 방송 후보를 조회한다.
 - 수집 흐름은 `크롤링 실행 -> 방송 후보 검토/선택 -> 선택 반영` 순서를 따른다.
 - 반영은 선택한 `sourceEventId`만 처리하며, 반영 시 일정 목록 캐시를 무효화한다.
+- 크롤링 반영으로 생성되는 일정은 기본 `비노출(isVisible=false)`로 저장된다.
 - 참여자 칩에서 미등록 스트리머를 즉시 등록할 수 있고, 등록 후 현재 후보 목록에 반영한다.
 
 #### API 연동

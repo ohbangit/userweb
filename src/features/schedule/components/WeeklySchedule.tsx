@@ -48,7 +48,7 @@ export function WeeklySchedule({
                         key={day.toISOString()}
                         className={[
                             'flex min-w-[200px] shrink-0 snap-start flex-col bg-bg md:min-w-0 md:shrink',
-                            'min-h-[240px] sm:min-h-[280px]',
+                            'min-h-[300px] sm:min-h-[360px]',
                             today ? 'bg-primary/[0.02]' : '',
                         ].join(' ')}
                     >

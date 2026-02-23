@@ -24,7 +24,7 @@ type ViewMode = 'weekly' | 'monthly'
 
 type DraftParticipant = {
     name: string
-    streamerId?: string
+    streamerId?: number
     isHost?: boolean
     avatarUrl?: string
     isPartner?: boolean
@@ -126,7 +126,7 @@ function initFormState(broadcast?: Broadcast): BroadcastFormState {
             startTime: '',
             endTime: '',
             tags: '',
-            isVisible: true,
+            isVisible: false,
             participants: [],
         }
     }
@@ -162,7 +162,7 @@ function BroadcastFormModal({
         initFormState(broadcast),
     )
     const [participantNameInput, setParticipantNameInput] = useState('')
-    const [participantStreamerId, setParticipantStreamerId] = useState<string>()
+    const [participantStreamerId, setParticipantStreamerId] = useState<number>()
     const [participantAvatarUrl, setParticipantAvatarUrl] = useState<string>()
     const [participantIsPartner, setParticipantIsPartner] = useState(false)
     const [editingParticipantName, setEditingParticipantName] = useState<
@@ -301,7 +301,7 @@ function BroadcastFormModal({
         isPartner,
     }: {
         originalName: string
-        streamerId: string
+        streamerId: number
         streamerName: string
         avatarUrl?: string
         isPartner: boolean
@@ -376,25 +376,10 @@ function BroadcastFormModal({
                     isHost: participant.isHost,
                 }),
             }))
-        const primaryStreamerId =
-            form.participants.find(
-                (participant) => participant.isHost && participant.streamerId,
-            )?.streamerId ??
-            form.participants.find((participant) => participant.streamerId)
-                ?.streamerId
         try {
             if (mode === 'create') {
-                if (primaryStreamerId === undefined) {
-                    addToast({
-                        message:
-                            '관리 스트리머와 연결된 참석자를 최소 1명 지정해주세요.',
-                        variant: 'error',
-                    })
-                    return
-                }
                 const body: CreateBroadcastRequest = {
                     title: form.title.trim(),
-                    streamerId: primaryStreamerId,
                     startTime: localDatetimeToISO(form.startTime),
                     broadcastType: form.broadcastType,
                     isVisible: form.isVisible,
@@ -418,9 +403,6 @@ function BroadcastFormModal({
                     startTime: localDatetimeToISO(form.startTime),
                     broadcastType: form.broadcastType,
                     isVisible: form.isVisible,
-                    ...(primaryStreamerId !== undefined && {
-                        streamerId: primaryStreamerId,
-                    }),
                     categoryId:
                         form.categoryId !== null ? form.categoryId : undefined,
                     endTime:
@@ -548,28 +530,38 @@ function BroadcastFormModal({
                                 </svg>
                                 게임 / 카테고리
                             </p>
-                            <select
-                                value={form.categoryId ?? ''}
-                                onChange={(e) =>
-                                    updateField(
-                                        'categoryId',
-                                        e.target.value === ''
-                                            ? null
-                                            : Number(e.target.value),
-                                    )
-                                }
-                                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                            >
-                                <option value="">카테고리 없음</option>
-                                {categories.map((category) => (
-                                    <option
-                                        key={category.id}
-                                        value={category.id}
-                                    >
-                                        {category.name}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    value={form.categoryId ?? ''}
+                                    onChange={(e) =>
+                                        updateField(
+                                            'categoryId',
+                                            e.target.value === ''
+                                                ? null
+                                                : Number(e.target.value),
+                                        )
+                                    }
+                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                >
+                                    <option value="">카테고리 없음</option>
+                                    {categories.map((category) => (
+                                        <option
+                                            key={category.id}
+                                            value={category.id}
+                                        >
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <svg
+                                    className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[#848494]"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
+                                </svg>
+                            </div>
                             <p className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
                                 <svg
                                     className="h-3.5 w-3.5"

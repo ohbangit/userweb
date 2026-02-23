@@ -1,5 +1,5 @@
 export interface StreamerItem {
-    id: string
+    id: number
     name: string
     channelId: string | null
     isPartner: boolean

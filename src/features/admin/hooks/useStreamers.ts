@@ -68,7 +68,7 @@ export function useRegisterStreamer() {
     })
 }
 
-export function useSyncStreamer(streamerId: string) {
+export function useSyncStreamer(streamerId: number) {
     const queryClient = useQueryClient()
     return useMutation<StreamerItem, Error, UpdateChannelRequest>({
         mutationFn: (body) =>
@@ -110,7 +110,7 @@ export function useUpdateFanCafeUrl(channelId: string) {
     })
 }
 
-export function useRefreshStreamer(streamerId: string) {
+export function useRefreshStreamer(streamerId: number) {
     const queryClient = useQueryClient()
     return useMutation<StreamerItem, Error, void>({
         mutationFn: () =>
@@ -126,7 +126,7 @@ export function useRefreshStreamer(streamerId: string) {
 
 export function useDeleteStreamer() {
     const queryClient = useQueryClient()
-    return useMutation<void, Error, string>({
+    return useMutation<void, Error, number>({
         mutationFn: (streamerId) =>
             adminApiDelete(`/api/admin/streamers/${streamerId}`),
         onSuccess: () => {

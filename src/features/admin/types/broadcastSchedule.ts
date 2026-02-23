@@ -5,7 +5,7 @@ export interface AdminScheduleParticipant {
     name: string
     avatarUrl: string | null
     channelUrl: string | null
-    streamerId?: string | null
+    streamerId?: number | null
     isHost?: boolean
     isPartner?: boolean
 }
@@ -15,7 +15,7 @@ export interface AdminBroadcastItem {
     title: string
     broadcastType: string | null
     streamerName: string
-    streamerId: string
+    streamerId: number | null
     streamerProfileUrl: string | null
     streamerChannelUrl: string | null
     streamerIsPartner: boolean
@@ -45,13 +45,13 @@ export interface AdminScheduleDateGroup {
 
 export interface CreateBroadcastRequest {
     title: string
-    streamerId: string
+    streamerId?: number
     broadcastType?: string
     categoryId?: number
     startTime: string
     endTime?: string
     thumbnailUrl?: string
-    participantIds?: string[]
+    participantIds?: number[]
     participants?: AdminBroadcastParticipantInput[]
     tags?: string[]
     source?: string
@@ -61,13 +61,13 @@ export interface CreateBroadcastRequest {
 
 export interface UpdateBroadcastRequest {
     title?: string
-    streamerId?: string
+    streamerId?: number
     broadcastType?: string
     categoryId?: number
     startTime?: string
     endTime?: string
     thumbnailUrl?: string
-    participantIds?: string[]
+    participantIds?: number[]
     participants?: AdminBroadcastParticipantInput[]
     tags?: string[]
     isVisible?: boolean
@@ -75,7 +75,7 @@ export interface UpdateBroadcastRequest {
 
 export interface AdminBroadcastParticipantInput {
     name: string
-    streamerId?: string
+    streamerId?: number
     isHost?: boolean
 }
 
