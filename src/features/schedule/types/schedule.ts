@@ -3,6 +3,8 @@ export interface Participant {
     name: string
     avatarUrl?: string
     channelUrl?: string | null
+    youtubeUrl?: string | null
+    fanCafeUrl?: string | null
     streamerId?: number | null
     isHost?: boolean
     isPartner?: boolean

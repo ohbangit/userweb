@@ -274,6 +274,7 @@ type ViewMode = 'daily' | 'weekly' | 'monthly'
 - **정렬**: 한국어 이름 기준 오름차순 (`localeCompare('ko')`)
 - **아바타 폴백**: 매칭된 스트리머 썸네일(`channel_image_url`) 우선, 없으면 이름 첫 글자 이니셜
 - **레이아웃**: 세로 스택 (가로 스크롤 대비 발견성, 정보 가독성 우수)
+- **외부 링크 아이콘**: 치지직(`chzzk_icon.png`), 유튜브(`youtube.png`), 팬카페(`cafe.png`)를 URL 존재 시 노출
 - **폴백**: 참여자 데이터 없으면 `streamerName`을 기본 참여자로 생성
 
 #### 인터랙션

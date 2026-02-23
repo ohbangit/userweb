@@ -5,6 +5,8 @@ import type { Broadcast, Participant } from '../types/schedule'
 import { useBroadcastDetail } from '../hooks/useBroadcastDetail'
 import { formatTime, getDayName } from '../utils/date'
 import chzzkIcon from '../../../assets/chzzk_icon.png'
+import youtubeIcon from '../../../assets/youtube.png'
+import cafeIcon from '../../../assets/cafe.png'
 
 interface BroadcastDetailModalProps {
     broadcast: Broadcast | null
@@ -31,10 +33,14 @@ function StatusIndicator({ broadcast }: { broadcast: Broadcast }) {
 function ParticipantRow({
     participant,
     channelUrl,
+    youtubeUrl,
+    fanCafeUrl,
     avatarFallbackUrl,
 }: {
     participant: Participant
     channelUrl?: string
+    youtubeUrl?: string
+    fanCafeUrl?: string
     avatarFallbackUrl?: string
 }) {
     const avatarUrl = participant.avatarUrl ?? avatarFallbackUrl
@@ -59,22 +65,51 @@ function ParticipantRow({
                     {participant.name}
                 </span>
             </div>
-            {channelUrl && (
-                <a
-                    href={channelUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
-                    aria-label={`${participant.name} 치지직 채널 열기`}
-                >
-                    <img
-                        src={chzzkIcon}
-                        alt="치지직"
-                        className="h-4 w-4"
-                        loading="lazy"
-                    />
-                </a>
-            )}
+            <div className="flex items-center gap-1.5">
+                {channelUrl && (
+                    <a
+                        href={channelUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
+                        aria-label={`${participant.name} 치지직 채널 열기`}
+                    >
+                        <img
+                            src={chzzkIcon}
+                            alt="치지직"
+                            className="h-4 w-4"
+                            loading="lazy"
+                        />
+                    </a>
+                )}
+                {youtubeUrl && (
+                    <a
+                        href={youtubeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
+                        aria-label={`${participant.name} 유튜브 채널 열기`}
+                    >
+                        <img src={youtubeIcon} alt="유튜브" loading="lazy" />
+                    </a>
+                )}
+                {fanCafeUrl && (
+                    <a
+                        href={fanCafeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
+                        aria-label={`${participant.name} 팬카페 열기`}
+                    >
+                        <img
+                            src={cafeIcon}
+                            alt="팬카페"
+                            className="h-4 w-4"
+                            loading="lazy"
+                        />
+                    </a>
+                )}
+            </div>
         </div>
     )
 }
@@ -234,6 +269,14 @@ export function BroadcastDetailModal({
                                                     ? (displayBroadcast.streamerChannelUrl ??
                                                       undefined)
                                                     : undefined)
+                                            }
+                                            youtubeUrl={
+                                                participant.youtubeUrl ??
+                                                undefined
+                                            }
+                                            fanCafeUrl={
+                                                participant.fanCafeUrl ??
+                                                undefined
                                             }
                                             avatarFallbackUrl={
                                                 participant.name ===
