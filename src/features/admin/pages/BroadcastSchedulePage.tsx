@@ -170,6 +170,8 @@ function BroadcastFormModal({
         string | null
     >(null)
     const [editingInput, setEditingInput] = useState('')
+    const [categorySearch, setCategorySearch] = useState('')
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false)
     const { addToast } = useAdminToast()
     const createMutation = useCreateBroadcast()
     const updateMutation = useUpdateBroadcast(broadcast?.id ?? '')
@@ -532,28 +534,38 @@ function BroadcastFormModal({
                                 게임 / 카테고리
                             </p>
                             <div className="relative">
-                                <select
-                                    value={form.categoryId ?? ''}
-                                    onChange={(e) =>
-                                        updateField(
-                                            'categoryId',
-                                            e.target.value === ''
-                                                ? null
-                                                : Number(e.target.value),
-                                        )
+                                <input
+                                    type="text"
+                                    value={
+                                        isCategoryOpen
+                                            ? categorySearch
+                                            : (form.categoryId !== null
+                                                  ? (categories.find(
+                                                        (c) =>
+                                                            c.id ===
+                                                            form.categoryId,
+                                                    )?.name ?? '')
+                                                  : '')
                                     }
-                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                                >
-                                    <option value="">카테고리 없음</option>
-                                    {categories.map((category) => (
-                                        <option
-                                            key={category.id}
-                                            value={category.id}
-                                        >
-                                            {category.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                    onChange={(e) => {
+                                        setCategorySearch(e.target.value)
+                                        if (!isCategoryOpen) {
+                                            setIsCategoryOpen(true)
+                                        }
+                                    }}
+                                    onFocus={() => {
+                                        setIsCategoryOpen(true)
+                                        setCategorySearch('')
+                                    }}
+                                    onBlur={() => {
+                                        setTimeout(() => {
+                                            setIsCategoryOpen(false)
+                                            setCategorySearch('')
+                                        }, 150)
+                                    }}
+                                    placeholder="카테고리 검색"
+                                    className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                />
                                 <svg
                                     className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[#848494]"
                                     viewBox="0 0 20 20"
@@ -562,6 +574,67 @@ function BroadcastFormModal({
                                 >
                                     <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
                                 </svg>
+                                {isCategoryOpen && (
+                                    <div className="absolute z-10 mt-1 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
+                                        <button
+                                            type="button"
+                                            onMouseDown={(e) =>
+                                                e.preventDefault()
+                                            }
+                                            onClick={() => {
+                                                updateField(
+                                                    'categoryId',
+                                                    null,
+                                                )
+                                                setIsCategoryOpen(false)
+                                                setCategorySearch('')
+                                            }}
+                                            className="flex w-full cursor-pointer items-center px-3 py-1.5 text-left text-xs text-gray-400 hover:bg-gray-50 dark:text-[#848494] dark:hover:bg-[#3a3a44]"
+                                        >
+                                            카테고리 없음
+                                        </button>
+                                        {categories
+                                            .filter((c) =>
+                                                c.name
+                                                    .toLowerCase()
+                                                    .includes(
+                                                        categorySearch
+                                                            .trim()
+                                                            .toLowerCase(),
+                                                    ),
+                                            )
+                                            .map((category) => (
+                                                <button
+                                                    key={category.id}
+                                                    type="button"
+                                                    onMouseDown={(e) =>
+                                                        e.preventDefault()
+                                                    }
+                                                    onClick={() => {
+                                                        updateField(
+                                                            'categoryId',
+                                                            category.id,
+                                                        )
+                                                        setIsCategoryOpen(
+                                                            false,
+                                                        )
+                                                        setCategorySearch(
+                                                            '',
+                                                        )
+                                                    }}
+                                                    className={[
+                                                        'flex w-full cursor-pointer items-center px-3 py-1.5 text-left text-xs hover:bg-gray-50 dark:hover:bg-[#3a3a44]',
+                                                        form.categoryId ===
+                                                            category.id
+                                                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
+                                                            : 'text-gray-800 dark:text-[#efeff1]',
+                                                    ].join(' ')}
+                                                >
+                                                    {category.name}
+                                                </button>
+                                            ))}
+                                    </div>
+                                )}
                             </div>
                             <p className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
                                 <svg
@@ -581,6 +654,7 @@ function BroadcastFormModal({
                                     <div className="relative">
                                         <input
                                             type="datetime-local"
+                                            step="1800"
                                             value={form.startTime}
                                             onChange={(e) =>
                                                 updateField(
@@ -619,6 +693,7 @@ function BroadcastFormModal({
                                     <div className="relative">
                                         <input
                                             type="datetime-local"
+                                            step="1800"
                                             value={form.endTime}
                                             onChange={(e) =>
                                                 updateField(

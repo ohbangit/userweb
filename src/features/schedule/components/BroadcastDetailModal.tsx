@@ -7,6 +7,7 @@ import { formatTime, getDayName } from '../utils/date'
 import chzzkIcon from '../../../assets/chzzk_icon.png'
 import youtubeIcon from '../../../assets/youtube.png'
 import cafeIcon from '../../../assets/cafe.png'
+import partnerMark from '../../../assets/mark.png'
 
 interface BroadcastDetailModalProps {
     broadcast: Broadcast | null
@@ -33,6 +34,7 @@ function StatusIndicator({ broadcast }: { broadcast: Broadcast }) {
 function ParticipantRow({
     participant,
     isHost,
+    isPartner,
     channelUrl,
     youtubeUrl,
     fanCafeUrl,
@@ -40,6 +42,7 @@ function ParticipantRow({
 }: {
     participant: Participant
     isHost?: boolean
+    isPartner?: boolean
     channelUrl?: string
     youtubeUrl?: string
     fanCafeUrl?: string
@@ -72,6 +75,14 @@ function ParticipantRow({
                             <Crown className="h-2.5 w-2.5" />
                             주최
                         </span>
+                    )}
+                    {isPartner && (
+                        <img
+                            src={partnerMark}
+                            alt="파트너"
+                            className="h-3 w-3 shrink-0"
+                            loading="lazy"
+                        />
                     )}
                 </div>
             </div>
@@ -284,6 +295,10 @@ export function BroadcastDetailModal({
                                             }
                                             isHost={
                                                 participant.isHost ??
+                                                false
+                                            }
+                                            isPartner={
+                                                participant.isPartner ??
                                                 false
                                             }
                                             youtubeUrl={

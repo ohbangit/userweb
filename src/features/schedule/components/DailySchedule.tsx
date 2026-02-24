@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { Broadcast, Participant } from '../types/schedule'
 import { isSameDay, formatTime } from '../utils/date'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
+import partnerMark from '../../../assets/mark.png'
 
 interface DailyScheduleProps {
     broadcasts: Broadcast[]
@@ -132,8 +133,16 @@ function DailyBroadcastItem({
 
                 <div className="flex items-center gap-3">
                     <ParticipantStack participants={sortedParticipants} />
-                    <span className="text-[11px] text-text-dim">
+                    <span className="flex items-center gap-1 text-[11px] text-text-dim">
                         {participantLabel}
+                        {sortedParticipants.some((p) => p.isPartner) && (
+                            <img
+                                src={partnerMark}
+                                alt="파트너"
+                                className="h-3 w-3 shrink-0"
+                                loading="lazy"
+                            />
+                        )}
                     </span>
                 </div>
 
