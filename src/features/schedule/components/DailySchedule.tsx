@@ -88,12 +88,22 @@ function DailyBroadcastItem({
         return participant
     })
     const sortedParticipants = [...participantsWithStreamerFallback].sort(
-        (a, b) => a.name.localeCompare(b.name, 'ko'),
+        (a, b) => {
+            if (a.isHost && !b.isHost) return -1
+            if (!a.isHost && b.isHost) return 1
+            return a.name.localeCompare(b.name, 'ko')
+        },
     )
-    const participantLabel =
-        sortedParticipants.length > 1
-            ? `${sortedParticipants[0].name} 외 ${sortedParticipants.length - 1}명`
-            : sortedParticipants[0].name
+    const hostParticipant = sortedParticipants.find((participant) =>
+        Boolean(participant.isHost),
+    )
+    const participantLabel = hostParticipant
+        ? sortedParticipants.length > 1
+            ? `${hostParticipant.name} 외 ${sortedParticipants.length - 1}명`
+            : hostParticipant.name
+        : sortedParticipants.length > 1
+          ? `${sortedParticipants[0].name} 외 ${sortedParticipants.length - 1}명`
+          : sortedParticipants[0].name
 
     return (
         <button

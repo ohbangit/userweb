@@ -31,13 +31,21 @@ export function BroadcastCard({
         broadcast.participants && broadcast.participants.length > 0
             ? broadcast.participants
             : [{ name: broadcast.streamerName }]
-    const sortedParticipants = [...participants].sort((a, b) =>
-        a.name.localeCompare(b.name, 'ko'),
+    const sortedParticipants = [...participants].sort((a, b) => {
+        if (a.isHost && !b.isHost) return -1
+        if (!a.isHost && b.isHost) return 1
+        return a.name.localeCompare(b.name, 'ko')
+    })
+    const hostParticipant = sortedParticipants.find((participant) =>
+        Boolean(participant.isHost),
     )
-    const participantLabel =
-        sortedParticipants.length > 1
-            ? `${sortedParticipants[0].name} 외 ${sortedParticipants.length - 1}명`
-            : sortedParticipants[0].name
+    const participantLabel = hostParticipant
+        ? sortedParticipants.length > 1
+            ? `${hostParticipant.name} 외 ${sortedParticipants.length - 1}명`
+            : hostParticipant.name
+        : sortedParticipants.length > 1
+          ? `${sortedParticipants[0].name} 외 ${sortedParticipants.length - 1}명`
+          : sortedParticipants[0].name
     const tags = broadcast.tags ?? []
 
     if (variant === 'full') {
