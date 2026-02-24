@@ -146,6 +146,7 @@ interface BroadcastFormState {
     endMinute: string
     tags: string
     isVisible: boolean
+    isChzzkSupport: boolean
     participants: DraftParticipant[]
 }
 
@@ -163,6 +164,7 @@ function initFormState(broadcast?: Broadcast): BroadcastFormState {
             endMinute: '',
             tags: '',
             isVisible: false,
+            isChzzkSupport: false,
             participants: [],
         }
     }
@@ -193,6 +195,7 @@ function initFormState(broadcast?: Broadcast): BroadcastFormState {
         endMinute,
         tags: (broadcast.tags ?? []).join(', '),
         isVisible: broadcast.isVisible ?? true,
+        isChzzkSupport: broadcast.isChzzkSupport ?? false,
         participants: toParticipantDrafts(broadcast.participants),
     }
 }
@@ -450,6 +453,7 @@ function BroadcastFormModal({
                     startTime: localDatetimeToISO(startLocal),
                     broadcastType: form.broadcastType,
                     isVisible: form.isVisible,
+                    isChzzkSupport: form.isChzzkSupport,
                     ...(form.categoryId !== null && {
                         categoryId: form.categoryId,
                     }),
@@ -470,6 +474,7 @@ function BroadcastFormModal({
                     startTime: localDatetimeToISO(startLocal),
                     broadcastType: form.broadcastType,
                     isVisible: form.isVisible,
+                    isChzzkSupport: form.isChzzkSupport,
                     categoryId:
                         form.categoryId !== null ? form.categoryId : undefined,
                     endTime:
@@ -566,7 +571,7 @@ function BroadcastFormModal({
                                 </svg>
                                 타입
                             </p>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-4 gap-1.5">
                                 {BROADCAST_TYPES.map((type) => (
                                     <button
                                         key={type}
@@ -575,7 +580,7 @@ function BroadcastFormModal({
                                             updateField('broadcastType', type)
                                         }
                                         className={[
-                                            'cursor-pointer rounded-lg border px-2 py-1.5 text-xs font-medium',
+                                            'cursor-pointer rounded-lg border px-1.5 py-1.5 text-xs font-medium',
                                             form.broadcastType === type
                                                 ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
                                                 : 'border-gray-200 text-gray-500 dark:border-[#3a3a44] dark:text-[#adadb8]',
@@ -584,6 +589,31 @@ function BroadcastFormModal({
                                         {type}
                                     </button>
                                 ))}
+                            </div>
+                            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-3 py-2 dark:border-[#3a3a44]">
+                                <span className="text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
+                                    치지직 제작지원
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        updateField(
+                                            'isChzzkSupport',
+                                            !form.isChzzkSupport,
+                                        )
+                                    }
+                                    className={[
+                                        'cursor-pointer flex h-6 w-12 shrink-0 items-center rounded-full px-0.5 transition-colors',
+                                        form.isChzzkSupport
+                                            ? 'justify-end'
+                                            : 'justify-start',
+                                        form.isChzzkSupport
+                                            ? 'bg-emerald-500'
+                                            : 'bg-gray-300 dark:bg-[#3a3a44]',
+                                    ].join(' ')}
+                                >
+                                    <span className="h-5 w-5 rounded-full bg-white shadow" />
+                                </button>
                             </div>
                             <p className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
                                 <svg
@@ -1387,18 +1417,21 @@ function BroadcastCard({ broadcast, onEdit, onDelete }: BroadcastCardProps) {
                             ? ` · ${broadcast.streamerName}`
                             : ''}
                     </p>
-                    {tags.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1">
-                            {tags.slice(0, 4).map((tag) => (
-                                <span
-                                    key={tag}
-                                    className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
-                                >
-                                    #{tag}
-                                </span>
-                            ))}
-                        </div>
-                    )}
+                    <div className="mt-2 flex flex-wrap gap-1">
+                        {broadcast.isChzzkSupport === true && (
+                            <span className="rounded-full border border-emerald-400 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:border-emerald-500 dark:text-emerald-400">
+                                치지직 제작지원
+                            </span>
+                        )}
+                        {tags.slice(0, 4).map((tag) => (
+                            <span
+                                key={tag}
+                                className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
+                            >
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <span

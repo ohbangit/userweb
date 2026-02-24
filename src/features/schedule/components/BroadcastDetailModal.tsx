@@ -258,9 +258,16 @@ export function BroadcastDetailModal({
                                     </span>
                                 </InfoRow>
                             )}
-                            {tags.length > 0 && (
+                            {(displayBroadcast.isChzzkSupport === true ||
+                                tags.length > 0) && (
                                 <InfoRow icon={Hash} label="태그">
                                     <div className="flex flex-wrap gap-1.5">
+                                        {displayBroadcast.isChzzkSupport ===
+                                            true && (
+                                            <span className="rounded-md border border-primary/60 bg-bg-secondary px-2 py-0.5 text-xs font-medium text-primary">
+                                                치지직 제작지원
+                                            </span>
+                                        )}
                                         {tags.map((tag) => (
                                             <span
                                                 key={tag}
@@ -293,13 +300,9 @@ export function BroadcastDetailModal({
                                                       undefined)
                                                     : undefined)
                                             }
-                                            isHost={
-                                                participant.isHost ??
-                                                false
-                                            }
+                                            isHost={participant.isHost ?? false}
                                             isPartner={
-                                                participant.isPartner ??
-                                                false
+                                                participant.isPartner ?? false
                                             }
                                             youtubeUrl={
                                                 participant.youtubeUrl ??

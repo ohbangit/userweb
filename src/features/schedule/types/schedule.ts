@@ -34,6 +34,7 @@ export interface Broadcast {
     collabPartners?: string[]
     thumbnailUrl?: string
     isVisible?: boolean
+    isChzzkSupport?: boolean
 }
 
 export type ViewMode = 'daily' | 'weekly' | 'monthly'

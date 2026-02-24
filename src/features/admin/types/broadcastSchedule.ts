@@ -29,6 +29,7 @@ export interface AdminBroadcastItem {
     isLive: boolean
     isCollab: boolean
     source: string | null
+    isChzzkSupport?: boolean
 }
 
 export interface AdminScheduleResponse {
@@ -57,6 +58,7 @@ export interface CreateBroadcastRequest {
     source?: string
     externalId?: string
     isVisible?: boolean
+    isChzzkSupport?: boolean
 }
 
 export interface UpdateBroadcastRequest {
@@ -71,6 +73,7 @@ export interface UpdateBroadcastRequest {
     participants?: AdminBroadcastParticipantInput[]
     tags?: string[]
     isVisible?: boolean
+    isChzzkSupport?: boolean
 }
 
 export interface AdminBroadcastParticipantInput {

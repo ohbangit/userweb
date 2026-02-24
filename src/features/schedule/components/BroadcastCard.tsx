@@ -81,8 +81,13 @@ export function BroadcastCard({
                         {participantLabel}
                     </span>
                 </div>
-                {tags.length > 0 && (
+                {(broadcast.isChzzkSupport === true || tags.length > 0) && (
                     <div className="flex flex-wrap gap-0.5">
+                        {broadcast.isChzzkSupport === true && (
+                            <span className="rounded-md border border-primary/60 px-1.5 py-0.5 text-[9px] font-medium text-primary">
+                                치지직 제작지원
+                            </span>
+                        )}
                         {tags.slice(0, 2).map((tag) => (
                             <span
                                 key={tag}
