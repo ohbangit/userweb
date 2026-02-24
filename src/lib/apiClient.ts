@@ -1,6 +1,7 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000'
 
 const ADMIN_API_KEY_STORAGE_KEY = 'ohbangit-admin-key'
+const ADMIN_API_KEY_EVENT = 'ohbangit-admin-key-change'
 
 export function getAdminApiKey(): string {
     return sessionStorage.getItem(ADMIN_API_KEY_STORAGE_KEY) ?? ''
@@ -8,10 +9,20 @@ export function getAdminApiKey(): string {
 
 export function setAdminApiKey(key: string): void {
     sessionStorage.setItem(ADMIN_API_KEY_STORAGE_KEY, key)
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event(ADMIN_API_KEY_EVENT))
+    }
 }
 
 export function clearAdminApiKey(): void {
     sessionStorage.removeItem(ADMIN_API_KEY_STORAGE_KEY)
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event(ADMIN_API_KEY_EVENT))
+    }
+}
+
+export function getAdminApiKeyEventName(): string {
+    return ADMIN_API_KEY_EVENT
 }
 
 function buildAdminHeaders(): Record<string, string> {

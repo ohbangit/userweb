@@ -1,10 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAdminAuth } from '../hooks'
 
-export default function AdminLoginPage() {
+interface AdminLoginPageProps {
+    initialError?: string
+}
+
+export default function AdminLoginPage({ initialError }: AdminLoginPageProps) {
     const { login } = useAdminAuth()
     const [key, setKey] = useState('')
-    const [error, setError] = useState('')
+    const [error, setError] = useState(initialError ?? '')
+
+    useEffect(() => {
+        if (initialError && initialError.length > 0) {
+            setError(initialError)
+        }
+    }, [initialError])
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault()

@@ -152,19 +152,29 @@ export function ContactPanel() {
                             >
                                 문의 유형
                             </label>
-                            <select
-                                id="contact-type"
-                                name="type"
-                                className="w-full rounded-xl border border-border/40 bg-bg-secondary/60 px-3 py-2 text-sm text-text focus:border-primary/50 focus:outline-none"
-                                value={type}
-                                onChange={(e) => setType(e.target.value)}
-                            >
-                                {inquiryTypes.map((t) => (
-                                    <option key={t} value={t}>
-                                        {t}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    id="contact-type"
+                                    name="type"
+                                    className="w-full appearance-none rounded-xl border border-border/40 bg-bg-secondary/60 px-3 py-2 pr-9 text-sm text-text focus:border-primary/50 focus:outline-none"
+                                    value={type}
+                                    onChange={(e) => setType(e.target.value)}
+                                >
+                                    {inquiryTypes.map((t) => (
+                                        <option key={t} value={t}>
+                                            {t}
+                                        </option>
+                                    ))}
+                                </select>
+                                <svg
+                                    className="pointer-events-none absolute inset-y-0 right-3 my-auto h-4 w-4 text-text-dim"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
+                                </svg>
+                            </div>
                         </div>
                         <div className="flex flex-col gap-1.5">
                             <label

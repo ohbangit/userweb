@@ -69,19 +69,46 @@ function formatTime(isoString: string): string {
     return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-function toLocalDatetimeInput(isoString: string): string {
+function toLocalDateInput(isoString: string): string {
     const d = new Date(isoString)
     const y = d.getFullYear()
     const mo = String(d.getMonth() + 1).padStart(2, '0')
     const da = String(d.getDate()).padStart(2, '0')
-    const h = String(d.getHours()).padStart(2, '0')
-    const mi = String(d.getMinutes()).padStart(2, '0')
-    return `${y}-${mo}-${da}T${h}:${mi}`
+    return `${y}-${mo}-${da}`
+}
+
+function toLocalHourInput(isoString: string): string {
+    const d = new Date(isoString)
+    const hour = d.getHours()
+    return String(hour).padStart(2, '0')
+}
+
+function toLocalMinuteInput(isoString: string): string {
+    const d = new Date(isoString)
+    const minute = d.getMinutes()
+    const normalizedMinute = minute < 30 ? 0 : 30
+    return String(normalizedMinute).padStart(2, '0')
+}
+
+function buildLocalDatetime(
+    date: string,
+    hour: string,
+    minute: string,
+): string | null {
+    if (date.length === 0 || hour.length === 0 || minute.length === 0) {
+        return null
+    }
+    return `${date}T${hour}:${minute}`
 }
 
 function localDatetimeToISO(local: string): string {
     return new Date(local).toISOString()
 }
+
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, index) =>
+    String(index).padStart(2, '0'),
+)
+const MINUTE_OPTIONS = ['00', '30']
 
 function collectBroadcasts(
     data: ScheduleWeeklyResponse | ScheduleMonthlyResponse | undefined,
@@ -111,8 +138,12 @@ interface BroadcastFormState {
     title: string
     broadcastType: string
     categoryId: number | null
-    startTime: string
-    endTime: string
+    startDate: string
+    startHour: string
+    startMinute: string
+    endDate: string
+    endHour: string
+    endMinute: string
     tags: string
     isVisible: boolean
     participants: DraftParticipant[]
@@ -124,22 +155,42 @@ function initFormState(broadcast?: Broadcast): BroadcastFormState {
             title: '',
             broadcastType: '합방',
             categoryId: null,
-            startTime: '',
-            endTime: '',
+            startDate: '',
+            startHour: '',
+            startMinute: '',
+            endDate: '',
+            endHour: '',
+            endMinute: '',
             tags: '',
             isVisible: false,
             participants: [],
         }
     }
+    const startDate = toLocalDateInput(broadcast.startTime)
+    const startHour = toLocalHourInput(broadcast.startTime)
+    const startMinute = toLocalMinuteInput(broadcast.startTime)
+    const endDate =
+        broadcast.endTime !== undefined && broadcast.endTime !== null
+            ? toLocalDateInput(broadcast.endTime)
+            : ''
+    const endHour =
+        broadcast.endTime !== undefined && broadcast.endTime !== null
+            ? toLocalHourInput(broadcast.endTime)
+            : ''
+    const endMinute =
+        broadcast.endTime !== undefined && broadcast.endTime !== null
+            ? toLocalMinuteInput(broadcast.endTime)
+            : ''
     return {
         title: broadcast.title,
         broadcastType: broadcast.broadcastType ?? '합방',
         categoryId: broadcast.category?.id ?? null,
-        startTime: toLocalDatetimeInput(broadcast.startTime),
-        endTime:
-            broadcast.endTime !== undefined && broadcast.endTime !== null
-                ? toLocalDatetimeInput(broadcast.endTime)
-                : '',
+        startDate,
+        startHour,
+        startMinute,
+        endDate,
+        endHour,
+        endMinute,
         tags: (broadcast.tags ?? []).join(', '),
         isVisible: broadcast.isVisible ?? true,
         participants: toParticipantDrafts(broadcast.participants),
@@ -361,10 +412,23 @@ function BroadcastFormModal({
             addToast({ message: '제목을 입력해주세요.', variant: 'error' })
             return
         }
-        if (form.startTime.length === 0) {
-            addToast({ message: '시작 시간을 입력해주세요.', variant: 'error' })
+        const startLocal = buildLocalDatetime(
+            form.startDate,
+            form.startHour,
+            form.startMinute,
+        )
+        if (startLocal === null) {
+            addToast({
+                message: '시작 날짜와 시간을 입력해주세요.',
+                variant: 'error',
+            })
             return
         }
+        const endLocal = buildLocalDatetime(
+            form.endDate,
+            form.endHour,
+            form.endMinute,
+        )
         const tags = form.tags
             .split(',')
             .map((tag) => tag.trim())
@@ -383,14 +447,14 @@ function BroadcastFormModal({
             if (mode === 'create') {
                 const body: CreateBroadcastRequest = {
                     title: form.title.trim(),
-                    startTime: localDatetimeToISO(form.startTime),
+                    startTime: localDatetimeToISO(startLocal),
                     broadcastType: form.broadcastType,
                     isVisible: form.isVisible,
                     ...(form.categoryId !== null && {
                         categoryId: form.categoryId,
                     }),
-                    ...(form.endTime.length > 0 && {
-                        endTime: localDatetimeToISO(form.endTime),
+                    ...(endLocal !== null && {
+                        endTime: localDatetimeToISO(endLocal),
                     }),
                     ...(tags.length > 0 && { tags }),
                     participants,
@@ -403,15 +467,13 @@ function BroadcastFormModal({
             } else {
                 const body: UpdateBroadcastRequest = {
                     title: form.title.trim(),
-                    startTime: localDatetimeToISO(form.startTime),
+                    startTime: localDatetimeToISO(startLocal),
                     broadcastType: form.broadcastType,
                     isVisible: form.isVisible,
                     categoryId:
                         form.categoryId !== null ? form.categoryId : undefined,
                     endTime:
-                        form.endTime.length > 0
-                            ? localDatetimeToISO(form.endTime)
-                            : null,
+                        endLocal !== null ? localDatetimeToISO(endLocal) : null,
                     tags,
                     participants,
                 }
@@ -539,13 +601,13 @@ function BroadcastFormModal({
                                     value={
                                         isCategoryOpen
                                             ? categorySearch
-                                            : (form.categoryId !== null
-                                                  ? (categories.find(
-                                                        (c) =>
-                                                            c.id ===
-                                                            form.categoryId,
-                                                    )?.name ?? '')
-                                                  : '')
+                                            : form.categoryId !== null
+                                              ? (categories.find(
+                                                    (c) =>
+                                                        c.id ===
+                                                        form.categoryId,
+                                                )?.name ?? '')
+                                              : ''
                                     }
                                     onChange={(e) => {
                                         setCategorySearch(e.target.value)
@@ -582,10 +644,7 @@ function BroadcastFormModal({
                                                 e.preventDefault()
                                             }
                                             onClick={() => {
-                                                updateField(
-                                                    'categoryId',
-                                                    null,
-                                                )
+                                                updateField('categoryId', null)
                                                 setIsCategoryOpen(false)
                                                 setCategorySearch('')
                                             }}
@@ -615,17 +674,13 @@ function BroadcastFormModal({
                                                             'categoryId',
                                                             category.id,
                                                         )
-                                                        setIsCategoryOpen(
-                                                            false,
-                                                        )
-                                                        setCategorySearch(
-                                                            '',
-                                                        )
+                                                        setIsCategoryOpen(false)
+                                                        setCategorySearch('')
                                                     }}
                                                     className={[
                                                         'flex w-full cursor-pointer items-center px-3 py-1.5 text-left text-xs hover:bg-gray-50 dark:hover:bg-[#3a3a44]',
                                                         form.categoryId ===
-                                                            category.id
+                                                        category.id
                                                             ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
                                                             : 'text-gray-800 dark:text-[#efeff1]',
                                                     ].join(' ')}
@@ -651,76 +706,234 @@ function BroadcastFormModal({
                                     <p className="text-[10px] font-medium text-gray-400 dark:text-[#848494]">
                                         시작
                                     </p>
-                                    <div className="relative">
-                                        <input
-                                            type="datetime-local"
-                                            step="1800"
-                                            value={form.startTime}
-                                            onChange={(e) =>
-                                                updateField(
-                                                    'startTime',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                updateField('startTime', '')
-                                            }
-                                            disabled={
-                                                form.startTime.length === 0
-                                            }
-                                            className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-40 dark:text-[#848494] dark:hover:bg-[#2f2f39] dark:hover:text-[#adadb8]"
-                                            aria-label="시작 시간 초기화"
-                                        >
-                                            <svg
-                                                className="h-3.5 w-3.5"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                                aria-hidden="true"
+                                    <div className="space-y-2">
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                value={form.startDate}
+                                                onChange={(e) =>
+                                                    updateField(
+                                                        'startDate',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    updateField('startDate', '')
+                                                    updateField('startHour', '')
+                                                    updateField(
+                                                        'startMinute',
+                                                        '',
+                                                    )
+                                                }}
+                                                disabled={
+                                                    form.startDate.length ===
+                                                        0 &&
+                                                    form.startHour.length ===
+                                                        0 &&
+                                                    form.startMinute.length ===
+                                                        0
+                                                }
+                                                className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-40 dark:text-[#848494] dark:hover:bg-[#2f2f39] dark:hover:text-[#adadb8]"
+                                                aria-label="시작 시간 초기화"
                                             >
-                                                <path d="M6.28 5.22a.75.75 0 10-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 10-1.06-1.06L10 8.94 6.28 5.22z" />
-                                            </svg>
-                                        </button>
+                                                <svg
+                                                    className="h-3.5 w-3.5"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path d="M6.28 5.22a.75.75 0 10-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 10-1.06-1.06L10 8.94 6.28 5.22z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div className="relative">
+                                                <select
+                                                    value={form.startHour}
+                                                    onChange={(e) =>
+                                                        updateField(
+                                                            'startHour',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                >
+                                                    <option value="">
+                                                        시 선택
+                                                    </option>
+                                                    {HOUR_OPTIONS.map(
+                                                        (hour) => (
+                                                            <option
+                                                                key={hour}
+                                                                value={hour}
+                                                            >
+                                                                {hour}
+                                                            </option>
+                                                        ),
+                                                    )}
+                                                </select>
+                                                <svg
+                                                    className="pointer-events-none absolute inset-y-0 right-3 my-auto h-4 w-4 text-gray-400 dark:text-[#848494]"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
+                                                </svg>
+                                            </div>
+                                            <div className="relative">
+                                                <select
+                                                    value={form.startMinute}
+                                                    onChange={(e) =>
+                                                        updateField(
+                                                            'startMinute',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                >
+                                                    <option value="">
+                                                        분 선택
+                                                    </option>
+                                                    {MINUTE_OPTIONS.map(
+                                                        (minute) => (
+                                                            <option
+                                                                key={minute}
+                                                                value={minute}
+                                                            >
+                                                                {minute}
+                                                            </option>
+                                                        ),
+                                                    )}
+                                                </select>
+                                                <svg
+                                                    className="pointer-events-none absolute inset-y-0 right-3 my-auto h-4 w-4 text-gray-400 dark:text-[#848494]"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-medium text-gray-400 dark:text-[#848494]">
                                         종료
                                     </p>
-                                    <div className="relative">
-                                        <input
-                                            type="datetime-local"
-                                            step="1800"
-                                            value={form.endTime}
-                                            onChange={(e) =>
-                                                updateField(
-                                                    'endTime',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                updateField('endTime', '')
-                                            }
-                                            disabled={form.endTime.length === 0}
-                                            className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-40 dark:text-[#848494] dark:hover:bg-[#2f2f39] dark:hover:text-[#adadb8]"
-                                            aria-label="종료 시간 초기화"
-                                        >
-                                            <svg
-                                                className="h-3.5 w-3.5"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                                aria-hidden="true"
+                                    <div className="space-y-2">
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                value={form.endDate}
+                                                onChange={(e) =>
+                                                    updateField(
+                                                        'endDate',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    updateField('endDate', '')
+                                                    updateField('endHour', '')
+                                                    updateField('endMinute', '')
+                                                }}
+                                                disabled={
+                                                    form.endDate.length === 0 &&
+                                                    form.endHour.length === 0 &&
+                                                    form.endMinute.length === 0
+                                                }
+                                                className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-40 dark:text-[#848494] dark:hover:bg-[#2f2f39] dark:hover:text-[#adadb8]"
+                                                aria-label="종료 시간 초기화"
                                             >
-                                                <path d="M6.28 5.22a.75.75 0 10-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 10-1.06-1.06L10 8.94 6.28 5.22z" />
-                                            </svg>
-                                        </button>
+                                                <svg
+                                                    className="h-3.5 w-3.5"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path d="M6.28 5.22a.75.75 0 10-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 10-1.06-1.06L10 8.94 6.28 5.22z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div className="relative">
+                                                <select
+                                                    value={form.endHour}
+                                                    onChange={(e) =>
+                                                        updateField(
+                                                            'endHour',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                >
+                                                    <option value="">
+                                                        시 선택
+                                                    </option>
+                                                    {HOUR_OPTIONS.map(
+                                                        (hour) => (
+                                                            <option
+                                                                key={hour}
+                                                                value={hour}
+                                                            >
+                                                                {hour}
+                                                            </option>
+                                                        ),
+                                                    )}
+                                                </select>
+                                                <svg
+                                                    className="pointer-events-none absolute inset-y-0 right-3 my-auto h-4 w-4 text-gray-400 dark:text-[#848494]"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
+                                                </svg>
+                                            </div>
+                                            <div className="relative">
+                                                <select
+                                                    value={form.endMinute}
+                                                    onChange={(e) =>
+                                                        updateField(
+                                                            'endMinute',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                >
+                                                    <option value="">
+                                                        분 선택
+                                                    </option>
+                                                    {MINUTE_OPTIONS.map(
+                                                        (minute) => (
+                                                            <option
+                                                                key={minute}
+                                                                value={minute}
+                                                            >
+                                                                {minute}
+                                                            </option>
+                                                        ),
+                                                    )}
+                                                </select>
+                                                <svg
+                                                    className="pointer-events-none absolute inset-y-0 right-3 my-auto h-4 w-4 text-gray-400 dark:text-[#848494]"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

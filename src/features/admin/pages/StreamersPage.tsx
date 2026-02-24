@@ -713,22 +713,32 @@ export default function StreamersPage() {
                     />
                 )}
 
-                <select
-                    value={sort}
-                    onChange={(event) =>
-                        setSort(
-                            event.target.value as
-                                | 'name_asc'
-                                | 'name_desc'
-                                | 'follower_desc',
-                        )
-                    }
-                    className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
-                >
-                    <option value="name_asc">이름순</option>
-                    <option value="name_desc">이름 역순</option>
-                    <option value="follower_desc">팔로워순</option>
-                </select>
+                <div className="relative">
+                    <select
+                        value={sort}
+                        onChange={(event) =>
+                            setSort(
+                                event.target.value as
+                                    | 'name_asc'
+                                    | 'name_desc'
+                                    | 'follower_desc',
+                            )
+                        }
+                        className="appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2 pr-9 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
+                    >
+                        <option value="name_asc">이름순</option>
+                        <option value="name_desc">이름 역순</option>
+                        <option value="follower_desc">팔로워순</option>
+                    </select>
+                    <svg
+                        className="pointer-events-none absolute inset-y-0 right-3 my-auto h-4 w-4 text-gray-400 dark:text-[#848494]"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
+                    </svg>
+                </div>
             </div>
 
             {isLoading && (
