@@ -33,3 +33,17 @@ export {
     useCrawlCategories,
     useInsertCategories,
 } from './useCategories'
+export {
+    useAdminStreamerSearch,
+    useAdminTournaments,
+    useCreateTournament,
+    useCreateTournamentTeam,
+    useDeleteTournament,
+    useDeleteTournamentMember,
+    useReorderTournamentTeams,
+    useDeleteTournamentTeam,
+    useTournamentTeams,
+    useUpdateTournament,
+    useUpdateTournamentTeam,
+    useUpsertTournamentMember,
+} from './useTournamentAdmin'

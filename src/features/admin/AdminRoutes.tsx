@@ -10,6 +10,7 @@ const BroadcastSchedulePage = lazy(
     () => import('./pages/BroadcastSchedulePage'),
 )
 const CategoryManagePage = lazy(() => import('./pages/CategoryManagePage'))
+const TournamentManagePage = lazy(() => import('./pages/TournamentManagePage'))
 
 export default function AdminRoutes() {
     return (
@@ -33,6 +34,10 @@ export default function AdminRoutes() {
                         <Route
                             path="categories"
                             element={<CategoryManagePage />}
+                        />
+                        <Route
+                            path="tournaments"
+                            element={<TournamentManagePage />}
                         />
                         <Route
                             path="*"

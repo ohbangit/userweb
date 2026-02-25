@@ -45,3 +45,16 @@ export type {
     InsertCategoriesRequest,
     InsertCategoriesResponse,
 } from './category'
+export type {
+    CreateTournamentRequest,
+    CreateTournamentTeamRequest,
+    SlotType,
+    TournamentAdminMember,
+    TournamentAdminTeam,
+    TournamentAdminTeamsResponse,
+    TournamentItem,
+    TournamentListResponse,
+    UpdateTournamentRequest,
+    UpdateTournamentTeamRequest,
+    UpsertTournamentMemberRequest,
+} from './tournamentAdmin'

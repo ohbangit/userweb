@@ -28,6 +28,12 @@ const NAV_SECTIONS: NavSection[] = [
         ],
     },
     {
+        title: '대회',
+        items: [
+            { to: '/admin/tournaments', label: '오버워치' },
+        ],
+    },
+    {
         title: '운영',
         items: [
             { to: '/admin/streamer-discovery', label: '스트리머 발굴' },
