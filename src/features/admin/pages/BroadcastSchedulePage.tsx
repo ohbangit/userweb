@@ -504,11 +504,11 @@ function BroadcastFormModal({
             }}
         >
             <div className="my-8 w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-[#1a1a23]">
-                <div className="flex flex-col gap-3 border-b border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-[#3a3a44]">
+                <div className="flex flex-col gap-3 border-b border-gray-200 px-6 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-[#3a3a44]">
                     <h2 className="text-base font-bold text-gray-900 dark:text-[#efeff1]">
                         {mode === 'create' ? '방송 추가' : '방송 수정'}
                     </h2>
-                    <div className="flex items-center justify-between gap-2 rounded-lg border border-gray-100 px-3 py-2 sm:justify-start dark:border-[#3a3a44]">
+                    <div className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 px-3 py-2 sm:justify-start dark:border-[#3a3a44]">
                         <span className="text-xs font-medium text-gray-500 dark:text-[#adadb8]">
                             유저 웹 노출
                         </span>
@@ -538,7 +538,7 @@ function BroadcastFormModal({
                     className="space-y-4 px-6 py-4"
                 >
                     <div className="grid gap-4 md:grid-cols-2">
-                        <section className="space-y-3 rounded-xl border border-gray-100 p-4 dark:border-[#3a3a44]">
+                        <section className="space-y-3 rounded-xl border border-gray-200 p-4 dark:border-[#3a3a44]">
                             <p className="text-xs font-semibold text-gray-500 dark:text-[#848494]">
                                 기본 정보
                             </p>
@@ -559,7 +559,7 @@ function BroadcastFormModal({
                                     updateField('title', e.target.value)
                                 }
                                 placeholder="제목"
-                                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                             />
                             <p className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
                                 <svg
@@ -583,14 +583,14 @@ function BroadcastFormModal({
                                             'cursor-pointer rounded-lg border px-1.5 py-1.5 text-xs font-medium',
                                             form.broadcastType === type
                                                 ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
-                                                : 'border-gray-200 text-gray-500 dark:border-[#3a3a44] dark:text-[#adadb8]',
+                                                : 'border-gray-300 text-gray-500 dark:border-[#3a3a44] dark:text-[#adadb8]',
                                         ].join(' ')}
                                     >
                                         {type}
                                     </button>
                                 ))}
                             </div>
-                            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-3 py-2 dark:border-[#3a3a44]">
+                            <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2 dark:border-[#3a3a44]">
                                 <span className="text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
                                     치지직 제작지원
                                 </span>
@@ -656,7 +656,7 @@ function BroadcastFormModal({
                                         }, 150)
                                     }}
                                     placeholder="카테고리 검색"
-                                    className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                    className="w-full rounded-xl border border-gray-300 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                                 />
                                 <svg
                                     className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[#848494]"
@@ -667,7 +667,7 @@ function BroadcastFormModal({
                                     <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.1 1.02l-4.25 4.5a.75.75 0 01-1.1 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
                                 </svg>
                                 {isCategoryOpen && (
-                                    <div className="absolute z-10 mt-1 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
+                                    <div className="absolute z-10 mt-1 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-300 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
                                         <button
                                             type="button"
                                             onMouseDown={(e) =>
@@ -747,7 +747,7 @@ function BroadcastFormModal({
                                                         e.target.value,
                                                     )
                                                 }
-                                                className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                className="w-full rounded-xl border border-gray-300 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                                             />
                                             <button
                                                 type="button"
@@ -790,7 +790,7 @@ function BroadcastFormModal({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                    className="w-full appearance-none rounded-xl border border-gray-300 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                                                 >
                                                     <option value="">
                                                         시 선택
@@ -824,7 +824,7 @@ function BroadcastFormModal({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                    className="w-full appearance-none rounded-xl border border-gray-300 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                                                 >
                                                     <option value="">
                                                         분 선택
@@ -867,7 +867,7 @@ function BroadcastFormModal({
                                                         e.target.value,
                                                     )
                                                 }
-                                                className="w-full rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                className="w-full rounded-xl border border-gray-300 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                                             />
                                             <button
                                                 type="button"
@@ -904,7 +904,7 @@ function BroadcastFormModal({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                    className="w-full appearance-none rounded-xl border border-gray-300 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                                                 >
                                                     <option value="">
                                                         시 선택
@@ -938,7 +938,7 @@ function BroadcastFormModal({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full appearance-none rounded-xl border border-gray-200 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                    className="w-full appearance-none rounded-xl border border-gray-300 px-3 py-2 pr-9 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                                                 >
                                                     <option value="">
                                                         분 선택
@@ -984,17 +984,17 @@ function BroadcastFormModal({
                                     updateField('tags', e.target.value)
                                 }
                                 placeholder="태그 (쉼표 구분)"
-                                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                             />
                         </section>
 
-                        <section className="space-y-3 rounded-xl border border-gray-100 p-4 dark:border-[#3a3a44]">
+                        <section className="space-y-3 rounded-xl border border-gray-200 p-4 dark:border-[#3a3a44]">
                             <p className="text-xs font-semibold text-gray-500 dark:text-[#848494]">
                                 참석자 관리
                             </p>
                             <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
                                 {form.participants.length === 0 && (
-                                    <p className="rounded-lg border border-dashed border-gray-200 px-3 py-5 text-center text-xs text-gray-400 dark:border-[#3a3a44] dark:text-[#848494]">
+                                    <p className="rounded-lg border border-dashed border-gray-300 px-3 py-5 text-center text-xs text-gray-400 dark:border-[#3a3a44] dark:text-[#848494]">
                                         참석자를 먼저 추가해주세요
                                     </p>
                                 )}
@@ -1009,8 +1009,8 @@ function BroadcastFormModal({
                                                 'overflow-hidden rounded-lg border',
                                                 participant.streamerId !==
                                                 undefined
-                                                    ? 'border-l-[3px] border-l-emerald-400 border-gray-100 dark:border-gray-100/0 dark:border-l-emerald-400 dark:bg-[#1a1a23]'
-                                                    : 'border-l-[3px] border-l-amber-400 border-gray-100 dark:border-gray-100/0 dark:border-l-amber-400 dark:bg-[#1a1a23]',
+                                                    ? 'border-l-[3px] border-l-emerald-400 border-gray-200 dark:border-gray-100/0 dark:border-l-emerald-400 dark:bg-[#1a1a23]'
+                                                    : 'border-l-[3px] border-l-amber-400 border-gray-200 dark:border-gray-100/0 dark:border-l-amber-400 dark:bg-[#1a1a23]',
                                             ].join(' ')}
                                         >
                                             <div className="flex items-center justify-between gap-2 px-3 py-2">
@@ -1086,7 +1086,7 @@ function BroadcastFormModal({
                                                                         .items
                                                                         .length >
                                                                         0 && (
-                                                                        <div className="mt-1 max-h-32 overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
+                                                                        <div className="mt-1 max-h-32 overflow-y-auto rounded-lg border border-gray-300 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
                                                                             {editStreamerQuery.data.items.map(
                                                                                 (
                                                                                     streamer,
@@ -1206,7 +1206,7 @@ function BroadcastFormModal({
                                 })}
                             </div>
 
-                            <div className="space-y-2 rounded-lg border border-gray-100 p-3 dark:border-[#3a3a44]">
+                            <div className="space-y-2 rounded-lg border border-gray-200 p-3 dark:border-[#3a3a44]">
                                 <div className="relative">
                                     <input
                                         type="text"
@@ -1230,7 +1230,7 @@ function BroadcastFormModal({
                                         }}
                                         placeholder="참석자 이름 또는 스트리머 검색"
                                         className={[
-                                            'w-full rounded-lg border border-gray-200 py-2 pl-3 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]',
+                                            'w-full rounded-lg border border-gray-300 py-2 pl-3 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]',
                                             participantStreamerId !== undefined
                                                 ? 'pr-14'
                                                 : 'pr-3',
@@ -1246,7 +1246,7 @@ function BroadcastFormModal({
                                             undefined &&
                                         participantStreamerQuery.data.items
                                             .length > 0 && (
-                                            <div className="mt-1 max-h-32 overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
+                                            <div className="mt-1 max-h-32 overflow-y-auto rounded-lg border border-gray-300 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
                                                 {participantStreamerQuery.data.items.map(
                                                     (streamer) => (
                                                         <button
@@ -1295,7 +1295,7 @@ function BroadcastFormModal({
                         <button
                             type="button"
                             onClick={requestClose}
-                            className="cursor-pointer flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                            className="cursor-pointer flex-1 rounded-xl border border-gray-300 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                         >
                             취소
                         </button>
@@ -1356,7 +1356,7 @@ function DeleteConfirmModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="cursor-pointer flex-1 rounded-xl border border-gray-200 py-2 text-sm dark:border-[#3a3a44]"
+                        className="cursor-pointer flex-1 rounded-xl border border-gray-300 py-2 text-sm dark:border-[#3a3a44]"
                     >
                         취소
                     </button>
@@ -1390,7 +1390,7 @@ function BroadcastCard({ broadcast, onEdit, onDelete }: BroadcastCardProps) {
     return (
         <div
             className={[
-                'cursor-pointer rounded-xl border border-gray-100 px-4 py-3 transition hover:border-blue-200 dark:border-[#3a3a44] dark:hover:border-blue-900/40',
+                'cursor-pointer rounded-xl border border-gray-200 px-4 py-3 transition hover:border-blue-200 dark:border-[#3a3a44] dark:hover:border-blue-900/40',
                 typeGradientClass,
             ].join(' ')}
             onClick={() => onEdit(broadcast)}
@@ -1548,7 +1548,7 @@ export default function BroadcastSchedulePage() {
             </div>
 
             <div className="flex items-center gap-3">
-                <div className="flex overflow-hidden rounded-xl border border-gray-200 dark:border-[#3a3a44]">
+                <div className="flex overflow-hidden rounded-xl border border-gray-300 dark:border-[#3a3a44]">
                     {(['weekly', 'monthly'] as const).map((mode) => (
                         <button
                             key={mode}
@@ -1565,11 +1565,11 @@ export default function BroadcastSchedulePage() {
                         </button>
                     ))}
                 </div>
-                <div className="flex overflow-hidden rounded-lg border border-gray-200 dark:border-[#3a3a44]">
+                <div className="flex overflow-hidden rounded-lg border border-gray-300 dark:border-[#3a3a44]">
                     <button
                         type="button"
                         onClick={navigatePrev}
-                        className="cursor-pointer border-r border-gray-200 px-3 py-2 dark:border-[#3a3a44]"
+                        className="cursor-pointer border-r border-gray-300 px-3 py-2 dark:border-[#3a3a44]"
                     >
                         ‹
                     </button>
@@ -1580,7 +1580,7 @@ export default function BroadcastSchedulePage() {
                             setBaseDate(today)
                             setPendingScrollDate(toDateString(today))
                         }}
-                        className="cursor-pointer border-r border-gray-200 px-3 py-2 text-xs dark:border-[#3a3a44]"
+                        className="cursor-pointer border-r border-gray-300 px-3 py-2 text-xs dark:border-[#3a3a44]"
                     >
                         오늘
                     </button>
@@ -1630,7 +1630,7 @@ export default function BroadcastSchedulePage() {
                         </section>
                     ))}
                     {totalCount === 0 && (
-                        <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center text-sm text-gray-400 dark:border-[#3a3a44] dark:text-[#848494]">
+                        <div className="rounded-2xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-[#3a3a44] dark:text-[#848494]">
                             해당 기간 방송이 없습니다.
                         </div>
                     )}

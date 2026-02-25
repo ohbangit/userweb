@@ -89,7 +89,7 @@ function InlineEditForm({
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className="h-8 flex-1 rounded-md border border-gray-200 bg-gray-50 px-2.5 font-mono text-xs text-gray-900 outline-none transition focus:border-gray-400 focus:bg-white dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-[#848494] dark:focus:bg-[#2e2e38]"
+                    className="h-8 flex-1 rounded-md border border-gray-300 bg-gray-50 px-2.5 font-mono text-xs text-gray-900 outline-none transition focus:border-gray-400 focus:bg-white dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-[#848494] dark:focus:bg-[#2e2e38]"
                 />
                 <button
                     type="submit"
@@ -101,7 +101,7 @@ function InlineEditForm({
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="h-8 rounded-md border border-gray-200 px-3 text-xs font-medium text-gray-500 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#2e2e38]"
+                    className="h-8 rounded-md border border-gray-300 px-3 text-xs font-medium text-gray-500 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#2e2e38]"
                 >
                     취소
                 </button>
@@ -163,8 +163,8 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                 if (e.target === e.currentTarget) onClose()
             }}
         >
-            <div className="w-full max-w-md overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl dark:border-[#3a3a44] dark:bg-[#1a1a23]">
-                <div className="flex items-center gap-3.5 border-b border-gray-100 px-5 py-4 dark:border-[#3a3a44]">
+            <div className="w-full max-w-md overflow-hidden rounded-xl border border-gray-300 bg-white shadow-2xl dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                <div className="flex items-center gap-3.5 border-b border-gray-200 px-5 py-4 dark:border-[#3a3a44]">
                     <StreamerAvatar
                         src={streamer.channelImageUrl}
                         name={streamer.name}
@@ -392,7 +392,7 @@ function RegisterModal({ onClose }: RegisterModalProps) {
                         value={channelId}
                         onChange={(e) => setChannelId(e.target.value)}
                         placeholder="채널 ID"
-                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
+                        className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
                     />
 
                     {register.error && (
@@ -405,7 +405,7 @@ function RegisterModal({ onClose }: RegisterModalProps) {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                            className="flex-1 rounded-xl border border-gray-300 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                         >
                             취소
                         </button>
@@ -439,7 +439,7 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
 
     return (
         <tr
-            className="border-b border-gray-100 last:border-0 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:hover:bg-[#26262e]"
+            className="border-b border-gray-200 last:border-0 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:hover:bg-[#26262e]"
             onClick={() => {
                 if (!confirmDelete) onClick()
             }}
@@ -505,7 +505,7 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                                     setConfirmDelete(false)
                                     remove.reset()
                                 }}
-                                className="rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#2e2e38]"
+                                className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#2e2e38]"
                             >
                                 취소
                             </button>
@@ -522,7 +522,7 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                                     refresh.mutate()
                                 }}
                                 title="채널 정보 갱신"
-                                className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-[#848494] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
+                                className="rounded-md border border-gray-300 p-1.5 text-gray-500 transition hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-[#848494] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
                             >
                                 <svg
                                     className={[
@@ -548,7 +548,7 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                                     setConfirmDelete(true)
                                 }}
                                 title="스트리머 삭제"
-                                className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition hover:border-red-300 hover:bg-red-50 hover:text-red-500 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-red-800 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                                className="rounded-md border border-gray-300 p-1.5 text-gray-500 transition hover:border-red-300 hover:bg-red-50 hover:text-red-500 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-red-800 dark:hover:bg-red-900/20 dark:hover:text-red-400"
                             >
                                 <svg
                                     className="h-4 w-4"
@@ -590,7 +590,7 @@ function StreamerTable({
 }: StreamerTableProps) {
     if (streamers.length === 0) {
         return (
-            <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-gray-200 dark:border-[#3a3a44]">
+            <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-gray-300 dark:border-[#3a3a44]">
                 <p className="text-sm text-gray-400 dark:text-[#848494]">
                     {emptyMessage}
                 </p>
@@ -599,10 +599,10 @@ function StreamerTable({
     }
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+        <div className="overflow-hidden rounded-2xl border border-gray-300 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
             <table className="w-full">
                 <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
+                    <tr className="border-b border-gray-300 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[#848494]">
                             스트리머
                         </th>
@@ -683,7 +683,7 @@ export default function StreamersPage() {
             </div>
 
             <div className="mb-4 flex items-center gap-3">
-                <div className="flex rounded-xl border border-gray-200 bg-white p-1 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                <div className="flex rounded-xl border border-gray-300 bg-white p-1 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
                     {(['all', 'missing'] as const).map((t) => (
                         <button
                             key={t}
@@ -709,7 +709,7 @@ export default function StreamersPage() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="이름 검색"
-                        className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
+                        className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
                     />
                 )}
 
@@ -724,7 +724,7 @@ export default function StreamersPage() {
                                     | 'follower_desc',
                             )
                         }
-                        className="appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2 pr-9 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
+                        className="appearance-none rounded-xl border border-gray-300 bg-white px-4 py-2 pr-9 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
                     >
                         <option value="name_asc">이름순</option>
                         <option value="name_desc">이름 역순</option>
@@ -779,7 +779,7 @@ export default function StreamersPage() {
                                 setPage((prev) => Math.max(1, prev - 1))
                             }
                             disabled={page <= 1}
-                            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
+                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
                         >
                             이전
                         </button>
@@ -791,7 +791,7 @@ export default function StreamersPage() {
                                 )
                             }
                             disabled={page >= totalPages}
-                            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
+                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
                         >
                             다음
                         </button>

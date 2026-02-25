@@ -89,12 +89,12 @@ function DeleteConfirmModal({
                         해제됩니다.
                     </p>
                 </div>
-                <div className="flex gap-2 border-t border-gray-100 px-6 py-4 dark:border-[#3a3a44]">
+                <div className="flex gap-2 border-t border-gray-200 px-6 py-4 dark:border-[#3a3a44]">
                     <button
                         type="button"
                         onClick={onCancel}
                         disabled={isPending}
-                        className="cursor-pointer flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                        className="cursor-pointer flex-1 rounded-xl border border-gray-300 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                     >
                         취소
                     </button>
@@ -158,7 +158,7 @@ function AddCategoryForm({ onSuccess }: AddCategoryFormProps) {
             onSubmit={(e) => {
                 void handleSubmit(e)
             }}
-            className="space-y-3 rounded-xl border border-gray-100 p-4 dark:border-[#3a3a44]"
+            className="space-y-3 rounded-xl border border-gray-200 p-4 dark:border-[#3a3a44]"
         >
             <p className="text-xs font-semibold text-gray-500 dark:text-[#848494]">
                 새 카테고리 추가
@@ -173,7 +173,7 @@ function AddCategoryForm({ onSuccess }: AddCategoryFormProps) {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="예: 발로란트, 리그 오브 레전드"
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
+                        className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
                     />
                 </div>
                 <div className="space-y-1">
@@ -185,7 +185,7 @@ function AddCategoryForm({ onSuccess }: AddCategoryFormProps) {
                         value={thumbnailUrl}
                         onChange={(e) => setThumbnailUrl(e.target.value)}
                         placeholder="https://..."
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
+                        className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
                     />
                 </div>
             </div>
@@ -269,7 +269,7 @@ function EditCategoryModal({
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="예: 발로란트, 리그 오브 레전드"
-                                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
+                                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
                                 />
                             </div>
                             <div className="space-y-1">
@@ -283,17 +283,17 @@ function EditCategoryModal({
                                         setThumbnailUrl(e.target.value)
                                     }
                                     placeholder="https://..."
-                                    className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
+                                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
                                 />
                             </div>
                         </div>
                     </div>
-                    <div className="flex gap-2 border-t border-gray-100 px-6 py-4 dark:border-[#3a3a44]">
+                    <div className="flex gap-2 border-t border-gray-200 px-6 py-4 dark:border-[#3a3a44]">
                         <button
                             type="button"
                             onClick={onCancel}
                             disabled={isPending}
-                            className="cursor-pointer flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                            className="cursor-pointer flex-1 rounded-xl border border-gray-300 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                         >
                             취소
                         </button>
@@ -446,7 +446,7 @@ export default function CategoryManagePage() {
             </div>
 
             <div className="space-y-4">
-                <div className="rounded-xl border border-gray-100 p-4 dark:border-[#3a3a44]">
+                <div className="rounded-xl border border-gray-200 p-4 dark:border-[#3a3a44]">
                     <div className="flex items-center justify-between gap-3">
                         <div>
                             <p className="text-xs font-semibold text-gray-500 dark:text-[#848494]">
@@ -495,17 +495,17 @@ export default function CategoryManagePage() {
                                         onClick={() =>
                                             setSelectedCrawledIds([])
                                         }
-                                        className="cursor-pointer rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                                        className="cursor-pointer rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                                     >
                                         선택 해제
                                     </button>
                                 )}
                             </div>
 
-                            <div className="mt-3 overflow-hidden rounded-xl border border-gray-100 dark:border-[#3a3a44]">
+                            <div className="mt-3 overflow-hidden rounded-xl border border-gray-200 dark:border-[#3a3a44]">
                                 <table className="w-full">
                                     <thead>
-                                        <tr className="border-b border-gray-100 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
+                                        <tr className="border-b border-gray-200 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
                                             <th className="w-10 px-3 py-2">
                                                 <input
                                                     type="checkbox"
@@ -541,7 +541,7 @@ export default function CategoryManagePage() {
                                         {crawledCategories.map((category) => (
                                             <tr
                                                 key={category.categoryId}
-                                                className="border-b border-gray-100 last:border-0 dark:border-[#3a3a44]"
+                                                className="border-b border-gray-200 last:border-0 dark:border-[#3a3a44]"
                                             >
                                                 <td className="px-3 py-2.5">
                                                     <input
@@ -592,8 +592,8 @@ export default function CategoryManagePage() {
 
                 <AddCategoryForm onSuccess={() => setSearchQuery('')} />
 
-                <div className="rounded-xl border border-gray-100 dark:border-[#3a3a44]">
-                    <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-3 dark:border-[#3a3a44]">
+                <div className="rounded-xl border border-gray-200 dark:border-[#3a3a44]">
+                    <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 dark:border-[#3a3a44]">
                         <div className="flex items-center gap-2">
                             <p className="text-xs font-semibold text-gray-500 dark:text-[#848494]">
                                 카테고리 목록
@@ -609,7 +609,7 @@ export default function CategoryManagePage() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="검색"
-                            className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
+                            className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
                         />
                     </div>
 

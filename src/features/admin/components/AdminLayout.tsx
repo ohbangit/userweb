@@ -49,8 +49,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     return (
         <AdminToastProvider>
             <div className="flex min-h-screen bg-gray-50 dark:bg-[#0e0e10]">
-                <aside className="flex w-56 flex-col border-r border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
-                    <div className="flex h-14 items-center justify-between border-b border-gray-200 px-5 dark:border-[#3a3a44]">
+                <aside className="flex w-56 flex-col border-r border-gray-300 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                    <div className="flex h-14 items-center justify-between border-b border-gray-300 px-5 dark:border-[#3a3a44]">
                         <span className="text-sm font-bold text-gray-900 dark:text-[#efeff1]">
                             어드민
                         </span>
@@ -102,7 +102,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                 className={[
                                     'space-y-1',
                                     sectionIndex > 0
-                                        ? 'mt-3 border-t border-gray-200 pt-3 dark:border-[#3a3a44]'
+                                        ? 'mt-3 border-t border-gray-300 pt-3 dark:border-[#3a3a44]'
                                         : '',
                                 ].join(' ')}
                             >
@@ -126,7 +126,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         ))}
                     </nav>
 
-                    <div className="border-t border-gray-200 px-3 py-3 dark:border-[#3a3a44]">
+                    <div className="border-t border-gray-300 px-3 py-3 dark:border-[#3a3a44]">
                         <button
                             onClick={handleLogout}
                             className="cursor-pointer w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"

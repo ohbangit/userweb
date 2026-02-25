@@ -36,7 +36,7 @@ export function WeeklySchedule({
         : []
 
     return (
-        <div className="flex gap-px overflow-x-auto rounded-xl border border-border/40 bg-border/20 scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-7 md:snap-none md:overflow-visible">
+        <div className="flex gap-px overflow-x-auto overflow-y-hidden rounded-xl border border-border/40 bg-border/20 scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-7 md:snap-none">
             {weekDays.map((day) => {
                 const dayBroadcasts = getBroadcastsForDay(day)
                 const today = isToday(day)

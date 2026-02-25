@@ -68,7 +68,7 @@ function RegisterParticipantModal({
             }}
         >
             <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-[#1a1a23]">
-                <div className="border-b border-gray-100 px-6 py-4 dark:border-[#3a3a44]">
+                <div className="border-b border-gray-200 px-6 py-4 dark:border-[#3a3a44]">
                     <h2 className="text-base font-bold text-gray-900 dark:text-[#efeff1]">
                         스트리머 등록
                     </h2>
@@ -78,7 +78,7 @@ function RegisterParticipantModal({
                 </div>
 
                 <div className="px-6 py-4">
-                    <div className="flex items-center gap-3 rounded-xl border border-gray-100 p-4 dark:border-[#3a3a44]">
+                    <div className="flex items-center gap-3 rounded-xl border border-gray-200 p-4 dark:border-[#3a3a44]">
                         {participant.channelImageUrl !== null ? (
                             <img
                                 src={participant.channelImageUrl}
@@ -124,11 +124,11 @@ function RegisterParticipantModal({
                         관리 페이지에서 직접 등록해주세요.
                     </p>
                 )}
-                <div className="flex gap-2 border-t border-gray-100 px-6 py-4 dark:border-[#3a3a44]">
+                <div className="flex gap-2 border-t border-gray-200 px-6 py-4 dark:border-[#3a3a44]">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="cursor-pointer flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                        className="cursor-pointer flex-1 rounded-xl border border-gray-300 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                     >
                         닫기
                     </button>
@@ -213,7 +213,7 @@ function BroadcastRow({
     return (
         <tr
             className={[
-                'border-b border-gray-100 last:border-0 transition dark:border-[#3a3a44]',
+                'border-b border-gray-200 last:border-0 transition dark:border-[#3a3a44]',
                 checked
                     ? 'bg-blue-50/50 dark:bg-blue-900/10'
                     : 'hover:bg-gray-50 dark:hover:bg-[#26262e]',
@@ -417,7 +417,7 @@ export default function BroadcastCrawlPage() {
                 </button>
             </div>
 
-            <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+            <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
                 <span className="text-xs font-medium text-gray-500 dark:text-[#adadb8]">
                     월
                 </span>
@@ -425,7 +425,7 @@ export default function BroadcastCrawlPage() {
                     type="month"
                     value={targetMonth}
                     onChange={(e) => setTargetMonth(e.target.value)}
-                    className="rounded-lg border border-gray-200 px-2 py-1 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                    className="rounded-lg border border-gray-300 px-2 py-1 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                 />
             </div>
 
@@ -481,17 +481,17 @@ export default function BroadcastCrawlPage() {
                     <button
                         type="button"
                         onClick={() => setSelectedIds([])}
-                        className="cursor-pointer rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                        className="cursor-pointer rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                     >
                         선택 해제
                     </button>
                 )}
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+            <div className="overflow-hidden rounded-2xl border border-gray-300 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
                 <table className="w-full">
                     <thead>
-                        <tr className="border-b border-gray-200 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
+                        <tr className="border-b border-gray-300 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
                             <th className="w-12 px-4 py-3">
                                 <input
                                     type="checkbox"

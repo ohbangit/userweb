@@ -40,7 +40,7 @@ export function MonthlySchedule({
     }
 
     return (
-        <div className="overflow-x-auto rounded-xl border border-border/40 scrollbar-hide md:overflow-visible">
+        <div className="overflow-x-auto overflow-y-hidden rounded-xl border border-border/40 scrollbar-hide">
             <div className="min-w-[640px] md:min-w-0">
                 <div className="grid grid-cols-7 border-b border-border/30 bg-bg-secondary">
                     {DAY_HEADERS.map((name) => (

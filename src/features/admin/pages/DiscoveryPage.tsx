@@ -276,7 +276,7 @@ export default function DiscoveryPage() {
                                 void handleLoadMore()
                             }}
                             disabled={cursor === null || runDiscovery.isPending}
-                            className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
+                            className="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
                         >
                             추가로 가져오기
                         </button>
@@ -306,16 +306,16 @@ export default function DiscoveryPage() {
                             selectedCandidates.length === 0 ||
                             createExclusions.isPending
                         }
-                        className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
+                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#efeff1] dark:hover:bg-[#26262e]"
                     >
                         선택 예외 처리
                     </button>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                <div className="overflow-hidden rounded-2xl border border-gray-300 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-gray-200 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
+                            <tr className="border-b border-gray-300 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
                                 <th className="w-12 px-4 py-3">
                                     <input
                                         type="checkbox"
@@ -361,7 +361,7 @@ export default function DiscoveryPage() {
                                 return (
                                     <tr
                                         key={candidate.channelId}
-                                        className="border-b border-gray-100 last:border-0 dark:border-[#3a3a44]"
+                                        className="border-b border-gray-200 last:border-0 dark:border-[#3a3a44]"
                                         onClick={() =>
                                             toggleSelected(candidate.channelId)
                                         }
@@ -442,7 +442,7 @@ export default function DiscoveryPage() {
                             setExclusionChannelId(event.target.value)
                         }
                         placeholder="channelId"
-                        className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1]"
+                        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1]"
                         required
                     />
                     <input
@@ -451,7 +451,7 @@ export default function DiscoveryPage() {
                             setExclusionName(event.target.value)
                         }
                         placeholder="채널명"
-                        className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1]"
+                        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1]"
                         required
                     />
                     <input
@@ -460,7 +460,7 @@ export default function DiscoveryPage() {
                             setExclusionReason(event.target.value)
                         }
                         placeholder="사유 (선택)"
-                        className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1]"
+                        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1]"
                     />
                     <button
                         type="submit"
@@ -471,10 +471,10 @@ export default function DiscoveryPage() {
                     </button>
                 </form>
 
-                <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                <div className="overflow-hidden rounded-2xl border border-gray-300 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-gray-200 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
+                            <tr className="border-b border-gray-300 bg-gray-50 dark:border-[#3a3a44] dark:bg-[#26262e]">
                                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[#848494]">
                                     채널
                                 </th>
@@ -499,7 +499,7 @@ export default function DiscoveryPage() {
                             {exclusions.map((item) => (
                                 <tr
                                     key={item.id}
-                                    className="border-b border-gray-100 last:border-0 dark:border-[#3a3a44]"
+                                    className="border-b border-gray-200 last:border-0 dark:border-[#3a3a44]"
                                 >
                                     <td className="px-4 py-3">
                                         <p className="text-sm font-medium text-gray-900 dark:text-[#efeff1]">
@@ -521,7 +521,7 @@ export default function DiscoveryPage() {
                                                 )
                                             }}
                                             disabled={deleteExclusion.isPending}
-                                            className="rounded-md border border-gray-200 px-2.5 py-1 text-xs text-gray-600 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                                            className="rounded-md border border-gray-300 px-2.5 py-1 text-xs text-gray-600 transition hover:bg-gray-50 disabled:opacity-40 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
                                         >
                                             삭제
                                         </button>
