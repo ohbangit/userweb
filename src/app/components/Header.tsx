@@ -1,6 +1,6 @@
 import { Sun, Moon } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
-import logoSrc from '../../assets/logo.png'
+import logoDarkSrc from '../../assets/logo_dark.png'
 
 export function Header() {
     const { theme, toggleTheme } = useTheme()
@@ -9,10 +9,9 @@ export function Header() {
         <header className="sticky top-0 z-50 border-b border-border/30 bg-bg/80 backdrop-blur-xl">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
                 <div className="flex items-center">
-                    <img src={logoSrc} alt="오뱅잇" className="h-7 w-auto" />
-                    <span className="ml-3 text-xs text-text-muted">
-                        스트리밍 스케줄
-                    </span>
+                    <img src={logoDarkSrc} alt="오뱅잇" className="h-7 w-auto" />
+                    {/*<span className="ml-3 text-xs text-text-muted">*/}
+                    {/*</span>*/}
                 </div>
                 <button
                     onClick={toggleTheme}
