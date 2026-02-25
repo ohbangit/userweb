@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ko">
     <head>
+        <!-- 테마 초기화: 로드 전 flash 방지 -->
         <script>
             ;(function () {
                 var t = localStorage.getItem('ohbangit-theme')
@@ -14,7 +15,12 @@
                 }
             })()
         </script>
+
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <!-- 파비콘 -->
         <link
             rel="apple-touch-icon"
             sizes="180x180"
@@ -39,25 +45,45 @@
             href="/src/assets/favicon.ico/favicon-16x16.png"
         />
         <link rel="manifest" href="/src/assets/favicon.ico/manifest.json" />
-        <meta name="msapplication-TileColor" content="#ffffff" />
+
+        <!-- 테마 컬러 (라이트/다크) -->
+        <meta
+            name="theme-color"
+            media="(prefers-color-scheme: light)"
+            content="#ffffff"
+        />
+        <meta
+            name="theme-color"
+            media="(prefers-color-scheme: dark)"
+            content="#0e0e10"
+        />
+        <meta name="msapplication-TileColor" content="#00dc82" />
         <meta
             name="msapplication-TileImage"
             content="/src/assets/favicon.ico/ms-icon-144x144.png"
         />
-        <meta name="theme-color" content="#ffffff" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>오뱅잇 - 스트리밍 스케줄</title>
+
+        <!-- 기본 SEO (SPA JS 실행 전 크롤러 폴백) -->
+        <title>오뱅잇 - 치지직 스트리밍 스케줄</title>
         <meta
             name="description"
             content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."
         />
+        <meta
+            name="keywords"
+            content="치지직,치지직 스케줄,치지직 방송일정,스트리밍 일정,오뱅잇,방송 스케줄"
+        />
         <meta name="robots" content="index, follow" />
+        <meta name="application-name" content="오뱅잇" />
+        <meta name="author" content="오뱅잇" />
+        <meta name="format-detection" content="telephone=no" />
         <link rel="canonical" href="https://ohbang-it.kr/" />
 
+        <!-- Open Graph (정적 폴백) -->
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="오뱅잇" />
         <meta property="og:locale" content="ko_KR" />
-        <meta property="og:title" content="오뱅잇 - 스트리밍 스케줄" />
+        <meta property="og:title" content="오뱅잇 - 치지직 스트리밍 스케줄" />
         <meta
             property="og:description"
             content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."
@@ -67,9 +93,16 @@
             property="og:image"
             content="https://ohbang-it.kr/og-default.svg"
         />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta
+            property="og:image:alt"
+            content="오뱅잇 - 치지직 스트리밍 스케줄"
+        />
 
+        <!-- Twitter Card (정적 폴백) -->
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="오뱅잇 - 스트리밍 스케줄" />
+        <meta name="twitter:title" content="오뱅잇 - 치지직 스트리밍 스케줄" />
         <meta
             name="twitter:description"
             content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."

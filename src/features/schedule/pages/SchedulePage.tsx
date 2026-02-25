@@ -12,6 +12,7 @@ import {
     ViewToggle,
     NavButton,
     PeriodDisplay,
+    ScheduleSeoHead,
 } from '../components'
 
 export default function SchedulePage() {
@@ -45,7 +46,13 @@ export default function SchedulePage() {
     }
 
     return (
-        <div className="space-y-4 sm:space-y-6">
+        <>
+            <ScheduleSeoHead
+                broadcasts={broadcasts}
+                currentDate={currentDate}
+                viewMode={viewMode}
+            />
+            <div className="space-y-4 sm:space-y-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-h-12 items-center gap-2 sm:gap-3">
                     <NavButton direction="prev" onClick={handlePrev} />
@@ -107,6 +114,7 @@ export default function SchedulePage() {
                     }}
                 />
             )}
-        </div>
+            </div>
+        </>
     )
 }
