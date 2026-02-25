@@ -856,10 +856,20 @@ export default function TournamentManagePage() {
         useAdminTournaments()
     const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
     const [showCreateModal, setShowCreateModal] = useState(false)
+    const [showMetaEditor, setShowMetaEditor] = useState(false)
+    const [isRosterSectionCollapsed, setIsRosterSectionCollapsed] =
+        useState(false)
+    const [metaForm, setMetaForm] = useState({
+        name: '',
+        startedAt: '',
+        endedAt: '',
+        bannerUrl: '',
+    })
     const [draggingTeamId, setDraggingTeamId] = useState<number | null>(null)
     const [hoveredTeamId, setHoveredTeamId] = useState<number | null>(null)
 
     const tournaments = tournamentsData?.tournaments ?? []
+    const selectedTournament = tournaments.find((t) => t.slug === selectedSlug)
 
     // 대회 목록이 로드되면 첫 번째 대회 자동 선택
     useEffect(() => {
@@ -868,11 +878,32 @@ export default function TournamentManagePage() {
         }
     }, [selectedSlug, tournaments])
 
+    useEffect(() => {
+        if (selectedTournament === undefined) {
+            setMetaForm({
+                name: '',
+                startedAt: '',
+                endedAt: '',
+                bannerUrl: '',
+            })
+            return
+        }
+        setMetaForm({
+            name: selectedTournament.name,
+            startedAt: selectedTournament.startedAt?.slice(0, 10) ?? '',
+            endedAt: selectedTournament.endedAt?.slice(0, 10) ?? '',
+            bannerUrl: selectedTournament.bannerUrl ?? '',
+        })
+    }, [selectedTournament])
+
+    useEffect(() => {
+        setShowMetaEditor(false)
+    }, [selectedSlug])
+
     const slug = selectedSlug ?? ''
     const { data, isLoading, isError, error } = useTournamentTeams(slug)
     const reorderTeams = useReorderTournamentTeams(slug)
 
-    const selectedTournament = tournaments.find((t) => t.slug === selectedSlug)
     const updateTournament = useUpdateTournament(selectedSlug ?? '')
     const deleteTournament = useDeleteTournament()
 
@@ -919,6 +950,39 @@ export default function TournamentManagePage() {
         }
     }
 
+    async function handleUpdateTournamentMeta(e: React.FormEvent) {
+        e.preventDefault()
+        if (selectedTournament === undefined) return
+        if (metaForm.name.trim().length === 0) {
+            addToast({ message: '대회명을 입력해주세요.', variant: 'error' })
+            return
+        }
+        try {
+            await updateTournament.mutateAsync({
+                name: metaForm.name.trim(),
+                startedAt:
+                    metaForm.startedAt.trim().length > 0
+                        ? metaForm.startedAt
+                        : undefined,
+                endedAt:
+                    metaForm.endedAt.trim().length > 0
+                        ? metaForm.endedAt
+                        : undefined,
+                bannerUrl:
+                    metaForm.bannerUrl.trim().length > 0
+                        ? metaForm.bannerUrl.trim()
+                        : undefined,
+            })
+            addToast({
+                message: '대회 메타가 저장되었습니다.',
+                variant: 'success',
+            })
+            setShowMetaEditor(false)
+        } catch (error) {
+            addToast({ message: getErrorMessage(error), variant: 'error' })
+        }
+    }
+
     const sortedTeams = [...(data?.teams ?? [])].sort((a, b) => {
         if (a.teamOrder === b.teamOrder) return a.id - b.id
         return a.teamOrder - b.teamOrder
@@ -960,8 +1024,13 @@ export default function TournamentManagePage() {
         }
     }
 
+    const schedulePreview =
+        metaForm.startedAt.length > 0 || metaForm.endedAt.length > 0
+            ? `${metaForm.startedAt || '미정'} ~ ${metaForm.endedAt || '미정'}`
+            : '미정 ~ 미정'
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 [&_button:disabled]:cursor-not-allowed [&_button]:cursor-pointer">
             {/* 헤더 */}
             <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-[#efeff1]">
@@ -986,52 +1055,155 @@ export default function TournamentManagePage() {
                 />
             )}
 
-            {/* 선택된 대회 슬러그 */}
             {selectedSlug !== null && (
-                <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs text-gray-400 dark:text-[#adadb8]">
-                        slug:
-                    </span>
-                    <code className="rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-[#2e2e38] dark:text-[#adadb8]">
-                        {selectedSlug}
-                    </code>
-                    <button
-                        type="button"
-                        onClick={handleCopySlug}
-                        className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-[#efeff1]"
-                    >
-                        복사
-                    </button>
-                    <div className="ml-auto flex items-center gap-2">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                void handleToggleActive()
-                            }}
-                            disabled={updateTournament.isPending}
-                            className={[
-                                'rounded-lg px-3 py-1 text-xs font-medium transition disabled:opacity-50',
-                                selectedTournament?.isActive === true
-                                    ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30'
-                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-[#2e2e38] dark:text-[#adadb8] dark:hover:bg-[#3a3a44]',
-                            ].join(' ')}
-                        >
-                            {selectedTournament?.isActive === true
-                                ? '● 활성'
-                                : '○ 비활성'}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                void handleDeleteTournament()
-                            }}
-                            disabled={deleteTournament.isPending}
-                            className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-medium text-gray-400 transition hover:border-red-200 hover:text-red-500 disabled:opacity-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-red-900/60 dark:hover:text-red-400"
-                        >
-                            대회 삭제
-                        </button>
+                <section className="rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                    <div className="border-b border-gray-100 px-4 py-3 dark:border-[#2e2e38]">
+                        <p className="text-sm font-semibold text-gray-700 dark:text-[#efeff1]">
+                            대회 메타
+                        </p>
                     </div>
-                </div>
+                    <div className="space-y-3 p-4">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-xs text-gray-400 dark:text-[#adadb8]">
+                                slug:
+                            </span>
+                            <code className="rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-[#2e2e38] dark:text-[#adadb8]">
+                                {selectedSlug}
+                            </code>
+                            <button
+                                type="button"
+                                onClick={handleCopySlug}
+                                className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-[#efeff1]"
+                            >
+                                복사
+                            </button>
+                            <div className="ml-auto flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowMetaEditor((prev) => !prev)
+                                    }
+                                    className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-medium text-gray-500 transition hover:border-blue-200 hover:text-blue-600 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-blue-700 dark:hover:text-blue-400"
+                                >
+                                    {showMetaEditor ? '메타 닫기' : '메타 편집'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        void handleToggleActive()
+                                    }}
+                                    disabled={updateTournament.isPending}
+                                    className={[
+                                        'rounded-lg px-3 py-1 text-xs font-medium transition disabled:opacity-50',
+                                        selectedTournament?.isActive === true
+                                            ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30'
+                                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-[#2e2e38] dark:text-[#adadb8] dark:hover:bg-[#3a3a44]',
+                                    ].join(' ')}
+                                >
+                                    {selectedTournament?.isActive === true
+                                        ? '● 활성'
+                                        : '○ 비활성'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        void handleDeleteTournament()
+                                    }}
+                                    disabled={deleteTournament.isPending}
+                                    className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-medium text-gray-400 transition hover:border-red-200 hover:text-red-500 disabled:opacity-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-red-900/60 dark:hover:text-red-400"
+                                >
+                                    대회 삭제
+                                </button>
+                            </div>
+                        </div>
+
+                        {selectedTournament !== undefined && showMetaEditor && (
+                            <form
+                                onSubmit={(e) => {
+                                    void handleUpdateTournamentMeta(e)
+                                }}
+                                className="grid gap-3"
+                            >
+                                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#2e2e38] dark:bg-[#20202a]">
+                                    <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">
+                                        일정
+                                    </p>
+                                    <div className="grid gap-3 sm:grid-cols-2">
+                                        <input
+                                            type="date"
+                                            value={metaForm.startedAt}
+                                            onChange={(e) =>
+                                                setMetaForm((prev) => ({
+                                                    ...prev,
+                                                    startedAt: e.target.value,
+                                                }))
+                                            }
+                                            className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                        />
+                                        <input
+                                            type="date"
+                                            value={metaForm.endedAt}
+                                            onChange={(e) =>
+                                                setMetaForm((prev) => ({
+                                                    ...prev,
+                                                    endedAt: e.target.value,
+                                                }))
+                                            }
+                                            className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                        />
+                                    </div>
+                                    <p className="mt-2 text-xs text-gray-400 dark:text-[#adadb8]">
+                                        기간 미리보기: {schedulePreview}
+                                    </p>
+                                </div>
+                                <div className="grid gap-3 sm:grid-cols-2">
+                                    <input
+                                        type="text"
+                                        value={metaForm.name}
+                                        onChange={(e) =>
+                                            setMetaForm((prev) => ({
+                                                ...prev,
+                                                name: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="대회명"
+                                        className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                    />
+                                    <input
+                                        type="url"
+                                        value={metaForm.bannerUrl}
+                                        onChange={(e) =>
+                                            setMetaForm((prev) => ({
+                                                ...prev,
+                                                bannerUrl: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="배너 URL (선택)"
+                                        className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                    />
+                                </div>
+                                <div className="flex justify-end gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowMetaEditor(false)}
+                                        className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-500 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#26262e]"
+                                    >
+                                        취소
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={updateTournament.isPending}
+                                        className="rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-600 disabled:opacity-50"
+                                    >
+                                        {updateTournament.isPending
+                                            ? '저장 중...'
+                                            : '메타 저장'}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                    </div>
+                </section>
             )}
 
             {/* 팀 목록 */}
@@ -1043,67 +1215,97 @@ export default function TournamentManagePage() {
                     </div>
                 )}
 
-            {selectedSlug !== null && isLoading && (
-                <div className="rounded-2xl border border-gray-200 bg-white px-4 py-10 text-center text-sm text-gray-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#adadb8]">
-                    불러오는 중...
-                </div>
-            )}
+            {selectedSlug !== null && (
+                <section className="rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setIsRosterSectionCollapsed((prev) => !prev)
+                        }
+                        aria-expanded={!isRosterSectionCollapsed}
+                        aria-controls="tournament-roster-panel"
+                        className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-3 text-left dark:border-[#2e2e38]"
+                    >
+                        <span>
+                            <p className="text-sm font-semibold text-gray-700 dark:text-[#efeff1]">
+                                선수 목록
+                            </p>
+                            <p className="text-xs text-gray-400 dark:text-[#adadb8]">
+                                팀 카드 드래그로 순서를 변경할 수 있습니다.
+                            </p>
+                        </span>
+                        <span className="text-xs text-gray-500 dark:text-[#adadb8]">
+                            {isRosterSectionCollapsed ? '펼치기' : '접기'}
+                        </span>
+                    </button>
 
-            {selectedSlug !== null && isError && (
-                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-10 text-center text-sm text-red-600 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">
-                    {getErrorMessage(error)}
-                </div>
-            )}
+                    <div
+                        id="tournament-roster-panel"
+                        className={
+                            isRosterSectionCollapsed ? 'hidden' : 'block'
+                        }
+                    >
+                        <div className="p-4">
+                            {isLoading && (
+                                <div className="rounded-2xl border border-gray-200 bg-white px-4 py-10 text-center text-sm text-gray-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#adadb8]">
+                                    불러오는 중...
+                                </div>
+                            )}
 
-            {selectedSlug !== null && !isLoading && !isError && (
-                <>
-                    <p className="text-xs text-gray-400 dark:text-[#adadb8]">
-                        팀 카드를 드래그해서 순서를 변경할 수 있습니다.
-                    </p>
-                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                        {sortedTeams.map((team) => (
-                            <div
-                                key={team.id}
-                                draggable={!reorderTeams.isPending}
-                                onDragStart={() => {
-                                    setDraggingTeamId(team.id)
-                                }}
-                                onDragEnd={() => {
-                                    setDraggingTeamId(null)
-                                    setHoveredTeamId(null)
-                                }}
-                                onDragOver={(e) => {
-                                    e.preventDefault()
-                                }}
-                                onDragEnter={() => {
-                                    setHoveredTeamId(team.id)
-                                }}
-                                onDragLeave={() => {
-                                    if (hoveredTeamId === team.id)
-                                        setHoveredTeamId(null)
-                                }}
-                                onDrop={(e) => {
-                                    e.preventDefault()
-                                    void handleDropTeam(team.id)
-                                }}
-                                className={[
-                                    'rounded-2xl transition',
-                                    draggingTeamId === team.id
-                                        ? 'opacity-60'
-                                        : '',
-                                    hoveredTeamId === team.id &&
-                                    draggingTeamId !== null &&
-                                    draggingTeamId !== team.id
-                                        ? 'ring-2 ring-blue-300 ring-offset-2 ring-offset-white dark:ring-blue-700 dark:ring-offset-[#111118]'
-                                        : '',
-                                ].join(' ')}
-                            >
-                                <TeamCard slug={slug} team={team} />
-                            </div>
-                        ))}
-                        <AddTeamCard slug={slug} />
+                            {isError && (
+                                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-10 text-center text-sm text-red-600 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">
+                                    {getErrorMessage(error)}
+                                </div>
+                            )}
+
+                            {!isLoading && !isError && (
+                                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                                    {sortedTeams.map((team) => (
+                                        <div
+                                            key={team.id}
+                                            draggable={!reorderTeams.isPending}
+                                            onDragStart={() => {
+                                                setDraggingTeamId(team.id)
+                                            }}
+                                            onDragEnd={() => {
+                                                setDraggingTeamId(null)
+                                                setHoveredTeamId(null)
+                                            }}
+                                            onDragOver={(e) => {
+                                                e.preventDefault()
+                                            }}
+                                            onDragEnter={() => {
+                                                setHoveredTeamId(team.id)
+                                            }}
+                                            onDragLeave={() => {
+                                                if (hoveredTeamId === team.id)
+                                                    setHoveredTeamId(null)
+                                            }}
+                                            onDrop={(e) => {
+                                                e.preventDefault()
+                                                void handleDropTeam(team.id)
+                                            }}
+                                            className={[
+                                                'rounded-2xl transition',
+                                                draggingTeamId === team.id
+                                                    ? 'opacity-60'
+                                                    : '',
+                                                hoveredTeamId === team.id &&
+                                                draggingTeamId !== null &&
+                                                draggingTeamId !== team.id
+                                                    ? 'ring-2 ring-blue-300 ring-offset-2 ring-offset-white dark:ring-blue-700 dark:ring-offset-[#111118]'
+                                                    : '',
+                                            ].join(' ')}
+                                        >
+                                            <TeamCard slug={slug} team={team} />
+                                        </div>
+                                    ))}
+                                    <AddTeamCard slug={slug} />
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </>
+                </section>
             )}
 
             {/* 대회 생성 모달 */}
