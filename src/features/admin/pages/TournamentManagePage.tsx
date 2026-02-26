@@ -1063,6 +1063,119 @@ export default function TournamentManagePage() {
         return isVisiblePanelType(config, 'PLAYER_LIST')
     }
 
+    function renderSetupPanel() {
+        return (
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#2e2e38] dark:bg-[#20202a]">
+                <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">
+                    대회 구성요소
+                </p>
+                {isPromotionLoading && (
+                    <p className="text-xs text-gray-400 dark:text-[#adadb8]">
+                        구성요소 불러오는 중...
+                    </p>
+                )}
+                {!isPromotionLoading && promotionData === undefined && (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            void handleCreatePromotion()
+                        }}
+                        disabled={createPromotionConfig.isPending}
+                        className="rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-600 disabled:opacity-50"
+                    >
+                        {createPromotionConfig.isPending
+                            ? '생성 중...'
+                            : '대회 구성 설정 생성'}
+                    </button>
+                )}
+                {promotionData !== undefined && (
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                        {getSortedPanels(promotionData)
+                            .filter((panel) => panel.type !== 'TEAMS')
+                            .map((panel) => (
+                                <div
+                                    key={`picker-${panel.id}`}
+                                    draggable
+                                    onDragStart={() => {
+                                        setDraggingPanelId(panel.id)
+                                    }}
+                                    onDragEnd={() => {
+                                        setDraggingPanelId(null)
+                                        setHoveredPanelId(null)
+                                    }}
+                                    onDragOver={(e) => {
+                                        e.preventDefault()
+                                        setHoveredPanelId(panel.id)
+                                    }}
+                                    onDrop={(e) => {
+                                        e.preventDefault()
+                                        void handleDropPanel(panel.id)
+                                    }}
+                                    className={[
+                                        'w-44 shrink-0 rounded-xl border px-3 py-2 transition',
+                                        'cursor-grab active:cursor-grabbing',
+                                        draggingPanelId === panel.id
+                                            ? 'opacity-50'
+                                            : '',
+                                        hoveredPanelId === panel.id &&
+                                        draggingPanelId !== null &&
+                                        draggingPanelId !== panel.id
+                                            ? 'border-blue-400 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/10'
+                                            : 'border-gray-200 bg-white dark:border-[#2e2e38] dark:bg-[#1a1a23]',
+                                    ].join(' ')}
+                                >
+                                    <div className="mb-2 flex items-center gap-2">
+                                        <span className="text-base">
+                                            {
+                                                PANEL_ICONS[
+                                                    panel.type as PromotionPanelType
+                                                ]
+                                            }
+                                        </span>
+                                        <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-[#efeff1]">
+                                            {
+                                                PANEL_LABELS[
+                                                    panel.type as PromotionPanelType
+                                                ]
+                                            }
+                                        </span>
+                                        <span className="text-[10px] text-gray-300 dark:text-[#3a3a44]">
+                                            ☰
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            void handleTogglePanelVisibility(
+                                                panel.id,
+                                            )
+                                        }}
+                                        className={[
+                                            'flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition',
+                                            panel.enabled && !panel.hidden
+                                                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                                : 'bg-gray-100 text-gray-500 dark:bg-[#2e2e38] dark:text-[#adadb8]',
+                                        ].join(' ')}
+                                    >
+                                        <span>
+                                            {panel.enabled && !panel.hidden
+                                                ? 'ON'
+                                                : 'OFF'}
+                                        </span>
+                                        <span>
+                                            {panel.enabled && !panel.hidden
+                                                ? '노출'
+                                                : '비노출'}
+                                        </span>
+                                    </button>
+                                </div>
+                            ))}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
     async function handleDropPanel(targetPanelId: number) {
         if (draggingPanelId === null || draggingPanelId === targetPanelId)
             return
@@ -1344,137 +1457,7 @@ export default function TournamentManagePage() {
                                         기간 미리보기: {schedulePreview}
                                     </p>
                                 </div>
-                                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#2e2e38] dark:bg-[#20202a]">
-                                    <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">
-                                        구성요소
-                                    </p>
-                                    {isPromotionLoading && (
-                                        <p className="text-xs text-gray-400 dark:text-[#adadb8]">
-                                            구성요소 불러오는 중...
-                                        </p>
-                                    )}
-                                    {!isPromotionLoading &&
-                                        promotionData === undefined && (
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    void handleCreatePromotion()
-                                                }}
-                                                disabled={
-                                                    createPromotionConfig.isPending
-                                                }
-                                                className="rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-600 disabled:opacity-50"
-                                            >
-                                                {createPromotionConfig.isPending
-                                                    ? '생성 중...'
-                                                    : '대회 구성 설정 생성'}
-                                            </button>
-                                        )}
-                                    {promotionData !== undefined && (
-                                        <div className="flex gap-2 overflow-x-auto pb-1">
-                                            {getSortedPanels(promotionData)
-                                                .filter(
-                                                    (panel) =>
-                                                        panel.type !== 'TEAMS',
-                                                )
-                                                .map((panel) => (
-                                                    <div
-                                                        key={`picker-${panel.id}`}
-                                                        draggable
-                                                        onDragStart={() => {
-                                                            setDraggingPanelId(
-                                                                panel.id,
-                                                            )
-                                                        }}
-                                                        onDragEnd={() => {
-                                                            setDraggingPanelId(
-                                                                null,
-                                                            )
-                                                            setHoveredPanelId(
-                                                                null,
-                                                            )
-                                                        }}
-                                                        onDragOver={(e) => {
-                                                            e.preventDefault()
-                                                            setHoveredPanelId(
-                                                                panel.id,
-                                                            )
-                                                        }}
-                                                        onDrop={(e) => {
-                                                            e.preventDefault()
-                                                            void handleDropPanel(
-                                                                panel.id,
-                                                            )
-                                                        }}
-                                                        className={[
-                                                            'w-44 shrink-0 rounded-xl border px-3 py-2 transition',
-                                                            'cursor-grab active:cursor-grabbing',
-                                                            draggingPanelId ===
-                                                            panel.id
-                                                                ? 'opacity-50'
-                                                                : '',
-                                                            hoveredPanelId ===
-                                                                panel.id &&
-                                                            draggingPanelId !==
-                                                                null &&
-                                                            draggingPanelId !==
-                                                                panel.id
-                                                                ? 'border-blue-400 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/10'
-                                                                : 'border-gray-200 bg-white dark:border-[#2e2e38] dark:bg-[#1a1a23]',
-                                                        ].join(' ')}
-                                                    >
-                                                        <div className="mb-2 flex items-center gap-2">
-                                                            <span className="text-base">
-                                                                {
-                                                                    PANEL_ICONS[
-                                                                        panel.type as PromotionPanelType
-                                                                    ]
-                                                                }
-                                                            </span>
-                                                            <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-[#efeff1]">
-                                                                {
-                                                                    PANEL_LABELS[
-                                                                        panel.type as PromotionPanelType
-                                                                    ]
-                                                                }
-                                                            </span>
-                                                            <span className="text-[10px] text-gray-300 dark:text-[#3a3a44]">
-                                                                ☰
-                                                            </span>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                void handleTogglePanelVisibility(
-                                                                    panel.id,
-                                                                )
-                                                            }}
-                                                            className={[
-                                                                'flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition',
-                                                                panel.enabled &&
-                                                                !panel.hidden
-                                                                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                                                                    : 'bg-gray-100 text-gray-500 dark:bg-[#2e2e38] dark:text-[#adadb8]',
-                                                            ].join(' ')}
-                                                        >
-                                                            <span>
-                                                                {panel.enabled &&
-                                                                !panel.hidden
-                                                                    ? 'ON'
-                                                                    : 'OFF'}
-                                                            </span>
-                                                            <span>
-                                                                {panel.enabled &&
-                                                                !panel.hidden
-                                                                    ? '노출'
-                                                                    : '비노출'}
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                        </div>
-                                    )}
-                                </div>
+                                {renderSetupPanel()}
                                 <div className="flex justify-end gap-2">
                                     <button
                                         type="button"
@@ -1500,14 +1483,9 @@ export default function TournamentManagePage() {
             )}
 
             {selectedSlug !== null &&
-                showMetaEditor &&
                 promotionData !== undefined &&
                 getVisiblePanels(promotionData)
-                    .filter(
-                        (panel) =>
-                            panel.type !== 'PLAYER_LIST' &&
-                            panel.type !== 'TEAMS',
-                    )
+                    .filter((panel) => panel.type === 'DRAFT')
                     .map((panel) => (
                         <section
                             key={`promotion-editor-${panel.id}`}
@@ -1625,7 +1603,6 @@ export default function TournamentManagePage() {
                 )}
 
             {selectedSlug !== null &&
-                showMetaEditor &&
                 promotionData === undefined &&
                 !isPromotionLoading && (
                     <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-4 py-3 text-xs text-gray-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#adadb8]">
@@ -1635,17 +1612,6 @@ export default function TournamentManagePage() {
                 )}
 
             {selectedSlug !== null &&
-                showMetaEditor &&
-                promotionData !== undefined &&
-                !shouldShowRosterEditor(promotionData) && (
-                    <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-4 py-3 text-xs text-gray-500 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#adadb8]">
-                        대회 구성요소에서 `선수 목록`을 ON으로 변경하면 아래
-                        선수 목록 섹션이 표시됩니다.
-                    </div>
-                )}
-
-            {selectedSlug !== null &&
-                showMetaEditor &&
                 promotionData !== undefined &&
                 shouldShowRosterEditor(promotionData) && (
                     <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]">
@@ -1665,7 +1631,7 @@ export default function TournamentManagePage() {
                         >
                             <span>
                                 <p className="text-sm font-semibold text-gray-700 dark:text-[#efeff1]">
-                                    선수 목록 (대회 구성 연동)
+                                    선수 목록
                                 </p>
                                 <p className="text-xs text-gray-400 dark:text-[#adadb8]">
                                     팀 카드 드래그로 순서를 변경할 수 있습니다.
@@ -1759,6 +1725,108 @@ export default function TournamentManagePage() {
                         </div>
                     </section>
                 )}
+
+            {selectedSlug !== null &&
+                promotionData !== undefined &&
+                getVisiblePanels(promotionData)
+                    .filter(
+                        (panel) =>
+                            panel.type !== 'DRAFT' &&
+                            panel.type !== 'PLAYER_LIST' &&
+                            panel.type !== 'TEAMS',
+                    )
+                    .map((panel) => (
+                        <section
+                            key={`promotion-editor-${panel.id}`}
+                            className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1a1a23]"
+                        >
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setCollapsedPromotionEditors((prev) => ({
+                                        ...prev,
+                                        [panel.id]: !(prev[panel.id] ?? false),
+                                    }))
+                                }
+                                aria-expanded={
+                                    !(
+                                        collapsedPromotionEditors[panel.id] ??
+                                        false
+                                    )
+                                }
+                                aria-controls={`promotion-editor-panel-${panel.id}`}
+                                className={[
+                                    'flex w-full items-center justify-between px-4 py-3 text-left',
+                                    (collapsedPromotionEditors[panel.id] ??
+                                    false)
+                                        ? ''
+                                        : 'border-b border-gray-100 dark:border-[#2e2e38]',
+                                ].join(' ')}
+                            >
+                                <span>
+                                    <p className="text-sm font-semibold text-gray-700 dark:text-[#efeff1]">
+                                        {
+                                            PANEL_LABELS[
+                                                panel.type as PromotionPanelType
+                                            ]
+                                        }
+                                    </p>
+                                    <p className="text-xs text-gray-400 dark:text-[#adadb8]">
+                                        선수 목록과 같은 레벨에서 편집하는
+                                        섹션입니다.
+                                    </p>
+                                </span>
+                                <span className="text-xs text-gray-500 dark:text-[#adadb8]">
+                                    {(collapsedPromotionEditors[panel.id] ??
+                                    false)
+                                        ? '펼치기'
+                                        : '접기'}
+                                </span>
+                            </button>
+                            <div
+                                id={`promotion-editor-panel-${panel.id}`}
+                                className={
+                                    (collapsedPromotionEditors[panel.id] ??
+                                    false)
+                                        ? 'hidden'
+                                        : 'block'
+                                }
+                            >
+                                <div className="p-4">
+                                    {panel.type === 'SCHEDULE' && (
+                                        <SchedulePanelEditor
+                                            content={panel.content}
+                                            teams={sortedTeams}
+                                            onSave={(c: ScheduleContent) =>
+                                                handleSavePanelContent(
+                                                    panel.id,
+                                                    c,
+                                                )
+                                            }
+                                            isSaving={
+                                                savingPanelId === panel.id
+                                            }
+                                        />
+                                    )}
+                                    {panel.type === 'FINAL_RESULT' && (
+                                        <FinalResultPanelEditor
+                                            content={panel.content}
+                                            teams={sortedTeams}
+                                            onSave={(c: FinalResultContent) =>
+                                                handleSavePanelContent(
+                                                    panel.id,
+                                                    c,
+                                                )
+                                            }
+                                            isSaving={
+                                                savingPanelId === panel.id
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+                    ))}
 
             {/* 대회 생성 모달 */}
             {showCreateModal && (

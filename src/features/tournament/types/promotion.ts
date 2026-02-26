@@ -29,6 +29,7 @@ export interface PublicPromotionConfig {
 // DRAFT 패널 content 타입
 export interface DraftParticipant {
     id: string
+    streamerId: number | null
     name: string
     teamId: number | null
     seed: number | null

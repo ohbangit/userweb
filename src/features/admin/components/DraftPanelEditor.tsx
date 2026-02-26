@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAdminStreamerSearch } from '../hooks'
 import type { DraftContent, DraftParticipant } from '../types'
 
 interface DraftPanelEditorProps {
@@ -8,12 +9,34 @@ interface DraftPanelEditorProps {
 }
 
 function parseDraftContent(raw: Record<string, unknown>): DraftContent {
+    const parsedParticipants = Array.isArray(raw.participants)
+        ? (raw.participants as DraftParticipant[]).map(
+              (participant, index) => ({
+                  id: participant.id,
+                  streamerId:
+                      typeof participant.streamerId === 'number'
+                          ? participant.streamerId
+                          : null,
+                  name: participant.name,
+                  teamId:
+                      typeof participant.teamId === 'number'
+                          ? participant.teamId
+                          : null,
+                  seed:
+                      typeof participant.seed === 'number'
+                          ? participant.seed
+                          : null,
+                  order:
+                      typeof participant.order === 'number'
+                          ? participant.order
+                          : index,
+              }),
+          )
+        : []
     return {
         startsOn: typeof raw.startsOn === 'string' ? raw.startsOn : null,
         meta: typeof raw.meta === 'string' ? raw.meta : '',
-        participants: Array.isArray(raw.participants)
-            ? (raw.participants as DraftParticipant[])
-            : [],
+        participants: parsedParticipants,
     }
 }
 
@@ -28,20 +51,36 @@ export function DraftPanelEditor({
     const [participants, setParticipants] = useState<DraftParticipant[]>(
         parsed.participants,
     )
-    const [newName, setNewName] = useState('')
+    const [searchInput, setSearchInput] = useState('')
+    const [selectedStreamerId, setSelectedStreamerId] = useState<number>()
+    const [selectedStreamerName, setSelectedStreamerName] = useState('')
+    const showSuggestions =
+        searchInput.trim().length > 0 && selectedStreamerId === undefined
+    const { data: suggestions, isFetching } = useAdminStreamerSearch(
+        selectedStreamerId === undefined ? searchInput : '',
+    )
 
     function handleAddParticipant() {
-        const trimmed = newName.trim()
-        if (trimmed.length === 0) return
+        if (selectedStreamerId === undefined) return
+        if (
+            participants.some(
+                (participant) => participant.streamerId === selectedStreamerId,
+            )
+        ) {
+            return
+        }
         const next: DraftParticipant = {
             id: crypto.randomUUID(),
-            name: trimmed,
+            streamerId: selectedStreamerId,
+            name: selectedStreamerName,
             teamId: null,
             seed: null,
             order: participants.length,
         }
         setParticipants((prev) => [...prev, next])
-        setNewName('')
+        setSearchInput('')
+        setSelectedStreamerId(undefined)
+        setSelectedStreamerName('')
     }
 
     function handleRemoveParticipant(id: string) {
@@ -106,28 +145,93 @@ export function DraftPanelEditor({
                 <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">
                     참여자 ({participants.length}명)
                 </p>
-                <div className="mb-2 flex gap-2">
-                    <input
-                        type="text"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault()
-                                handleAddParticipant()
+                <div className="relative mb-2">
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            value={
+                                selectedStreamerId !== undefined
+                                    ? selectedStreamerName
+                                    : searchInput
                             }
-                        }}
-                        placeholder="참여자 이름 입력"
-                        className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#6b6b7a]"
-                    />
-                    <button
-                        type="button"
-                        onClick={handleAddParticipant}
-                        disabled={newName.trim().length === 0}
-                        className="rounded-lg bg-blue-500 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-600 disabled:opacity-40"
-                    >
-                        추가
-                    </button>
+                            onChange={(e) => {
+                                setSearchInput(e.target.value)
+                                setSelectedStreamerId(undefined)
+                                setSelectedStreamerName('')
+                            }}
+                            readOnly={selectedStreamerId !== undefined}
+                            placeholder="관리 스트리머 검색"
+                            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#6b6b7a]"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleAddParticipant}
+                            disabled={selectedStreamerId === undefined}
+                            className="rounded-lg bg-blue-500 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-600 disabled:opacity-40"
+                        >
+                            추가
+                        </button>
+                    </div>
+                    {selectedStreamerId !== undefined && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSelectedStreamerId(undefined)
+                                setSelectedStreamerName('')
+                                setSearchInput('')
+                            }}
+                            className="absolute right-16 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-gray-600"
+                            aria-label="선택 해제"
+                        >
+                            ✕
+                        </button>
+                    )}
+                    {showSuggestions && (
+                        <div className="absolute z-50 mt-1 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
+                            {isFetching && (
+                                <p className="px-3 py-2 text-xs text-gray-500">
+                                    검색 중...
+                                </p>
+                            )}
+                            {!isFetching &&
+                                (suggestions?.length ?? 0) === 0 && (
+                                    <p className="px-3 py-2 text-xs text-gray-500">
+                                        결과 없음
+                                    </p>
+                                )}
+                            {!isFetching &&
+                                suggestions?.map((streamer) => (
+                                    <button
+                                        key={streamer.id}
+                                        type="button"
+                                        onMouseDown={(event) =>
+                                            event.preventDefault()
+                                        }
+                                        onClick={() => {
+                                            setSelectedStreamerId(streamer.id)
+                                            setSelectedStreamerName(
+                                                streamer.name,
+                                            )
+                                            setSearchInput(streamer.name)
+                                        }}
+                                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-gray-800 transition hover:bg-gray-50 dark:text-[#efeff1] dark:hover:bg-[#3a3a44]"
+                                    >
+                                        {streamer.channelImageUrl !== null ? (
+                                            <img
+                                                src={streamer.channelImageUrl}
+                                                alt={streamer.name}
+                                                className="h-5 w-5 rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="h-5 w-5 rounded-full bg-gray-100 dark:bg-[#3a3a44]" />
+                                        )}
+                                        <span className="truncate">
+                                            {streamer.name}
+                                        </span>
+                                    </button>
+                                ))}
+                        </div>
+                    )}
                 </div>
                 {participants.length > 0 ? (
                     <div className="space-y-1.5">
