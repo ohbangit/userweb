@@ -47,3 +47,10 @@ export {
     useUpdateTournamentTeam,
     useUpsertTournamentMember,
 } from './useTournamentAdmin'
+
+export {
+    usePromotionConfig,
+    useCreatePromotionConfig,
+    useUpdatePromotionPanels,
+    useReorderPromotionPanels,
+} from './usePromotionAdmin'

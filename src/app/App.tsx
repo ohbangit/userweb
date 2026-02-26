@@ -5,6 +5,9 @@ import { SeoHead } from './components/SeoHead'
 import SchedulePage from '../features/schedule/pages/SchedulePage'
 
 const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
+const TournamentPromotionPage = lazy(
+    () => import('../features/tournament/pages/TournamentPromotionPage'),
+)
 
 function App() {
     return (
@@ -25,6 +28,16 @@ function App() {
                         <Suspense fallback={null}>
                             <AdminRoutes />
                         </Suspense>
+                    }
+                />
+                <Route
+                    path="/tournament/:slug"
+                    element={
+                        <AppLayout>
+                            <Suspense fallback={null}>
+                                <TournamentPromotionPage />
+                            </Suspense>
+                        </AppLayout>
                     }
                 />
                 <Route path="*" element={<Navigate to="/" replace />} />

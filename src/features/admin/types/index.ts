@@ -58,3 +58,23 @@ export type {
     UpdateTournamentTeamRequest,
     UpsertTournamentMemberRequest,
 } from './tournamentAdmin'
+
+export type {
+    PromotionPanelType,
+    PromotionConfigStatus,
+    PromotionPanel,
+    PromotionConfig,
+    PromotionConfigRaw,
+    DraftParticipant,
+    DraftContent,
+    MatchStatus,
+    ScheduleMatch,
+    ScheduleGroup,
+    ScheduleContent,
+    StandingEntry,
+    FinalResultContent,
+    CreatePromotionConfigRequest,
+    UpdatePromotionPanelItem,
+    UpdatePromotionPanelsRequest,
+    ReorderPromotionPanelsRequest,
+} from './tournamentPromotion'

@@ -21,18 +21,18 @@ type StreamerListResponse = {
     total: number
 }
 
-function tournamentTeamsKey(slug: string) {
-    return ['admin', 'tournaments', slug, 'teams'] as const
+function tournamentTeamsKey(tournamentId: number) {
+    return ['admin', 'tournaments', tournamentId, 'teams'] as const
 }
 
-export function useTournamentTeams(slug: string) {
+export function useTournamentTeams(tournamentId: number | null) {
     return useQuery({
-        queryKey: tournamentTeamsKey(slug),
+        queryKey: ['admin', 'tournaments', tournamentId, 'teams'],
         queryFn: () =>
             adminApiGet<TournamentAdminTeamsResponse>(
-                `/api/admin/tournaments/${slug}/teams`,
+                `/api/admin/tournaments/${tournamentId}/teams`,
             ),
-        enabled: slug.trim().length > 0,
+        enabled: tournamentId !== null,
     })
 }
 
@@ -56,23 +56,23 @@ export function useAdminStreamerSearch(keyword: string) {
     })
 }
 
-export function useCreateTournamentTeam(slug: string) {
+export function useCreateTournamentTeam(tournamentId: number) {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: (body: CreateTournamentTeamRequest) =>
             adminApiPost<{ id: number }>(
-                `/api/admin/tournaments/${slug}/teams`,
+                `/api/admin/tournaments/${tournamentId}/teams`,
                 body,
             ),
         onSuccess: () => {
             void queryClient.invalidateQueries({
-                queryKey: tournamentTeamsKey(slug),
+                queryKey: tournamentTeamsKey(tournamentId),
             })
         },
     })
 }
 
-export function useUpdateTournamentTeam(slug: string, teamId: number) {
+export function useUpdateTournamentTeam(tournamentId: number, teamId: number) {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: (body: UpdateTournamentTeamRequest) =>
@@ -82,20 +82,20 @@ export function useUpdateTournamentTeam(slug: string, teamId: number) {
             ),
         onSuccess: () => {
             void queryClient.invalidateQueries({
-                queryKey: tournamentTeamsKey(slug),
+                queryKey: tournamentTeamsKey(tournamentId),
             })
         },
     })
 }
 
-export function useDeleteTournamentTeam(slug: string) {
+export function useDeleteTournamentTeam(tournamentId: number) {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: (teamId: number) =>
             adminApiDelete(`/api/admin/tournaments/teams/${teamId}`),
         onSuccess: () => {
             void queryClient.invalidateQueries({
-                queryKey: tournamentTeamsKey(slug),
+                queryKey: tournamentTeamsKey(tournamentId),
             })
         },
     })
@@ -106,7 +106,7 @@ type ReorderTournamentTeamInput = {
     readonly teamOrder: number
 }
 
-export function useReorderTournamentTeams(slug: string) {
+export function useReorderTournamentTeams(tournamentId: number) {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (items: readonly ReorderTournamentTeamInput[]) => {
@@ -121,13 +121,16 @@ export function useReorderTournamentTeams(slug: string) {
         },
         onSuccess: () => {
             void queryClient.invalidateQueries({
-                queryKey: tournamentTeamsKey(slug),
+                queryKey: tournamentTeamsKey(tournamentId),
             })
         },
     })
 }
 
-export function useUpsertTournamentMember(slug: string, teamId: number) {
+export function useUpsertTournamentMember(
+    tournamentId: number,
+    teamId: number,
+) {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: (body: UpsertTournamentMemberRequest) =>
@@ -137,13 +140,16 @@ export function useUpsertTournamentMember(slug: string, teamId: number) {
             ),
         onSuccess: () => {
             void queryClient.invalidateQueries({
-                queryKey: tournamentTeamsKey(slug),
+                queryKey: tournamentTeamsKey(tournamentId),
             })
         },
     })
 }
 
-export function useDeleteTournamentMember(slug: string, teamId: number) {
+export function useDeleteTournamentMember(
+    tournamentId: number,
+    teamId: number,
+) {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: ({ memberId }: { memberId: number }) =>
@@ -152,7 +158,7 @@ export function useDeleteTournamentMember(slug: string, teamId: number) {
             ),
         onSuccess: () => {
             void queryClient.invalidateQueries({
-                queryKey: tournamentTeamsKey(slug),
+                queryKey: tournamentTeamsKey(tournamentId),
             })
         },
     })
@@ -181,12 +187,12 @@ export function useCreateTournament() {
     })
 }
 
-export function useUpdateTournament(slug: string) {
+export function useUpdateTournament(tournamentId: number | null) {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: (body: UpdateTournamentRequest) =>
-            adminApiPatch<{ slug: string }>(
-                `/api/admin/tournaments/${slug}`,
+            adminApiPatch<{ id: number }>(
+                `/api/admin/tournaments/${tournamentId}`,
                 body,
             ),
         onSuccess: () => {
@@ -198,8 +204,8 @@ export function useUpdateTournament(slug: string) {
 export function useDeleteTournament() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (targetSlug: string) =>
-            adminApiDelete(`/api/admin/tournaments/${targetSlug}`),
+        mutationFn: (targetTournamentId: number) =>
+            adminApiDelete(`/api/admin/tournaments/${targetTournamentId}`),
         onSuccess: () => {
             void queryClient.invalidateQueries({ queryKey: tournamentsKey() })
         },

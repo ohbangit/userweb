@@ -12,6 +12,7 @@ type TournamentAdminMember = {
 }
 
 type TournamentItem = {
+    id: number
     slug: string
     name: string
     game: string
