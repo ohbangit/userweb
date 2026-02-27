@@ -1,6 +1,102 @@
-# React + TypeScript + Vite
+# 오뱅잇 (OhBangIt) - 치지직 스트리밍 스케줄
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript + Vite application for viewing Chzzk streaming schedules.
+
+## Features
+
+- 📅 Daily, weekly, and monthly streaming schedules
+- 🔍 Detailed stream information
+- 🎨 Light/Dark theme support
+- 📱 Responsive design with Tailwind CSS
+- 📊 Vercel Web Analytics integration
+
+## Tech Stack
+
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS 4
+- **Routing**: React Router
+- **State Management**: TanStack React Query
+- **Analytics**: Vercel Web Analytics
+- **SEO**: React Helmet Async
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (LTS version recommended)
+- Yarn package manager
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   yarn install
+   ```
+
+### Development
+
+Run the development server:
+
+```bash
+yarn dev
+```
+
+The application will be available at `http://localhost:5173`
+
+### Building
+
+Build for production:
+
+```bash
+yarn build
+```
+
+Preview the production build:
+
+```bash
+yarn preview
+```
+
+### Code Quality
+
+Format code:
+
+```bash
+yarn format
+```
+
+Check formatting:
+
+```bash
+yarn format:check
+```
+
+Lint code:
+
+```bash
+yarn lint
+```
+
+## Analytics
+
+This project uses Vercel Web Analytics for tracking visitor data and page views. See [VERCEL_ANALYTICS.md](./VERCEL_ANALYTICS.md) for detailed information about the analytics implementation and how to use it.
+
+## Project Structure
+
+```
+src/
+├── app/              # Application core (App component, layouts)
+├── assets/           # Static assets (images, fonts, etc.)
+├── features/         # Feature-based modules
+├── hooks/            # Custom React hooks
+├── lib/              # Utility functions and libraries
+├── index.css         # Global styles
+└── main.tsx          # Application entry point
+```
+
+## Vite Configuration
 
 Currently, two official plugins are available:
 
