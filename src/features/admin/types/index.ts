@@ -66,6 +66,7 @@ export type {
     PromotionConfig,
     PromotionConfigRaw,
     DraftParticipant,
+    OverwatchRole,
     DraftContent,
     MatchStatus,
     ScheduleMatch,

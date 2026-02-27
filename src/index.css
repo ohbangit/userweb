@@ -1,5 +1,13 @@
 @import 'tailwindcss';
 
+@font-face {
+    font-family: 'Koverwatch';
+    src: url('./assets/fonts/koverwatch.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -20,6 +28,7 @@
     --font-family-sans:
         'Inter', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
         Roboto, sans-serif;
+    --font-koverwatch: 'Koverwatch', sans-serif;
 }
 
 /* Light mode (default) — 치지직 화이트 테마 */

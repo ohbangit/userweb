@@ -4,6 +4,7 @@ export type {
     PublicPromotionPanel,
     PublicPromotionConfig,
     DraftParticipant,
+    OverwatchRole,
     DraftContent,
     MatchStatus,
     ScheduleMatch,
@@ -14,4 +15,6 @@ export type {
     TournamentMember,
     TournamentTeam,
     TournamentTeamsResponse,
+    TournamentDetail,
+    TournamentListResponse,
 } from './promotion'

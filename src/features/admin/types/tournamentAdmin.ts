@@ -21,6 +21,14 @@ type TournamentItem = {
     bannerUrl: string | null
     isActive: boolean
     createdAt: string
+    tags: string[]
+    isChzzkSupport: boolean
+    hostName: string | null
+    hostAvatarUrl: string | null
+    hostChannelUrl: string | null
+    hostIsPartner: boolean
+    hostStreamerId: number | null
+    links: { label: string; url: string }[]
 }
 
 type TournamentListResponse = {
@@ -43,6 +51,14 @@ type UpdateTournamentRequest = {
     endedAt?: string
     bannerUrl?: string
     isActive?: boolean
+    tags?: string[]
+    isChzzkSupport?: boolean
+    hostName?: string | null
+    hostAvatarUrl?: string | null
+    hostChannelUrl?: string | null
+    hostIsPartner?: boolean
+    hostStreamerId?: number | null
+    links?: { label: string; url: string }[]
 }
 
 type TournamentAdminTeam = {

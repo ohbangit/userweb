@@ -33,11 +33,9 @@ function App() {
                 <Route
                     path="/tournament/:slug"
                     element={
-                        <AppLayout>
-                            <Suspense fallback={null}>
-                                <TournamentPromotionPage />
-                            </Suspense>
-                        </AppLayout>
+                        <Suspense fallback={null}>
+                            <TournamentPromotionPage />
+                        </Suspense>
                     }
                 />
                 <Route path="*" element={<Navigate to="/" replace />} />

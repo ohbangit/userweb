@@ -7,7 +7,7 @@ export function useTournamentPromotion(slug: string) {
     return useQuery({
         queryKey: ['tournaments', slug, 'promotion'],
         queryFn: () =>
-            apiGet<PublicPromotionConfig>(`/tournaments/${slug}/promotion`),
+            apiGet<PublicPromotionConfig>(`/api/tournaments/${slug}/promotion`),
         retry: false,
     })
 }
@@ -17,7 +17,7 @@ export function useTournamentTeams(slug: string, enabled = true) {
     return useQuery({
         queryKey: ['tournaments', slug, 'teams'],
         queryFn: () =>
-            apiGet<TournamentTeamsResponse>(`/tournaments/${slug}/teams`),
+            apiGet<TournamentTeamsResponse>(`/api/tournaments/${slug}/teams`),
         enabled,
         retry: false,
     })

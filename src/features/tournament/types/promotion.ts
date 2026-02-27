@@ -27,12 +27,16 @@ export interface PublicPromotionConfig {
 }
 
 // DRAFT 패널 content 타입
+export type OverwatchRole = 'TNK' | 'DPS' | 'SPT'
+
 export interface DraftParticipant {
     id: string
     streamerId: number | null
     name: string
     teamId: number | null
-    seed: number | null
+    position: OverwatchRole | null
+    avatarUrl: string | null
+    isPartner: boolean
     order: number
 }
 
@@ -103,4 +107,26 @@ export interface TournamentTeam {
 
 export interface TournamentTeamsResponse {
     teams: TournamentTeam[]
+}
+
+export interface TournamentDetail {
+    id: number
+    slug: string
+    name: string
+    game: string
+    startedAt: string | null
+    endedAt: string | null
+    bannerUrl: string | null
+    isActive: boolean
+    tags: string[]
+    isChzzkSupport: boolean
+    hostName: string | null
+    hostAvatarUrl: string | null
+    hostChannelUrl: string | null
+    hostIsPartner: boolean
+    links: { label: string; url: string }[]
+}
+
+export interface TournamentListResponse {
+    tournaments: TournamentDetail[]
 }

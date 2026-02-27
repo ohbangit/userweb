@@ -27,12 +27,16 @@ export interface PromotionConfig {
 }
 
 // DRAFT 패널 content 타입
+export type OverwatchRole = 'TNK' | 'DPS' | 'SPT'
+
 export interface DraftParticipant {
     id: string
     streamerId: number | null
     name: string
     teamId: number | null
-    seed: number | null
+    position: OverwatchRole | null
+    avatarUrl: string | null
+    isPartner: boolean
     order: number
 }
 
