@@ -1,5 +1,7 @@
+import { memo, useMemo } from 'react'
 import type { Broadcast, Participant } from '../types/schedule'
 import { formatTime } from '../utils/date'
+import { sortParticipants, getParticipantLabel } from '../utils/participant'
 
 interface BroadcastCardProps {
     broadcast: Broadcast
@@ -18,7 +20,7 @@ function StatusDot({ broadcast }: { broadcast: Broadcast }) {
     )
 }
 
-export function BroadcastCard({
+function BroadcastCardComponent({
     broadcast,
     variant = 'compact',
     onClick,
@@ -27,26 +29,18 @@ export function BroadcastCard({
     const endTime = broadcast.endTime
         ? formatTime(broadcast.endTime)
         : undefined
-    const participants: Participant[] =
-        broadcast.participants && broadcast.participants.length > 0
-            ? broadcast.participants
-            : [{ name: broadcast.streamerName }]
-    const sortedParticipants = [...participants].sort((a, b) => {
-        if (a.isHost && !b.isHost) return -1
-        if (!a.isHost && b.isHost) return 1
-        return a.name.localeCompare(b.name, 'ko')
-    })
-    const hostParticipant = sortedParticipants.find((participant) =>
-        Boolean(participant.isHost),
-    )
-    const participantLabel = hostParticipant
-        ? sortedParticipants.length > 1
-            ? `${hostParticipant.name} 외 ${sortedParticipants.length - 1}명`
-            : hostParticipant.name
-        : sortedParticipants.length > 1
-          ? `${sortedParticipants[0].name} 외 ${sortedParticipants.length - 1}명`
-          : sortedParticipants[0].name
-    const tags = broadcast.tags ?? []
+    const { participantLabel, tags } = useMemo(() => {
+        const p: Participant[] =
+            broadcast.participants && broadcast.participants.length > 0
+                ? broadcast.participants
+                : [{ name: broadcast.streamerName }]
+        const sortedParticipants = sortParticipants(p)
+        return {
+            sortedParticipants,
+            participantLabel: getParticipantLabel(sortedParticipants),
+            tags: broadcast.tags ?? [],
+        }
+    }, [broadcast])
 
     if (variant === 'full') {
         return (
@@ -110,3 +104,5 @@ export function BroadcastCard({
         </Wrapper>
     )
 }
+
+export const BroadcastCard = memo(BroadcastCardComponent)

@@ -1,9 +1,11 @@
-import { useEffect, useCallback } from 'react'
+import { useMemo } from 'react'
 import dayjs from 'dayjs'
 import { X, Calendar, Clock, Gamepad2, Hash, Users, Crown } from 'lucide-react'
 import type { Broadcast, Participant } from '../types/schedule'
 import { useBroadcastDetail } from '../hooks/useBroadcastDetail'
 import { formatTime, getDayName } from '../utils/date'
+import { getInitial, sortParticipants } from '../utils/participant'
+import { useModalKeydown } from '../../../hooks/useModalKeydown'
 import chzzkIcon from '../../../assets/chzzk_icon.png'
 import youtubeIcon from '../../../assets/youtube.png'
 import cafeIcon from '../../../assets/cafe.png'
@@ -13,8 +15,6 @@ interface BroadcastDetailModalProps {
     broadcast: Broadcast | null
     onClose: () => void
 }
-
-const getInitial = (name: string) => name.trim().slice(0, 1)
 
 function StatusIndicator({ broadcast }: { broadcast: Broadcast }) {
     if (broadcast.isCollab) {
@@ -163,23 +163,17 @@ export function BroadcastDetailModal({
 }: BroadcastDetailModalProps) {
     const { data: detailData } = useBroadcastDetail(broadcast?.id ?? null)
     const displayBroadcast: Broadcast | null = detailData ?? broadcast
+    useModalKeydown(displayBroadcast !== null, onClose)
 
-    const handleKeyDown = useCallback(
-        (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose()
-        },
-        [onClose],
-    )
-
-    useEffect(() => {
-        if (!displayBroadcast) return
-        document.addEventListener('keydown', handleKeyDown)
-        document.body.style.overflow = 'hidden'
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown)
-            document.body.style.overflow = ''
-        }
-    }, [displayBroadcast, handleKeyDown])
+    const sortedParticipants = useMemo(() => {
+        if (!displayBroadcast) return []
+        const participants: Participant[] =
+            displayBroadcast.participants &&
+            displayBroadcast.participants.length > 0
+                ? displayBroadcast.participants
+                : [{ name: displayBroadcast.streamerName }]
+        return sortParticipants(participants)
+    }, [displayBroadcast])
 
     if (!displayBroadcast) return null
 
@@ -192,16 +186,6 @@ export function BroadcastDetailModal({
     const dateLabel = `${date.month() + 1}월 ${date.date()}일 (${dayName})`
     const categoryName = displayBroadcast.category?.name ?? undefined
     const tags = displayBroadcast.tags ?? []
-    const participants: Participant[] =
-        displayBroadcast.participants &&
-        displayBroadcast.participants.length > 0
-            ? displayBroadcast.participants
-            : [{ name: displayBroadcast.streamerName }]
-    const sortedParticipants = [...participants].sort((a, b) => {
-        if (a.isHost && !b.isHost) return -1
-        if (!a.isHost && b.isHost) return 1
-        return a.name.localeCompare(b.name, 'ko')
-    })
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">

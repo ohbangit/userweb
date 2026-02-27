@@ -1,11 +1,11 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
+import { useMemo } from 'react'
 import type { Broadcast } from '../types/schedule'
 import {
     getMonthDays,
     getDayName,
     getWeekDays,
-    isSameDay,
     isSameMonth,
     isToday,
 } from '../utils/date'
@@ -24,20 +24,37 @@ export function MonthlySchedule({
     currentDate,
     onSelectDay,
 }: MonthlyScheduleProps) {
-    const monthDays = getMonthDays(currentDate)
+    const broadcastsByDate = useMemo(() => {
+        const map = new Map<string, Broadcast[]>()
+        for (const b of broadcasts) {
+            const key = dayjs(b.startTime).format('YYYY-MM-DD')
+            const arr = map.get(key)
+            if (arr) arr.push(b)
+            else map.set(key, [b])
+        }
 
-    const getBroadcastsForDay = (day: Dayjs) =>
-        broadcasts
-            .filter((b) => isSameDay(dayjs(b.startTime), day))
-            .sort(
+        for (const arr of map.values()) {
+            arr.sort(
                 (a, b) =>
                     dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf(),
             )
+        }
 
-    const rows: Dayjs[][] = []
-    for (let i = 0; i < monthDays.length; i += 7) {
-        rows.push(monthDays.slice(i, i + 7))
-    }
+        return map
+    }, [broadcasts])
+
+    const monthDays = useMemo(() => getMonthDays(currentDate), [currentDate])
+
+    const getBroadcastsForDay = (day: Dayjs) =>
+        broadcastsByDate.get(day.format('YYYY-MM-DD')) ?? []
+
+    const rows = useMemo(() => {
+        const result: Dayjs[][] = []
+        for (let i = 0; i < monthDays.length; i += 7) {
+            result.push(monthDays.slice(i, i + 7))
+        }
+        return result
+    }, [monthDays])
 
     return (
         <div className="overflow-x-auto overflow-y-hidden rounded-xl border border-border/40 scrollbar-hide">

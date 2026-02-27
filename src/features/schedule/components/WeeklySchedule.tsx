@@ -1,8 +1,8 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { Broadcast } from '../types/schedule'
-import { getWeekDays, getDayName, isSameDay, isToday } from '../utils/date'
+import { getWeekDays, getDayName, isToday } from '../utils/date'
 import { BroadcastCard } from './BroadcastCard'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
 import { DayBroadcastListModal } from './DayBroadcastListModal'
@@ -21,19 +21,37 @@ export function WeeklySchedule({
     const [selectedBroadcast, setSelectedBroadcast] =
         useState<Broadcast | null>(null)
     const [expandedDay, setExpandedDay] = useState<Dayjs | null>(null)
-    const weekDays = getWeekDays(currentDate)
+    const broadcastsByDate = useMemo(() => {
+        const map = new Map<string, Broadcast[]>()
+        for (const b of broadcasts) {
+            const key = dayjs(b.startTime).format('YYYY-MM-DD')
+            const arr = map.get(key)
+            if (arr) arr.push(b)
+            else map.set(key, [b])
+        }
 
-    const getBroadcastsForDay = (day: Dayjs) =>
-        broadcasts
-            .filter((b) => isSameDay(dayjs(b.startTime), day))
-            .sort(
+        for (const arr of map.values()) {
+            arr.sort(
                 (a, b) =>
                     dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf(),
             )
+        }
 
-    const expandedDayBroadcasts = expandedDay
-        ? getBroadcastsForDay(expandedDay)
-        : []
+        return map
+    }, [broadcasts])
+
+    const weekDays = useMemo(() => getWeekDays(currentDate), [currentDate])
+
+    const getBroadcastsForDay = (day: Dayjs) =>
+        broadcastsByDate.get(day.format('YYYY-MM-DD')) ?? []
+
+    const expandedDayBroadcasts = useMemo(
+        () =>
+            expandedDay
+                ? (broadcastsByDate.get(expandedDay.format('YYYY-MM-DD')) ?? [])
+                : [],
+        [expandedDay, broadcastsByDate],
+    )
 
     return (
         <div className="flex gap-px overflow-x-auto overflow-y-hidden rounded-xl border border-border/40 bg-border/20 scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-7 md:snap-none">

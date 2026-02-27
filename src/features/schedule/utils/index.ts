@@ -15,3 +15,10 @@ export {
     addMonths,
     isSameMonth,
 } from './date'
+
+export {
+    getInitial,
+    sortParticipants,
+    resolveParticipants,
+    getParticipantLabel,
+} from './participant'

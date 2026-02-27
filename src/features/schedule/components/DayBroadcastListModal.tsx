@@ -1,9 +1,9 @@
-import { useEffect, useCallback } from 'react'
 import type { Dayjs } from 'dayjs'
 import { X } from 'lucide-react'
 import type { Broadcast } from '../types/schedule'
 import { getDayName } from '../utils/date'
 import { BroadcastCard } from './BroadcastCard'
+import { useModalKeydown } from '../../../hooks/useModalKeydown'
 
 interface DayBroadcastListModalProps {
     day: Dayjs | null
@@ -18,22 +18,7 @@ export function DayBroadcastListModal({
     onClose,
     onSelectBroadcast,
 }: DayBroadcastListModalProps) {
-    const handleKeyDown = useCallback(
-        (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose()
-        },
-        [onClose],
-    )
-
-    useEffect(() => {
-        if (!day) return
-        document.addEventListener('keydown', handleKeyDown)
-        document.body.style.overflow = 'hidden'
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown)
-            document.body.style.overflow = ''
-        }
-    }, [day, handleKeyDown])
+    useModalKeydown(day !== null, onClose)
 
     if (!day) return null
 
