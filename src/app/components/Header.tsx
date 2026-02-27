@@ -84,7 +84,7 @@ export function Header() {
 
                             {/* 드롭다운 패널 */}
                             {dropdownOpen && (
-                                <div className="absolute left-0 top-full z-50 mt-1 w-52 overflow-hidden rounded-xl border border-border/40 bg-card shadow-xl">
+                                <div className="absolute left-0 top-full z-50 mt-1 w-auto min-w-55 overflow-hidden rounded-xl border border-border/40 bg-card shadow-xl">
                                     {tournaments.length === 0 ? (
                                         <div className="flex items-center gap-2 px-4 py-3 text-sm text-text-muted">
                                             <Trophy className="h-4 w-4" />
@@ -111,14 +111,9 @@ export function Header() {
                                                         }}
                                                     >
                                                         <Trophy className="h-3.5 w-3.5 shrink-0 text-text-muted" />
-                                                        <span className="truncate">
+                                                        <span>
                                                             {tournament.name}
                                                         </span>
-                                                        {tournament.isActive && (
-                                                            <span className="ml-auto shrink-0 rounded-full bg-red-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-red-400">
-                                                                LIVE
-                                                            </span>
-                                                        )}
                                                     </button>
                                                 </li>
                                             ))}

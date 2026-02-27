@@ -53,7 +53,7 @@ export interface ScheduleMatch {
     id: string
     teamAId: number
     teamBId: number
-    mvpPlayerId: number | null
+    mvpPlayerIds: number[]
     status: MatchStatus
     scoreA: number | null
     scoreB: number | null

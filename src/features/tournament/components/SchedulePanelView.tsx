@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Zap } from 'lucide-react'
 import partnerMark from '../../../assets/mark.png'
 import tnkSrc from '../../../assets/tnk.svg'
 import dpsSrc from '../../../assets/dps.svg'
@@ -95,23 +95,18 @@ function MatchCard({ match, teams }: MatchCardProps) {
 
                     <div className="space-y-1.5">
                         {teamAPlayers.map((player) => {
-                            const isMvp =
-                                match.mvpPlayerId !== null &&
-                                match.mvpPlayerId === player.id
-                            const isDimmed = isCompleted && !teamAWon && !isMvp
+                            const mvpCount = match.mvpPlayerIds.filter(
+                                (id) => id === player.id,
+                            ).length
+                            const isDimmed = isCompleted && !teamAWon && mvpCount === 0
                             return (
                                 <div
                                     key={player.id}
                                     className={[
                                         'relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
-                                        isMvp ? 'ring-1 ring-amber-300/50' : '',
+                                        mvpCount > 0 ? 'ring-1 ring-amber-300/50' : '',
                                     ].join(' ')}
                                 >
-                                    {isMvp && (
-                                        <span className="absolute -right-1 -top-1 rounded bg-amber-400/95 px-2 py-0.5 text-[10px] font-black leading-none text-[#1b1200] shadow-md">
-                                            POTG
-                                        </span>
-                                    )}
                                     <span
                                         className={`flex h-6 w-6 items-center justify-center rounded ${ROLE_TONE[player.slot] ?? 'bg-[#041524] ring-[#1e3a5f]/40'} ring-1 ${isDimmed ? 'opacity-55' : ''}`}
                                     >
@@ -124,6 +119,15 @@ function MatchCard({ match, teams }: MatchCardProps) {
                                     <span
                                         className={`flex min-w-0 items-center justify-end gap-1 truncate text-sm font-semibold text-[#e8f4fd] ${isDimmed ? 'opacity-55' : ''}`}
                                     >
+                                        {mvpCount > 0 &&
+                                            Array.from({ length: mvpCount }).map(
+                                                (_, i) => (
+                                                    <Zap
+                                                        key={i}
+                                                        className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
+                                                    />
+                                                ),
+                                            )}
                                         {player.name}
                                         {player.isPartner && (
                                             <img
@@ -205,23 +209,18 @@ function MatchCard({ match, teams }: MatchCardProps) {
 
                     <div className="space-y-1.5">
                         {teamBPlayers.map((player) => {
-                            const isMvp =
-                                match.mvpPlayerId !== null &&
-                                match.mvpPlayerId === player.id
-                            const isDimmed = isCompleted && !teamBWon && !isMvp
+                            const mvpCount = match.mvpPlayerIds.filter(
+                                (id) => id === player.id,
+                            ).length
+                            const isDimmed = isCompleted && !teamBWon && mvpCount === 0
                             return (
                                 <div
                                     key={player.id}
                                     className={[
                                         'relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
-                                        isMvp ? 'ring-1 ring-amber-300/50' : '',
+                                        mvpCount > 0 ? 'ring-1 ring-amber-300/50' : '',
                                     ].join(' ')}
                                 >
-                                    {isMvp && (
-                                        <span className="absolute -right-1 -top-1 rounded bg-amber-400/95 px-2 py-0.5 text-[10px] font-black leading-none text-[#1b1200] shadow-md">
-                                            POTG
-                                        </span>
-                                    )}
                                     {player.avatarUrl !== null ? (
                                         <img
                                             src={player.avatarUrl}
@@ -244,6 +243,15 @@ function MatchCard({ match, teams }: MatchCardProps) {
                                                 className={`h-3.5 w-3.5 shrink-0 ${isDimmed ? 'opacity-55' : ''}`}
                                             />
                                         )}
+                                        {mvpCount > 0 &&
+                                            Array.from({ length: mvpCount }).map(
+                                                (_, i) => (
+                                                    <Zap
+                                                        key={i}
+                                                        className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
+                                                    />
+                                                ),
+                                            )}
                                     </span>
                                     <span
                                         className={`flex h-6 w-6 items-center justify-center rounded ${ROLE_TONE[player.slot] ?? 'bg-[#041524] ring-[#1e3a5f]/40'} ring-1 ${isDimmed ? 'opacity-55' : ''}`}

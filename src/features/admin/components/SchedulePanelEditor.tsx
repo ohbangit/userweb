@@ -15,10 +15,26 @@ interface SchedulePanelEditorProps {
 }
 
 function parseScheduleContent(raw: Record<string, unknown>): ScheduleContent {
+    const rawGroups = Array.isArray(raw.groups) ? raw.groups : []
     return {
-        groups: Array.isArray(raw.groups)
-            ? (raw.groups as ScheduleGroup[])
-            : [],
+        groups: rawGroups.map((g: unknown) => {
+            const group = g as Record<string, unknown>
+            const rawMatches = Array.isArray(group.matches)
+                ? (group.matches as unknown[])
+                : []
+            return {
+                ...group,
+                matches: rawMatches.map((m: unknown) => {
+                    const match = m as Record<string, unknown>
+                    return {
+                        ...match,
+                        mvpPlayerIds: Array.isArray(match.mvpPlayerIds)
+                            ? (match.mvpPlayerIds as number[])
+                            : [],
+                    } as ScheduleMatch
+                }),
+            } as ScheduleGroup
+        }),
     }
 }
 
@@ -82,7 +98,7 @@ export function SchedulePanelEditor({
                     id: crypto.randomUUID(),
                     teamAId: teams[0]?.id ?? 0,
                     teamBId: teams[1]?.id ?? 0,
-                    mvpPlayerId: null,
+                    mvpPlayerIds: [],
                     status: 'SCHEDULED',
                     scoreA: null,
                     scoreB: null,
@@ -383,57 +399,105 @@ export function SchedulePanelEditor({
                                                             ),
                                                         )}
                                                     </select>
-                                                    <select
-                                                        value={
-                                                            match.mvpPlayerId ??
-                                                            ''
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleUpdateMatch(
-                                                                group.id,
-                                                                match.id,
-                                                                {
-                                                                    mvpPlayerId:
-                                                                        e.target
-                                                                            .value
-                                                                            .length >
-                                                                        0
-                                                                            ? Number(
-                                                                                  e
-                                                                                      .target
-                                                                                      .value,
-                                                                              )
-                                                                            : null,
-                                                                },
-                                                            )
-                                                        }
-                                                        className="rounded-lg border border-gray-300 px-2 py-1 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
-                                                    >
-                                                        <option value="">
-                                                            MVP 미선택
-                                                        </option>
-                                                        {mvpCandidates.map(
-                                                            (player) => (
-                                                                <option
-                                                                    key={
-                                                                        player.id
-                                                                    }
-                                                                    value={
-                                                                        player.id
-                                                                    }
+                                                    {/* 세트별 MVP */}
+                                                    <div className="mt-1 w-full space-y-1 border-t border-gray-100 pt-2 dark:border-[#2e2e38]">
+                                                        <p className="text-[10px] text-gray-400 dark:text-[#6b6b7a]">
+                                                            세트별 MVP
+                                                        </p>
+                                                        {match.mvpPlayerIds.map(
+                                                            (playerId, setIndex) => (
+                                                                <div
+                                                                    key={setIndex}
+                                                                    className="flex items-center gap-1.5"
                                                                 >
-                                                                    {
-                                                                        player.name
-                                                                    }{' '}
-                                                                    (
-                                                                    {
-                                                                        player.teamName
-                                                                    }
-                                                                    )
-                                                                </option>
+                                                                    <span className="w-8 shrink-0 text-[10px] text-gray-400 dark:text-[#6b6b7a]">
+                                                                        {setIndex + 1}세트
+                                                                    </span>
+                                                                    <select
+                                                                        value={playerId}
+                                                                        onChange={(e) => {
+                                                                            const newIds = [
+                                                                                ...match.mvpPlayerIds,
+                                                                            ]
+                                                                            newIds[setIndex] =
+                                                                                Number(
+                                                                                    e.target.value,
+                                                                                )
+                                                                            handleUpdateMatch(
+                                                                                group.id,
+                                                                                match.id,
+                                                                                {
+                                                                                    mvpPlayerIds:
+                                                                                        newIds,
+                                                                                },
+                                                                            )
+                                                                        }}
+                                                                        className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+                                                                    >
+                                                                        {mvpCandidates.map(
+                                                                            (player) => (
+                                                                                <option
+                                                                                    key={player.id}
+                                                                                    value={player.id}
+                                                                                >
+                                                                                    {player.name} ({player.teamName})
+                                                                                </option>
+                                                                            ),
+                                                                        )}
+                                                                    </select>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            handleUpdateMatch(
+                                                                                group.id,
+                                                                                match.id,
+                                                                                {
+                                                                                    mvpPlayerIds:
+                                                                                        match.mvpPlayerIds.filter(
+                                                                                            (_, i) =>
+                                                                                                i !==
+                                                                                                setIndex,
+                                                                                        ),
+                                                                                },
+                                                                            )
+                                                                        }}
+                                                                        className="shrink-0 text-gray-300 transition hover:text-red-400 dark:text-[#3a3a44] dark:hover:text-red-500"
+                                                                    >
+                                                                        ✕
+                                                                    </button>
+                                                                </div>
                                                             ),
                                                         )}
-                                                    </select>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const firstId =
+                                                                    mvpCandidates[0]?.id
+                                                                if (
+                                                                    firstId ===
+                                                                    undefined
+                                                                )
+                                                                    return
+                                                                handleUpdateMatch(
+                                                                    group.id,
+                                                                    match.id,
+                                                                    {
+                                                                        mvpPlayerIds: [
+                                                                            ...match.mvpPlayerIds,
+                                                                            firstId,
+                                                                        ],
+                                                                    },
+                                                                )
+                                                            }}
+                                                            disabled={
+                                                                mvpCandidates.length ===
+                                                                0
+                                                            }
+                                                            className="text-[10px] text-blue-400 transition hover:text-blue-500 disabled:opacity-30"
+                                                        >
+                                                            + 세트 MVP 추가
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         )

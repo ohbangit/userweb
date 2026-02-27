@@ -81,10 +81,21 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
 
     if (panel.type === 'SCHEDULE') {
         const content = panel.content as unknown as ScheduleContent
+        const safeGroups = Array.isArray(content.groups)
+            ? content.groups.map((g) => ({
+                  ...g,
+                  matches: g.matches.map((m) => ({
+                      ...m,
+                      mvpPlayerIds: Array.isArray(m.mvpPlayerIds)
+                          ? m.mvpPlayerIds
+                          : [],
+                  })),
+              }))
+            : []
         return (
             <SchedulePanelView
                 title={panelTitle}
-                content={{ groups: content.groups ?? [] }}
+                content={{ groups: safeGroups }}
                 teams={teams}
             />
         )
