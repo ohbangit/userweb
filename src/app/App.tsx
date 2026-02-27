@@ -4,6 +4,7 @@ import { AppLayout } from './layouts/AppLayout'
 import { SeoHead } from './components/SeoHead'
 import SchedulePage from '../features/schedule/pages/SchedulePage'
 import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 
 const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
 const TournamentPromotionPage = lazy(
@@ -18,6 +19,7 @@ function App() {
                 mode={import.meta.env.PROD ? 'production' : 'development'}
                 debug={import.meta.env.DEV}
             />
+            <SpeedInsights />
             <Routes>
                 <Route
                     path="/"
