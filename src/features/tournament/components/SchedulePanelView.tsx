@@ -316,7 +316,7 @@ export function SchedulePanelView({ title, content, teams }: Props) {
                                         }))
                                     }}
                                     aria-expanded={!isGroupCollapsed}
-                                    className="mb-3 flex w-full items-center justify-between text-left"
+                                    className="mb-3 flex w-full items-center justify-between text-left cursor-pointer"
                                 >
                                     <div className="flex items-baseline gap-2.5">
                                         <h3 className="text-2xl font-black text-[#e8f4fd]">
