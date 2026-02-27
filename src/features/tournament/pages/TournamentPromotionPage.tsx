@@ -313,7 +313,7 @@ export default function TournamentPromotionPage() {
                 />
 
                 <div className="mx-auto max-w-[1280px] px-4 py-8 xl:grid xl:grid-cols-[minmax(0,1fr)_180px] xl:gap-6">
-                    <div className="space-y-4">
+                    <div className="mx-auto max-w-5xl space-y-4 xl:mx-0 xl:max-w-none">
                         {visiblePanels.length === 0 ? (
                             <div className="flex flex-col items-center justify-center gap-3 py-20">
                                 <span className="text-5xl">🔜</span>
