@@ -75,7 +75,7 @@ export function FinalResultPanelView({ title, content, teams }: Props) {
                     최종 결과가 아직 없습니다.
                 </p>
             ) : !collapsed ? (
-                <div className="mt-4 flex items-start gap-6">
+                <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-start">
                     {/* 왼쪽: 순위표 */}
                     <div className="min-w-0 flex-1 overflow-hidden rounded-xl">
                         <div className="grid grid-cols-[3rem_1fr_3.5rem_3.5rem] items-center gap-2 px-4 py-1.5 text-sm font-bold text-[#6aadcc] sm:grid-cols-[3rem_1fr_4.5rem_4.5rem]">
@@ -144,7 +144,7 @@ export function FinalResultPanelView({ title, content, teams }: Props) {
                             ? (mvpPlayer.slot as OverwatchRole)
                             : null
                         return (
-                            <div className="flex w-44 shrink-0 flex-col items-center gap-2">
+                            <div className="flex w-full flex-col items-center gap-2 sm:w-44 sm:shrink-0">
                                 <p className="text-base font-black tracking-[0.35em] text-[#0596e8]">
                                     MVP
                                 </p>

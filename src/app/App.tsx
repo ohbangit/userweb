@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from './layouts/AppLayout'
 import { SeoHead } from './components/SeoHead'
 import SchedulePage from '../features/schedule/pages/SchedulePage'
+import { Analytics } from '@vercel/analytics/react'
 
 const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
 const TournamentPromotionPage = lazy(
@@ -13,6 +14,10 @@ function App() {
     return (
         <>
             <SeoHead />
+            <Analytics
+                mode={import.meta.env.PROD ? 'production' : 'development'}
+                debug={import.meta.env.DEV}
+            />
             <Routes>
                 <Route
                     path="/"
