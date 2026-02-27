@@ -84,6 +84,7 @@ export interface StandingEntry {
 
 export interface FinalResultContent {
     standings: StandingEntry[]
+    mvpPlayerId: number | null
 }
 
 // 팀 조회 응답 타입

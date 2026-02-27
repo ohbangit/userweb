@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { FinalResultContent, StandingEntry } from '../types'
 import type { TournamentAdminTeam } from '../types'
 
@@ -16,6 +16,8 @@ function parseFinalResultContent(
         standings: Array.isArray(raw.standings)
             ? (raw.standings as StandingEntry[])
             : [],
+        mvpPlayerId:
+            typeof raw.mvpPlayerId === 'number' ? raw.mvpPlayerId : null,
     }
 }
 
@@ -43,6 +45,38 @@ export function FinalResultPanelEditor({
     const [standings, setStandings] = useState<StandingEntry[]>(
         buildInitialStandings,
     )
+    const [mvpPlayerId, setMvpPlayerId] = useState<number | null>(
+        parsed.mvpPlayerId,
+    )
+
+    const mvpCandidates = useMemo(() => {
+        const standingTeamIds = new Set<number>(standings.map((s) => s.teamId))
+        return teams
+            .filter((team) => standingTeamIds.has(team.id))
+            .flatMap((team) =>
+                team.members
+                    .filter(
+                        (member) =>
+                            member.slot !== 'HEAD_COACH' &&
+                            member.slot !== 'COACH',
+                    )
+                    .map((member) => ({
+                        id: member.id,
+                        name: member.name,
+                        teamName: team.name,
+                    })),
+            )
+    }, [standings, teams])
+
+    useEffect(() => {
+        if (mvpPlayerId === null) return
+        const hasSelectedPlayer = mvpCandidates.some(
+            (player) => player.id === mvpPlayerId,
+        )
+        if (!hasSelectedPlayer) {
+            setMvpPlayerId(null)
+        }
+    }, [mvpCandidates, mvpPlayerId])
 
     function handleUpdateStanding(
         teamId: number,
@@ -114,11 +148,35 @@ export function FinalResultPanelEditor({
     )
 
     async function handleSave() {
-        await onSave({ standings })
+        await onSave({ standings, mvpPlayerId })
     }
 
     return (
         <div className="mt-3 space-y-4 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-[#2e2e38] dark:bg-[#20202a]">
+            <div className="rounded-lg border border-gray-200 bg-white p-3 dark:border-[#3a3a44] dark:bg-[#26262e]">
+                <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">
+                    최종 결과 MVP
+                </p>
+                <select
+                    value={mvpPlayerId ?? ''}
+                    onChange={(e) => {
+                        setMvpPlayerId(
+                            e.target.value.length > 0
+                                ? Number(e.target.value)
+                                : null,
+                        )
+                    }}
+                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs dark:border-[#3a3a44] dark:bg-[#1f1f27] dark:text-[#efeff1]"
+                >
+                    <option value="">MVP 미선택</option>
+                    {mvpCandidates.map((player) => (
+                        <option key={player.id} value={player.id}>
+                            {player.name} ({player.teamName})
+                        </option>
+                    ))}
+                </select>
+            </div>
+
             {/* 순위표 */}
             {standings.length > 0 ? (
                 <div className="overflow-x-auto">

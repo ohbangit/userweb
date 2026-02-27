@@ -84,6 +84,7 @@ export interface StandingEntry {
 
 export interface FinalResultContent {
     standings: StandingEntry[]
+    mvpPlayerId: number | null
 }
 
 // API 요청 타입

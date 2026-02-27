@@ -95,7 +95,13 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
         return (
             <FinalResultPanelView
                 title={panelTitle}
-                content={{ standings: content.standings ?? [] }}
+                content={{
+                    standings: content.standings ?? [],
+                    mvpPlayerId:
+                        typeof content.mvpPlayerId === 'number'
+                            ? content.mvpPlayerId
+                            : null,
+                }}
                 teams={teams}
             />
         )
@@ -312,8 +318,8 @@ export default function TournamentPromotionPage() {
                     links={links}
                 />
 
-                <div className="mx-auto max-w-[1280px] px-4 py-8 xl:grid xl:grid-cols-[minmax(0,1fr)_180px] xl:gap-6">
-                    <div className="mx-auto max-w-5xl space-y-4 xl:mx-0 xl:max-w-none">
+                <div className="px-4 py-8">
+                    <div className="mx-auto max-w-5xl space-y-4">
                         {visiblePanels.length === 0 ? (
                             <div className="flex flex-col items-center justify-center gap-3 py-20">
                                 <span className="text-5xl">🔜</span>
@@ -341,9 +347,9 @@ export default function TournamentPromotionPage() {
                     {panelNavItems.length > 0 && (
                         <nav
                             aria-label="콘텐츠 목록"
-                            className="hidden xl:block"
+                            className="fixed right-4 top-24 z-10 hidden w-32 min-[1440px]:block"
                         >
-                            <div className="sticky top-24 rounded-xl bg-[#062035]/90 p-3 ring-1 ring-[#1e3a5f] backdrop-blur-sm">
+                            <div className="p-1">
                                 <p className="mb-2 text-[10px] font-black tracking-[0.2em] text-[#0596e8]/80">
                                     CONTENTS
                                 </p>
@@ -352,7 +358,7 @@ export default function TournamentPromotionPage() {
                                         <li key={item.id}>
                                             <a
                                                 href={`#${item.id}`}
-                                                className="block rounded-md px-2 py-1.5 text-sm text-[#6aadcc] transition hover:bg-[#041524] hover:text-[#e8f4fd]"
+                                                className="block rounded-md px-2 py-1.5 text-sm text-[#6aadcc]/60 transition hover:text-[#e8f4fd]"
                                             >
                                                 {item.label}
                                             </a>
