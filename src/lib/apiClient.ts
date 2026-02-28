@@ -150,10 +150,7 @@ export async function adminApiPatch<T>(
     return handleResponse<T>(response)
 }
 
-export async function adminApiPut<T>(
-    path: string,
-    body: unknown,
-): Promise<T> {
+export async function adminApiPut<T>(path: string, body: unknown): Promise<T> {
     const response = await fetch(`${BASE_URL}${path}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...buildAdminHeaders() },

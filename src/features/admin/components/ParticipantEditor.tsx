@@ -30,8 +30,9 @@ export function ParticipantEditor({
     const [searchInput, setSearchInput] = useState('')
     const [selectedStreamerId, setSelectedStreamerId] = useState<number>()
     const [selectedStreamerName, setSelectedStreamerName] = useState('')
-    const [selectedStreamerAvatarUrl, setSelectedStreamerAvatarUrl] =
-        useState<string | null>(null)
+    const [selectedStreamerAvatarUrl, setSelectedStreamerAvatarUrl] = useState<
+        string | null
+    >(null)
     const [selectedStreamerIsPartner, setSelectedStreamerIsPartner] =
         useState(false)
 
@@ -153,28 +154,30 @@ export function ParticipantEditor({
                                         onMouseDown={(e) => e.preventDefault()}
                                         onClick={() => {
                                             setSelectedStreamerId(streamer.id)
-                                            setSelectedStreamerName(streamer.name)
+                                            setSelectedStreamerName(
+                                                streamer.nickname,
+                                            )
                                             setSelectedStreamerAvatarUrl(
                                                 streamer.channelImageUrl,
                                             )
                                             setSelectedStreamerIsPartner(
                                                 streamer.isPartner,
                                             )
-                                            setSearchInput(streamer.name)
+                                            setSearchInput(streamer.nickname)
                                         }}
                                         className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-gray-800 transition hover:bg-gray-50 dark:text-[#efeff1] dark:hover:bg-[#3a3a44]"
                                     >
                                         {streamer.channelImageUrl !== null ? (
                                             <img
                                                 src={streamer.channelImageUrl}
-                                                alt={streamer.name}
+                                                alt={streamer.nickname}
                                                 className="h-5 w-5 rounded-full object-cover"
                                             />
                                         ) : (
                                             <div className="h-5 w-5 rounded-full bg-gray-100 dark:bg-[#3a3a44]" />
                                         )}
                                         <span className="flex-1 truncate">
-                                            {streamer.name}
+                                            {streamer.nickname}
                                         </span>
                                         {streamer.isPartner && (
                                             <span className="text-[10px] text-amber-500">
@@ -232,7 +235,9 @@ export function ParticipantEditor({
                                 </div>
                                 <button
                                     type="button"
-                                    onClick={() => handleRemoveParticipant(p.id)}
+                                    onClick={() =>
+                                        handleRemoveParticipant(p.id)
+                                    }
                                     className="shrink-0 text-gray-300 transition hover:text-red-400 dark:text-[#3a3a44] dark:hover:text-red-500"
                                     aria-label="참여자 삭제"
                                 >

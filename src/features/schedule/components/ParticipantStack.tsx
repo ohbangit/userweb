@@ -15,20 +15,22 @@ function ParticipantStackComponent({ participants }: ParticipantStackProps) {
             <div className="flex -space-x-2">
                 {visible.map((participant, index) => (
                     <div
-                        key={`${participant.name}-${index}`}
+                        key={`${participant.nickname ?? participant.name}-${index}`}
                         className="relative h-6 w-6 overflow-hidden rounded-full border border-border/60 bg-bg-secondary text-[10px] font-semibold text-text"
-                        title={participant.name}
+                        title={participant.nickname ?? participant.name}
                     >
                         {participant.avatarUrl ? (
                             <img
                                 src={participant.avatarUrl}
-                                alt={participant.name}
+                                alt={participant.nickname ?? participant.name}
                                 className="h-full w-full object-cover"
                                 loading="lazy"
                             />
                         ) : (
                             <span className="flex h-full w-full items-center justify-center">
-                                {getInitial(participant.name)}
+                                {getInitial(
+                                    participant.nickname ?? participant.name,
+                                )}
                             </span>
                         )}
                     </div>

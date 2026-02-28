@@ -44,7 +44,7 @@ export function useAdminStreamerSearch(keyword: string) {
             const response = await adminApiGet<StreamerListResponse>(
                 '/api/admin/streamers',
                 {
-                    name: trimmedKeyword,
+                    nickname: trimmedKeyword,
                     page: '1',
                     size: '8',
                     sort: 'name_asc',

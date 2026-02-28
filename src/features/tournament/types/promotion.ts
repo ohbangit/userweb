@@ -93,6 +93,7 @@ export interface TournamentMember {
     slot: string
     streamerId: number | null
     name: string
+    nickname?: string
     channelId: string | null
     isPartner: boolean
     avatarUrl: string | null

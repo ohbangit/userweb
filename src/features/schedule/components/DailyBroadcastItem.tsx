@@ -27,6 +27,7 @@ function DailyBroadcastItemComponent({
     const participants = resolveParticipants(
         broadcast.participants,
         broadcast.streamerName,
+        broadcast.streamerNickname,
         broadcast.streamerProfileUrl,
     )
     const sortedParticipants = sortParticipants(participants)

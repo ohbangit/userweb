@@ -1,6 +1,7 @@
 export interface StreamerItem {
     id: number
     name: string
+    nickname: string
     channelId: string | null
     isPartner: boolean
     channelImageUrl: string | null
@@ -23,4 +24,8 @@ export interface UpdateYoutubeUrlRequest {
 
 export interface UpdateFanCafeUrlRequest {
     fanCafeUrl: string
+}
+
+export interface UpdateNicknameRequest {
+    nickname: string
 }

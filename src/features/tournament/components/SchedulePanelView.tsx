@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { ChevronDown, Zap } from 'lucide-react'
-import partnerMark from '../../../assets/mark.png'
 import tnkSrc from '../../../assets/tnk.svg'
 import dpsSrc from '../../../assets/dps.svg'
 import sptSrc from '../../../assets/spt.svg'
@@ -77,10 +76,10 @@ function MatchCard({ match, teams }: MatchCardProps) {
                 <div className="min-w-0 space-y-1 text-right">
                     <div className="mb-2 flex items-center justify-end gap-2.5">
                         <div className="min-w-0 text-right pr-2">
-                            <p className="text-[10px] font-bold tracking-[0.2em] text-[#0596e8]/80">
+                            <p className="text-xs font-bold tracking-[0.2em] text-[#0596e8]/80">
                                 TEAM
                             </p>
-                            <span className="truncate text-2xl font-black text-[#e8f4fd]">
+                            <span className="truncate text-[28px] font-black text-[#e8f4fd]">
                                 {getTeamName(teams, match.teamAId)}
                             </span>
                         </div>
@@ -98,13 +97,16 @@ function MatchCard({ match, teams }: MatchCardProps) {
                             const mvpCount = match.mvpPlayerIds.filter(
                                 (id) => id === player.id,
                             ).length
-                            const isDimmed = isCompleted && !teamAWon && mvpCount === 0
+                            const isDimmed =
+                                isCompleted && !teamAWon && mvpCount === 0
                             return (
                                 <div
                                     key={player.id}
                                     className={[
-                                        'relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
-                                        mvpCount > 0 ? 'ring-1 ring-amber-300/50' : '',
+                                        'relative grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
+                                        mvpCount > 0
+                                            ? 'ring-1 ring-amber-300/50'
+                                            : '',
                                     ].join(' ')}
                                 >
                                     <span
@@ -117,37 +119,32 @@ function MatchCard({ match, teams }: MatchCardProps) {
                                         />
                                     </span>
                                     <span
-                                        className={`flex min-w-0 items-center justify-end gap-1 truncate text-sm font-semibold text-[#e8f4fd] ${isDimmed ? 'opacity-55' : ''}`}
+                                        className={`flex min-w-0 items-center justify-end gap-1 truncate pr-2 text-[15px] font-semibold text-[#e8f4fd] ${isDimmed ? 'opacity-55' : ''}`}
                                     >
                                         {mvpCount > 0 &&
-                                            Array.from({ length: mvpCount }).map(
-                                                (_, i) => (
-                                                    <Zap
-                                                        key={i}
-                                                        className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
-                                                    />
-                                                ),
-                                            )}
-                                        {player.name}
-                                        {player.isPartner && (
+                                            Array.from({
+                                                length: mvpCount,
+                                            }).map((_, i) => (
+                                                <Zap
+                                                    key={i}
+                                                    className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
+                                                />
+                                            ))}
+                                        {player.nickname ?? player.name}
+                                    </span>
+                                    <div className="hidden sm:block">
+                                        {player.avatarUrl !== null ? (
                                             <img
-                                                src={partnerMark}
-                                                alt="파트너"
-                                                className={`h-3.5 w-3.5 shrink-0 ${isDimmed ? 'opacity-55' : ''}`}
+                                                src={player.avatarUrl}
+                                                alt={player.nickname ?? player.name}
+                                                className={`h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-[#1e3a5f] ${isDimmed ? 'opacity-55' : ''}`}
+                                            />
+                                        ) : (
+                                            <div
+                                                className={`h-8 w-8 shrink-0 rounded-full bg-[#041524] ring-1 ring-[#1e3a5f] ${isDimmed ? 'opacity-55' : ''}`}
                                             />
                                         )}
-                                    </span>
-                                    {player.avatarUrl !== null ? (
-                                        <img
-                                            src={player.avatarUrl}
-                                            alt={player.name}
-                                            className={`h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-[#1e3a5f] ${isDimmed ? 'opacity-55' : ''}`}
-                                        />
-                                    ) : (
-                                        <div
-                                            className={`h-8 w-8 shrink-0 rounded-full bg-[#041524] ring-1 ring-[#1e3a5f] ${isDimmed ? 'opacity-55' : ''}`}
-                                        />
-                                    )}
+                                    </div>
                                 </div>
                             )
                         })}
@@ -198,7 +195,7 @@ function MatchCard({ match, teams }: MatchCardProps) {
                             />
                         )}
                         <div className="min-w-0 text-left pr-2">
-                            <p className="text-[10px] font-bold tracking-[0.2em] text-[#0596e8]/80">
+                            <p className="text-xs font-bold tracking-[0.2em] text-[#0596e8]/80">
                                 TEAM
                             </p>
                             <span className="truncate text-2xl font-black text-[#e8f4fd]">
@@ -212,46 +209,44 @@ function MatchCard({ match, teams }: MatchCardProps) {
                             const mvpCount = match.mvpPlayerIds.filter(
                                 (id) => id === player.id,
                             ).length
-                            const isDimmed = isCompleted && !teamBWon && mvpCount === 0
+                            const isDimmed =
+                                isCompleted && !teamBWon && mvpCount === 0
                             return (
                                 <div
                                     key={player.id}
                                     className={[
-                                        'relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
-                                        mvpCount > 0 ? 'ring-1 ring-amber-300/50' : '',
+                                        'relative grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
+                                        mvpCount > 0
+                                            ? 'ring-1 ring-amber-300/50'
+                                            : '',
                                     ].join(' ')}
                                 >
-                                    {player.avatarUrl !== null ? (
-                                        <img
-                                            src={player.avatarUrl}
-                                            alt={player.name}
-                                            className={`h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-[#1e3a5f] ${isDimmed ? 'opacity-55' : ''}`}
-                                        />
-                                    ) : (
-                                        <div
-                                            className={`h-8 w-8 shrink-0 rounded-full bg-[#041524] ring-1 ring-[#1e3a5f] ${isDimmed ? 'opacity-55' : ''}`}
-                                        />
-                                    )}
-                                    <span
-                                        className={`flex min-w-0 items-center gap-1 truncate text-sm font-semibold text-[#e8f4fd] ${isDimmed ? 'opacity-55' : ''}`}
-                                    >
-                                        {player.name}
-                                        {player.isPartner && (
+                                    <div className="hidden sm:block">
+                                        {player.avatarUrl !== null ? (
                                             <img
-                                                src={partnerMark}
-                                                alt="파트너"
-                                                className={`h-3.5 w-3.5 shrink-0 ${isDimmed ? 'opacity-55' : ''}`}
+                                                src={player.avatarUrl}
+                                                alt={player.nickname ?? player.name}
+                                                className={`h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-[#1e3a5f] ${isDimmed ? 'opacity-55' : ''}`}
+                                            />
+                                        ) : (
+                                            <div
+                                                className={`h-8 w-8 shrink-0 rounded-full bg-[#041524] ring-1 ring-[#1e3a5f] ${isDimmed ? 'opacity-55' : ''}`}
                                             />
                                         )}
+                                    </div>
+                                    <span
+                                        className={`flex min-w-0 items-center gap-1 truncate pr-2 text-[15px] font-semibold text-[#e8f4fd] ${isDimmed ? 'opacity-55' : ''}`}
+                                    >
+                                        {player.nickname ?? player.name}
                                         {mvpCount > 0 &&
-                                            Array.from({ length: mvpCount }).map(
-                                                (_, i) => (
-                                                    <Zap
-                                                        key={i}
-                                                        className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
-                                                    />
-                                                ),
-                                            )}
+                                            Array.from({
+                                                length: mvpCount,
+                                            }).map((_, i) => (
+                                                <Zap
+                                                    key={i}
+                                                    className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
+                                                />
+                                            ))}
                                     </span>
                                     <span
                                         className={`flex h-6 w-6 items-center justify-center rounded ${ROLE_TONE[player.slot] ?? 'bg-[#041524] ring-[#1e3a5f]/40'} ring-1 ${isDimmed ? 'opacity-55' : ''}`}

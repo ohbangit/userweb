@@ -7,6 +7,7 @@ export {
     useUpdateFanCafeUrl,
     useRefreshStreamer,
     useDeleteStreamer,
+    useUpdateNickname,
 } from './useStreamers'
 export { useAdminToast } from './useAdminToast'
 export {

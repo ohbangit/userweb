@@ -1,10 +1,6 @@
 import type { Dayjs } from 'dayjs'
 import type { ViewMode } from '../types'
-import {
-    getWeekNumber,
-    getWeekRange,
-    formatFullDate,
-} from '../utils'
+import { getWeekNumber, getWeekRange, formatFullDate } from '../utils'
 
 interface PeriodDisplayProps {
     currentDate: Dayjs

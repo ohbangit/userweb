@@ -48,7 +48,9 @@ function buildDescription(
     currentDate: Dayjs,
     viewMode: ViewMode,
 ): string {
-    const uniqueStreamers = [...new Set(broadcasts.map((b) => b.streamerName))]
+    const uniqueStreamers = [
+        ...new Set(broadcasts.map((b) => b.streamerNickname)),
+    ]
 
     if (uniqueStreamers.length === 0) {
         return '치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요.'
@@ -70,10 +72,9 @@ function buildDescription(
 
 /** 스트리머명·카테고리 기반 키워드 생성 */
 function buildKeywords(broadcasts: Broadcast[]): string {
-    const streamers = [...new Set(broadcasts.map((b) => b.streamerName))].slice(
-        0,
-        8,
-    )
+    const streamers = [
+        ...new Set(broadcasts.map((b) => b.streamerNickname)),
+    ].slice(0, 8)
 
     const categories = [
         ...new Set(
@@ -141,7 +142,7 @@ function buildEventSchemas(broadcasts: Broadcast[]): EventSchema[] {
                 },
                 organizer: {
                     '@type': 'Person',
-                    name: b.streamerName,
+                    name: b.streamerNickname,
                 },
                 description: b.title,
             }

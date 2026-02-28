@@ -3,6 +3,7 @@ export type BroadcastType = '합방' | '대회' | '콘텐츠' | '내전'
 export interface AdminScheduleParticipant {
     id?: string
     name: string
+    nickname?: string
     avatarUrl: string | null
     channelUrl: string | null
     streamerId?: number | null
@@ -15,6 +16,7 @@ export interface AdminBroadcastItem {
     title: string
     broadcastType: string | null
     streamerName: string
+    streamerNickname: string
     streamerId: number | null
     streamerProfileUrl: string | null
     streamerChannelUrl: string | null

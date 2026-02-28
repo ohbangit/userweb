@@ -4,6 +4,7 @@ export type {
     UpdateChannelRequest,
     UpdateYoutubeUrlRequest,
     UpdateFanCafeUrlRequest,
+    UpdateNicknameRequest,
 } from './streamer'
 export type {
     DiscoveryCursor,

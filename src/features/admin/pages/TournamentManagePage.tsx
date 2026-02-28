@@ -214,7 +214,6 @@ export default function TournamentManagePage() {
         [promotionData?.panels],
     )
 
-
     const handleCopySlug = useCallback(() => {
         if (selectedSlug !== null) {
             void navigator.clipboard.writeText(selectedSlug).then(() => {
@@ -508,7 +507,9 @@ export default function TournamentManagePage() {
                                 className={[
                                     'w-44 shrink-0 rounded-xl border px-3 py-2 transition',
                                     'cursor-grab active:cursor-grabbing',
-                                draggingPanelId === panel.id ? 'opacity-50' : '',
+                                    draggingPanelId === panel.id
+                                        ? 'opacity-50'
+                                        : '',
                                     hoveredPanelId === panel.id &&
                                     draggingPanelId !== null &&
                                     draggingPanelId !== panel.id
@@ -518,10 +519,18 @@ export default function TournamentManagePage() {
                             >
                                 <div className="mb-2 flex items-center gap-2">
                                     <span className="text-base">
-                                    {PANEL_ICONS[panel.type as PromotionPanelType]}
+                                        {
+                                            PANEL_ICONS[
+                                                panel.type as PromotionPanelType
+                                            ]
+                                        }
                                     </span>
                                     <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-[#efeff1]">
-                                    {PANEL_LABELS[panel.type as PromotionPanelType]}
+                                        {
+                                            PANEL_LABELS[
+                                                panel.type as PromotionPanelType
+                                            ]
+                                        }
                                     </span>
                                     <span className="text-[10px] text-gray-300 dark:text-[#3a3a44]">
                                         ☰
@@ -542,10 +551,14 @@ export default function TournamentManagePage() {
                                     ].join(' ')}
                                 >
                                     <span>
-                                    {panel.enabled && !panel.hidden ? 'ON' : 'OFF'}
+                                        {panel.enabled && !panel.hidden
+                                            ? 'ON'
+                                            : 'OFF'}
                                     </span>
                                     <span>
-                                    {panel.enabled && !panel.hidden ? '노출' : '비노출'}
+                                        {panel.enabled && !panel.hidden
+                                            ? '노출'
+                                            : '비노출'}
                                     </span>
                                 </button>
                             </div>
@@ -1264,7 +1277,9 @@ export default function TournamentManagePage() {
                         <button
                             type="button"
                             onClick={() =>
-                                setIsParticipantSectionCollapsed((prev) => !prev)
+                                setIsParticipantSectionCollapsed(
+                                    (prev) => !prev,
+                                )
                             }
                             aria-expanded={!isParticipantSectionCollapsed}
                             aria-controls="participant-editor-panel"
@@ -1280,42 +1295,61 @@ export default function TournamentManagePage() {
                                     참여자 목록
                                 </p>
                                 <p className="text-xs text-gray-400 dark:text-[#adadb8]">
-                                    드래프트에 참여할 스트리머를 추가하고 포지션을 설정합니다.
+                                    드래프트에 참여할 스트리머를 추가하고
+                                    포지션을 설정합니다.
                                 </p>
                             </span>
                             <span className="text-xs text-gray-500 dark:text-[#adadb8]">
-                                {isParticipantSectionCollapsed ? '펼치기' : '접기'}
+                                {isParticipantSectionCollapsed
+                                    ? '펼치기'
+                                    : '접기'}
                             </span>
                         </button>
                         <div
                             id="participant-editor-panel"
                             className={
-                                isParticipantSectionCollapsed ? 'hidden' : 'block'
+                                isParticipantSectionCollapsed
+                                    ? 'hidden'
+                                    : 'block'
                             }
                         >
                             <ParticipantEditor
                                 participants={
                                     Array.isArray(
-                                        (draftPanel?.content as Record<string, unknown> | undefined)
-                                            ?.participants,
+                                        (
+                                            draftPanel?.content as
+                                                | Record<string, unknown>
+                                                | undefined
+                                        )?.participants,
                                     )
-                                        ? ((draftPanel!.content as Record<string, unknown>).participants as DraftParticipant[])
+                                        ? ((
+                                              draftPanel!.content as Record<
+                                                  string,
+                                                  unknown
+                                              >
+                                          ).participants as DraftParticipant[])
                                         : []
                                 }
                                 onSave={async (participants) => {
                                     if (draftPanel === undefined) return
-                                    const c = draftPanel.content as Record<string, unknown>
-                                    await handleSavePanelContent(draftPanel.id, {
-                                        startsOn:
-                                            typeof c.startsOn === 'string'
-                                                ? c.startsOn
-                                                : null,
-                                        meta:
-                                            typeof c.meta === 'string'
-                                                ? c.meta
-                                                : '',
-                                        participants,
-                                    })
+                                    const c = draftPanel.content as Record<
+                                        string,
+                                        unknown
+                                    >
+                                    await handleSavePanelContent(
+                                        draftPanel.id,
+                                        {
+                                            startsOn:
+                                                typeof c.startsOn === 'string'
+                                                    ? c.startsOn
+                                                    : null,
+                                            meta:
+                                                typeof c.meta === 'string'
+                                                    ? c.meta
+                                                    : '',
+                                            participants,
+                                        },
+                                    )
                                 }}
                                 isSaving={
                                     savingPanelId === (draftPanel?.id ?? null)

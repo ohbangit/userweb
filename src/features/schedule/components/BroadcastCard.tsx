@@ -33,7 +33,12 @@ function BroadcastCardComponent({
         const p: Participant[] =
             broadcast.participants && broadcast.participants.length > 0
                 ? broadcast.participants
-                : [{ name: broadcast.streamerName }]
+                : [
+                      {
+                          name: broadcast.streamerName,
+                          nickname: broadcast.streamerNickname,
+                      },
+                  ]
         const sortedParticipants = sortParticipants(p)
         return {
             sortedParticipants,

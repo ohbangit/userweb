@@ -55,20 +55,20 @@ function ParticipantRow({
                 {avatarUrl ? (
                     <img
                         src={avatarUrl}
-                        alt={participant.name}
+                        alt={participant.nickname ?? participant.name}
                         className="h-full w-full object-cover"
                         loading="lazy"
                     />
                 ) : (
                     <span className="flex h-full w-full items-center justify-center">
-                        {getInitial(participant.name)}
+                        {getInitial(participant.nickname ?? participant.name)}
                     </span>
                 )}
             </div>
             <div className="flex min-w-0 flex-1 flex-col">
                 <div className="flex items-center gap-1.5">
                     <span className="text-sm font-semibold text-text">
-                        {participant.name}
+                        {participant.nickname ?? participant.name}
                     </span>
                     {isHost && (
                         <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
@@ -93,7 +93,7 @@ function ParticipantRow({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
-                        aria-label={`${participant.name} 치지직 채널 열기`}
+                        aria-label={`${participant.nickname ?? participant.name} 치지직 채널 열기`}
                     >
                         <img
                             src={chzzkIcon}
@@ -109,7 +109,7 @@ function ParticipantRow({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
-                        aria-label={`${participant.name} 유튜브 채널 열기`}
+                        aria-label={`${participant.nickname ?? participant.name} 유튜브 채널 열기`}
                     >
                         <img src={youtubeIcon} alt="유튜브" loading="lazy" />
                     </a>
@@ -120,7 +120,7 @@ function ParticipantRow({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
-                        aria-label={`${participant.name} 팬카페 열기`}
+                        aria-label={`${participant.nickname ?? participant.name} 팬카페 열기`}
                     >
                         <img
                             src={cafeIcon}
@@ -171,7 +171,12 @@ export function BroadcastDetailModal({
             displayBroadcast.participants &&
             displayBroadcast.participants.length > 0
                 ? displayBroadcast.participants
-                : [{ name: displayBroadcast.streamerName }]
+                : [
+                      {
+                          name: displayBroadcast.streamerName,
+                          nickname: displayBroadcast.streamerNickname,
+                      },
+                  ]
         return sortParticipants(participants)
     }, [displayBroadcast])
 

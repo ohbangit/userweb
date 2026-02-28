@@ -21,8 +21,8 @@ function getInitialViewMode(urlParam?: string | null): ViewMode {
 }
 
 export function useViewMode(urlParam?: string | null) {
-    const [viewMode, setViewMode] = useState<ViewMode>(
-        () => getInitialViewMode(urlParam),
+    const [viewMode, setViewMode] = useState<ViewMode>(() =>
+        getInitialViewMode(urlParam),
     )
 
     useEffect(() => {

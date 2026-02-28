@@ -405,23 +405,39 @@ export function SchedulePanelEditor({
                                                             세트별 MVP
                                                         </p>
                                                         {match.mvpPlayerIds.map(
-                                                            (playerId, setIndex) => (
+                                                            (
+                                                                playerId,
+                                                                setIndex,
+                                                            ) => (
                                                                 <div
-                                                                    key={setIndex}
+                                                                    key={
+                                                                        setIndex
+                                                                    }
                                                                     className="flex items-center gap-1.5"
                                                                 >
                                                                     <span className="w-8 shrink-0 text-[10px] text-gray-400 dark:text-[#6b6b7a]">
-                                                                        {setIndex + 1}세트
+                                                                        {setIndex +
+                                                                            1}
+                                                                        세트
                                                                     </span>
                                                                     <select
-                                                                        value={playerId}
-                                                                        onChange={(e) => {
-                                                                            const newIds = [
-                                                                                ...match.mvpPlayerIds,
-                                                                            ]
-                                                                            newIds[setIndex] =
+                                                                        value={
+                                                                            playerId
+                                                                        }
+                                                                        onChange={(
+                                                                            e,
+                                                                        ) => {
+                                                                            const newIds =
+                                                                                [
+                                                                                    ...match.mvpPlayerIds,
+                                                                                ]
+                                                                            newIds[
+                                                                                setIndex
+                                                                            ] =
                                                                                 Number(
-                                                                                    e.target.value,
+                                                                                    e
+                                                                                        .target
+                                                                                        .value,
                                                                                 )
                                                                             handleUpdateMatch(
                                                                                 group.id,
@@ -435,12 +451,25 @@ export function SchedulePanelEditor({
                                                                         className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
                                                                     >
                                                                         {mvpCandidates.map(
-                                                                            (player) => (
+                                                                            (
+                                                                                player,
+                                                                            ) => (
                                                                                 <option
-                                                                                    key={player.id}
-                                                                                    value={player.id}
+                                                                                    key={
+                                                                                        player.id
+                                                                                    }
+                                                                                    value={
+                                                                                        player.id
+                                                                                    }
                                                                                 >
-                                                                                    {player.name} ({player.teamName})
+                                                                                    {
+                                                                                        player.name
+                                                                                    }{' '}
+                                                                                    (
+                                                                                    {
+                                                                                        player.teamName
+                                                                                    }
+                                                                                    )
                                                                                 </option>
                                                                             ),
                                                                         )}
@@ -454,7 +483,10 @@ export function SchedulePanelEditor({
                                                                                 {
                                                                                     mvpPlayerIds:
                                                                                         match.mvpPlayerIds.filter(
-                                                                                            (_, i) =>
+                                                                                            (
+                                                                                                _,
+                                                                                                i,
+                                                                                            ) =>
                                                                                                 i !==
                                                                                                 setIndex,
                                                                                         ),
@@ -472,7 +504,8 @@ export function SchedulePanelEditor({
                                                             type="button"
                                                             onClick={() => {
                                                                 const firstId =
-                                                                    mvpCandidates[0]?.id
+                                                                    mvpCandidates[0]
+                                                                        ?.id
                                                                 if (
                                                                     firstId ===
                                                                     undefined
@@ -482,10 +515,11 @@ export function SchedulePanelEditor({
                                                                     group.id,
                                                                     match.id,
                                                                     {
-                                                                        mvpPlayerIds: [
-                                                                            ...match.mvpPlayerIds,
-                                                                            firstId,
-                                                                        ],
+                                                                        mvpPlayerIds:
+                                                                            [
+                                                                                ...match.mvpPlayerIds,
+                                                                                firstId,
+                                                                            ],
                                                                     },
                                                                 )
                                                             }}

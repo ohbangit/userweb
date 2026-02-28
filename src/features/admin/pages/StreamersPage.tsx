@@ -8,12 +8,13 @@ import {
     useUpdateFanCafeUrl,
     useRefreshStreamer,
     useDeleteStreamer,
+    useUpdateNickname,
 } from '../hooks'
 import type { StreamerItem } from '../types'
 import { ApiError } from '../../../lib/apiClient'
 
 type TabType = 'all' | 'missing'
-type EditingField = 'channel' | 'youtube' | 'fanCafe' | null
+type EditingField = 'channel' | 'nickname' | 'youtube' | 'fanCafe' | null
 
 function errMsg(err: Error | null): string | null {
     if (err === null) return null
@@ -141,19 +142,23 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
     const [channelInput, setChannelInput] = useState('')
     const [youtubeInput, setYoutubeInput] = useState(streamer.youtubeUrl ?? '')
     const [fanCafeInput, setFanCafeInput] = useState(streamer.fanCafeUrl ?? '')
+    const [nicknameInput, setNicknameInput] = useState(streamer.nickname)
 
     const sync = useSyncStreamer(streamer.id)
     const updateYoutube = useUpdateYoutubeUrl(streamer.channelId ?? '')
     const updateFanCafe = useUpdateFanCafeUrl(streamer.channelId ?? '')
+    const updateNickname = useUpdateNickname(streamer.id)
 
     function cancelEdit() {
         setEditing(null)
         setChannelInput('')
         setYoutubeInput(streamer.youtubeUrl ?? '')
         setFanCafeInput(streamer.fanCafeUrl ?? '')
+        setNicknameInput(streamer.nickname)
         sync.reset()
         updateYoutube.reset()
         updateFanCafe.reset()
+        updateNickname.reset()
     }
 
     return (
@@ -167,13 +172,13 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                 <div className="flex items-center gap-3.5 border-b border-gray-200 px-5 py-4 dark:border-[#3a3a44]">
                     <StreamerAvatar
                         src={streamer.channelImageUrl}
-                        name={streamer.name}
+                        name={streamer.nickname}
                         size={48}
                     />
                     <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                             <span className="truncate text-base font-semibold text-gray-900 dark:text-[#efeff1]">
-                                {streamer.name}
+                                {streamer.nickname}
                             </span>
                             {streamer.isPartner && (
                                 <img
@@ -183,6 +188,11 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                 />
                             )}
                         </div>
+                        {streamer.nickname !== streamer.name && (
+                            <p className="mt-0.5 truncate text-xs text-gray-400 dark:text-[#848494]">
+                                {streamer.name}
+                            </p>
+                        )}
                     </div>
                     <button
                         onClick={onClose}
@@ -244,6 +254,45 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                     {streamer.channelId
                                         ? '변경'
                                         : '채널 연결 →'}
+                                </button>
+                            </div>
+                        )}
+                    </FieldRow>
+
+                    <FieldRow label="닉네임">
+                        {editing === 'nickname' ? (
+                            <InlineEditForm
+                                value={nicknameInput}
+                                onChange={setNicknameInput}
+                                onSave={(e) => {
+                                    e.preventDefault()
+                                    if (nicknameInput.trim().length === 0)
+                                        return
+                                    updateNickname.mutate(
+                                        {
+                                            nickname: nicknameInput.trim(),
+                                        },
+                                        {
+                                            onSuccess: () => setEditing(null),
+                                        },
+                                    )
+                                }}
+                                onCancel={cancelEdit}
+                                placeholder="닉네임 입력"
+                                isPending={updateNickname.isPending}
+                                saveLabel="저장"
+                                error={updateNickname.error}
+                            />
+                        ) : (
+                            <div className="flex items-center justify-between">
+                                <span className="text-sm text-gray-900 dark:text-[#efeff1]">
+                                    {streamer.nickname}
+                                </span>
+                                <button
+                                    onClick={() => setEditing('nickname')}
+                                    className="ml-3 shrink-0 text-xs text-gray-400 transition hover:text-gray-700 dark:text-[#848494] dark:hover:text-[#efeff1]"
+                                >
+                                    수정
                                 </button>
                             </div>
                         )}
@@ -448,13 +497,13 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                 <div className="flex items-center gap-3">
                     <StreamerAvatar
                         src={streamer.channelImageUrl}
-                        name={streamer.name}
+                        name={streamer.nickname}
                         size={36}
                     />
                     <div>
                         <div className="flex items-center gap-1.5">
                             <span className="text-sm font-medium text-gray-900 dark:text-[#efeff1]">
-                                {streamer.name}
+                                {streamer.nickname}
                             </span>
                             {streamer.isPartner && (
                                 <img
@@ -464,6 +513,11 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                                 />
                             )}
                         </div>
+                        {streamer.nickname !== streamer.name && (
+                            <span className="mt-0.5 block text-xs text-gray-400 dark:text-[#848494]">
+                                {streamer.name}
+                            </span>
+                        )}
                         <span className="mt-0.5 block text-xs text-gray-400 dark:text-[#848494]">
                             팔로워{' '}
                             {streamer.followerCount != null
@@ -639,7 +693,7 @@ export default function StreamersPage() {
         tab === 'missing'
             ? { hasChannel: false as const }
             : search.trim().length > 0
-              ? { name: search.trim() }
+              ? { nickname: search.trim() }
               : {}
 
     const { data, isLoading, isError } = useStreamers({
@@ -708,7 +762,7 @@ export default function StreamersPage() {
                         type="search"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder="이름 검색"
+                        placeholder="닉네임 검색"
                         className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:placeholder-[#848494] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
                     />
                 )}
@@ -726,8 +780,8 @@ export default function StreamersPage() {
                         }
                         className="appearance-none rounded-xl border border-gray-300 bg-white px-4 py-2 pr-9 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-[#3a3a44] dark:bg-[#1a1a23] dark:text-[#efeff1] dark:focus:border-blue-400 dark:focus:ring-blue-900/30"
                     >
-                        <option value="name_asc">이름순</option>
-                        <option value="name_desc">이름 역순</option>
+                        <option value="name_asc">닉네임순</option>
+                        <option value="name_desc">닉네임 역순</option>
                         <option value="follower_desc">팔로워순</option>
                     </select>
                     <svg

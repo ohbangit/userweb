@@ -142,7 +142,7 @@ export function PlayerListPanelView({
                                     {player.avatarUrl !== null ? (
                                         <img
                                             src={player.avatarUrl}
-                                            alt={player.name}
+                                            alt={player.nickname ?? player.name}
                                             className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-[#1e3a5f]"
                                         />
                                     ) : (
@@ -151,7 +151,7 @@ export function PlayerListPanelView({
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-center gap-1.5">
                                             <span className="truncate pr-[2px] text-[17px] font-semibold text-[#e8f4fd]">
-                                                {player.name}
+                                                {player.nickname ?? player.name}
                                             </span>
                                             {player.isPartner && (
                                                 <img
@@ -161,7 +161,7 @@ export function PlayerListPanelView({
                                                 />
                                             )}
                                         </div>
-                                        <p className="mt-0.5 text-xs text-[#6aadcc]/70">
+                                        <p className="mt-0.5 text-sm text-[#6aadcc]/70">
                                             {player.teamName}
                                         </p>
                                     </div>

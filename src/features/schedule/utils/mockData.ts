@@ -70,7 +70,12 @@ function toBroadcast(seed: MockSeed): Broadcast {
         id: seed.id,
         title: seed.title,
         streamerName: seed.streamerName,
-        category: { id: 0, name: CATEGORY_GAME_MAP[seed.mockCategory], thumbnailUrl: null },
+        streamerNickname: seed.streamerName,
+        category: {
+            id: 0,
+            name: CATEGORY_GAME_MAP[seed.mockCategory],
+            thumbnailUrl: null,
+        },
         tags: CATEGORY_TAGS_MAP[seed.mockCategory],
         participants: buildParticipants([
             seed.streamerName,

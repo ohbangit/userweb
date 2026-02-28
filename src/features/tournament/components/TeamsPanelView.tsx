@@ -138,17 +138,17 @@ export function TeamsPanelView({ title, teams }: Props) {
                                             />
                                         )}
                                         <div className="min-w-0">
-                                            <p className="text-[10px] font-bold tracking-[0.2em] text-[#0596e8]/80">
+                                            <p className="text-xs font-bold tracking-[0.2em] text-[#0596e8]/80">
                                                 TEAM
                                             </p>
-                                            <span className="truncate pr-[2px] text-lg font-black text-[#e8f4fd] drop-shadow-[0_0_8px_rgba(5,150,232,0.35)]">
+                                            <span className="truncate pr-[2px] text-xl font-black text-[#e8f4fd] drop-shadow-[0_0_8px_rgba(5,150,232,0.35)]">
                                                 {team.name}
                                             </span>
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <div className="flex flex-wrap gap-1.5">
+                                        <div className="flex flex-wrap justify-center gap-1.5">
                                             {team.members
                                                 .filter((member) =>
                                                     [
@@ -172,7 +172,7 @@ export function TeamsPanelView({ title, teams }: Props) {
                                                         href={getMemberBroadcastUrl(
                                                             member,
                                                         )}
-                                                        className={`group relative flex min-w-0 flex-1 flex-col items-center gap-1.5 overflow-hidden rounded-lg bg-[#041524] px-2 py-1.5 sm:min-w-[120px] ${ROLE_THEME[member.slot as OverwatchRole].card}`}
+                                                        className={`group relative flex flex-none basis-[calc(33.333%-4px)] flex-col items-center gap-1.5 overflow-hidden rounded-lg bg-[#041524] px-2 py-1.5 sm:basis-auto sm:flex-1 sm:min-w-[120px] ${ROLE_THEME[member.slot as OverwatchRole].card}`}
                                                     >
                                                         <div className="pointer-events-none absolute inset-x-2 top-0 h-px bg-gradient-to-r from-transparent via-[#0596e8]/80 to-transparent" />
                                                         <div
@@ -198,15 +198,15 @@ export function TeamsPanelView({ title, teams }: Props) {
                                                                         member.avatarUrl
                                                                     }
                                                                     alt={
-                                                                        member.name
+                                                                        member.nickname ?? member.name
                                                                     }
                                                                     className={`h-7 w-7 shrink-0 rounded-full object-cover ring-2 ${ROLE_THEME[member.slot as OverwatchRole].avatarRing}`}
                                                                 />
                                                             ) : (
                                                                 <div className="h-7 w-7 shrink-0 rounded-full bg-[#062035] ring-2 ring-[#1e3a5f]" />
                                                             )}
-                                                            <span className="truncate pr-[2px] text-sm font-semibold text-[#e8f4fd]">
-                                                                {member.name}
+                                                            <span className="truncate pr-[2px] text-[15px] font-semibold text-[#e8f4fd]">
+                                                                {member.nickname ?? member.name}
                                                             </span>
                                                             {member.isPartner && (
                                                                 <img
@@ -269,7 +269,7 @@ export function TeamsPanelView({ title, teams }: Props) {
                                                                         member.avatarUrl
                                                                     }
                                                                     alt={
-                                                                        member.name
+                                                                        member.nickname ?? member.name
                                                                     }
                                                                     className="h-8 w-8 shrink-0 rounded-full object-cover ring-2 ring-[#1e3a5f]"
                                                                 />
@@ -278,9 +278,9 @@ export function TeamsPanelView({ title, teams }: Props) {
                                                             )}
                                                             <div className="min-w-0">
                                                                 <div className="flex items-center gap-1.5">
-                                                                    <span className="truncate pr-[2px] text-[13px] font-semibold text-[#e8f4fd]">
+                                                                    <span className="truncate pr-[2px] text-sm font-semibold text-[#e8f4fd]">
                                                                         {
-                                                                            member.name
+                                                                            member.nickname ?? member.name
                                                                         }
                                                                     </span>
                                                                     {member.isPartner && (
@@ -295,7 +295,7 @@ export function TeamsPanelView({ title, teams }: Props) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <span className="shrink-0 rounded-full bg-[#062035] px-1.5 py-0.5 text-[10px] font-semibold text-[#6aadcc]">
+                                                        <span className="shrink-0 rounded-full bg-[#062035] px-1.5 py-0.5 text-xs font-semibold text-[#6aadcc]">
                                                             {SLOT_LABEL[
                                                                 member.slot
                                                             ] ?? member.slot}

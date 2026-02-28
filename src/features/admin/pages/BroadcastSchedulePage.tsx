@@ -234,14 +234,14 @@ function BroadcastFormModal({
         participantStreamerId === undefined
     const participantStreamerQuery = useStreamers(
         showParticipantSuggestions
-            ? { name: participantNameInput.trim(), size: 5 }
+            ? { nickname: participantNameInput.trim(), size: 5 }
             : { size: 0 },
     )
     const showEditSuggestions =
         editingParticipantName !== null && editingInput.trim().length > 0
     const editStreamerQuery = useStreamers(
         showEditSuggestions
-            ? { name: editingInput.trim(), size: 5 }
+            ? { nickname: editingInput.trim(), size: 5 }
             : { size: 0 },
     )
     const { data: categoriesData } = useCategories()

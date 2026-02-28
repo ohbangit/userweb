@@ -1,6 +1,7 @@
 export interface Participant {
     id?: string
     name: string
+    nickname?: string
     avatarUrl?: string
     channelUrl?: string | null
     youtubeUrl?: string | null
@@ -21,6 +22,7 @@ export interface Broadcast {
     title: string
     broadcastType?: string | null
     streamerName: string
+    streamerNickname: string
     streamerProfileUrl?: string | null
     streamerChannelUrl?: string | null
     streamerIsPartner?: boolean

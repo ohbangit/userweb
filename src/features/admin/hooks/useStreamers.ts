@@ -11,6 +11,7 @@ import type {
     UpdateChannelRequest,
     UpdateYoutubeUrlRequest,
     UpdateFanCafeUrlRequest,
+    UpdateNicknameRequest,
 } from '../types'
 
 type StreamerListResponse = {
@@ -21,7 +22,7 @@ type StreamerListResponse = {
 }
 
 type StreamersParams = {
-    name?: string
+    nickname?: string
     hasChannel?: boolean
     page?: number
     size?: number
@@ -32,8 +33,8 @@ const STREAMERS_KEY = ['admin', 'streamers'] as const
 
 export function useStreamers(params: StreamersParams = {}) {
     const queryParams: Record<string, string> = {}
-    if (params.name !== undefined && params.name.trim().length > 0) {
-        queryParams['name'] = params.name.trim()
+    if (params.nickname !== undefined && params.nickname.trim().length > 0) {
+        queryParams['nickname'] = params.nickname.trim()
     }
     if (params.hasChannel === false) {
         queryParams['hasChannel'] = 'false'
@@ -129,6 +130,20 @@ export function useDeleteStreamer() {
     return useMutation<void, Error, number>({
         mutationFn: (streamerId) =>
             adminApiDelete(`/api/admin/streamers/${streamerId}`),
+        onSuccess: () => {
+            void queryClient.invalidateQueries({ queryKey: STREAMERS_KEY })
+        },
+    })
+}
+
+export function useUpdateNickname(streamerId: number) {
+    const queryClient = useQueryClient()
+    return useMutation<StreamerItem, Error, UpdateNicknameRequest>({
+        mutationFn: (body) =>
+            adminApiPatch<StreamerItem>(
+                `/api/admin/streamers/${streamerId}/nickname`,
+                body,
+            ),
         onSuccess: () => {
             void queryClient.invalidateQueries({ queryKey: STREAMERS_KEY })
         },
