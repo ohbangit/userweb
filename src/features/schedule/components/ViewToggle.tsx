@@ -11,35 +11,38 @@ export function ViewToggle({ viewMode, onChange }: ViewToggleProps) {
             <button
                 onClick={() => onChange('daily')}
                 className={[
-                    'cursor-pointer rounded-md px-3 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
+                    'cursor-pointer rounded-md px-2.5 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
                     viewMode === 'daily'
                         ? 'bg-card text-text shadow-sm'
                         : 'text-text-muted hover:text-text',
                 ].join(' ')}
             >
-                일간
+                <span className="sm:hidden">일</span>
+                <span className="hidden sm:inline">일간</span>
             </button>
             <button
                 onClick={() => onChange('weekly')}
                 className={[
-                    'cursor-pointer rounded-md px-3 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
+                    'cursor-pointer rounded-md px-2.5 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
                     viewMode === 'weekly'
                         ? 'bg-card text-text shadow-sm'
                         : 'text-text-muted hover:text-text',
                 ].join(' ')}
             >
-                주간
+                <span className="sm:hidden">주</span>
+                <span className="hidden sm:inline">주간</span>
             </button>
             <button
                 onClick={() => onChange('monthly')}
                 className={[
-                    'cursor-pointer rounded-md px-3 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
+                    'cursor-pointer rounded-md px-2.5 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
                     viewMode === 'monthly'
                         ? 'bg-card text-text shadow-sm'
                         : 'text-text-muted hover:text-text',
                 ].join(' ')}
             >
-                월간
+                <span className="sm:hidden">월</span>
+                <span className="hidden sm:inline">월간</span>
             </button>
         </div>
     )

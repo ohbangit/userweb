@@ -3,7 +3,6 @@ import type { ViewMode } from '../types'
 import {
     getWeekNumber,
     getWeekRange,
-    formatDate,
     formatFullDate,
 } from '../utils'
 
@@ -13,7 +12,6 @@ interface PeriodDisplayProps {
 }
 
 export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {
-    const year = String(currentDate.year()).slice(-2)
     const month = currentDate.month() + 1
     const containerClass = 'flex min-h-12 flex-col justify-center'
 
@@ -33,10 +31,10 @@ export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {
         return (
             <div className={containerClass}>
                 <h2 className="text-base font-semibold text-text sm:text-lg">
-                    {year}년 {month}월 {weekNum}주차
+                    {month}월 {weekNum}주차
                 </h2>
-                <p className="mt-0.5 text-xs text-text-dim">
-                    {formatDate(range.start)} – {formatDate(range.end)}
+                <p className="mt-0.5 hidden text-xs text-text-dim sm:block">
+                    {range.start.format('MM/DD')}~{range.end.format('MM/DD')}
                 </p>
             </div>
         )
@@ -45,7 +43,7 @@ export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {
     return (
         <div className={containerClass}>
             <h2 className="text-base font-semibold text-text sm:text-lg">
-                {year}년 {month}월
+                {month}월
             </h2>
         </div>
     )

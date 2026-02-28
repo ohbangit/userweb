@@ -206,15 +206,23 @@ export function ScheduleSeoHead({
         [title, description],
     )
 
+    const canonicalUrl = useMemo(
+        () =>
+            `${SITE_URL}/?date=${currentDate.format('YYYY-MM-DD')}&view=${viewMode}`,
+        [currentDate, viewMode],
+    )
+
     return (
         <Helmet>
             <title>{title}</title>
             <meta name="description" content={description} />
             <meta name="keywords" content={keywords} />
+            <link rel="canonical" href={canonicalUrl} />
 
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
             <meta property="og:image" content={ogImageUrl} />
+            <meta property="og:url" content={canonicalUrl} />
 
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />

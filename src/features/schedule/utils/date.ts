@@ -92,9 +92,8 @@ export function isSameMonth(a: Dayjs, b: Dayjs): boolean {
 }
 
 export function formatFullDate(date: Dayjs): string {
-    const year = String(date.year()).slice(-2)
     const month = date.month() + 1
     const day = date.date()
     const dayName = getDayName(date)
-    return `${year}년 ${month}월 ${day}일 (${dayName})`
+    return `${month}월 ${day}일 (${dayName})`
 }

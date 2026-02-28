@@ -1,10 +1,11 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { useViewMode } from '../../../hooks/useViewMode'
 import { useSchedule } from '../hooks'
-import { addDays, addMonths } from '../utils'
+import { addDays, addMonths, isSameDay } from '../utils'
 import {
     DailySchedule,
     WeeklySchedule,
@@ -16,8 +17,16 @@ import {
 } from '../components'
 
 export default function SchedulePage() {
-    const { viewMode, setViewMode } = useViewMode()
-    const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs())
+    const [searchParams, setSearchParams] = useSearchParams()
+    const { viewMode, setViewMode } = useViewMode(searchParams.get('view'))
+    const [currentDate, setCurrentDate] = useState<Dayjs>(() => {
+        const dateParam = searchParams.get('date')
+        if (dateParam) {
+            const parsed = dayjs(dateParam)
+            if (parsed.isValid()) return parsed
+        }
+        return dayjs()
+    })
     const {
         data: broadcasts = [],
         isPending,
@@ -45,6 +54,15 @@ export default function SchedulePage() {
         setCurrentDate(dayjs())
     }
 
+    const isToday = isSameDay(currentDate, dayjs())
+
+    // viewMode 또는 currentDate 변경 시 URL 파라미터 동기화
+    useEffect(() => {
+        setSearchParams(
+            { date: currentDate.format('YYYY-MM-DD'), view: viewMode },
+            { replace: true },
+        )
+    }, [viewMode, currentDate, setSearchParams])
     return (
         <>
             <ScheduleSeoHead
@@ -66,7 +84,13 @@ export default function SchedulePage() {
                 <div className="flex shrink-0 items-center gap-2 sm:gap-3">
                     <button
                         onClick={handleToday}
-                        className="cursor-pointer rounded-lg border border-border/40 bg-card px-4 py-2 text-xs font-medium text-text-muted transition-colors hover:border-border hover:text-text sm:px-3 sm:py-1.5"
+                        disabled={isToday}
+                        className={[
+                            'rounded-lg border px-2.5 py-2 text-xs font-medium transition-colors sm:px-3 sm:py-1.5',
+                            isToday
+                                ? 'cursor-default border-primary/40 bg-primary/10 text-primary'
+                                : 'cursor-pointer border-border/40 bg-card text-text-muted hover:border-border hover:text-text',
+                        ].join(' ')}
                     >
                         오늘
                     </button>
