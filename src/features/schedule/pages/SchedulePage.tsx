@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { RefreshCw } from 'lucide-react'
-import type { ViewMode } from '../types'
+import { useViewMode } from '../../../hooks/useViewMode'
 import { useSchedule } from '../hooks'
 import { addDays, addMonths } from '../utils'
 import {
@@ -16,7 +16,7 @@ import {
 } from '../components'
 
 export default function SchedulePage() {
-    const [viewMode, setViewMode] = useState<ViewMode>('weekly')
+    const { viewMode, setViewMode } = useViewMode()
     const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs())
     const {
         data: broadcasts = [],
@@ -53,8 +53,8 @@ export default function SchedulePage() {
                 viewMode={viewMode}
             />
             <div className="space-y-4 sm:space-y-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-h-12 items-center gap-2 sm:gap-3">
+            <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 sm:gap-3">
                     <NavButton direction="prev" onClick={handlePrev} />
                     <PeriodDisplay
                         currentDate={currentDate}
@@ -63,7 +63,7 @@ export default function SchedulePage() {
                     <NavButton direction="next" onClick={handleNext} />
                 </div>
 
-                <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex shrink-0 items-center gap-2 sm:gap-3">
                     <button
                         onClick={handleToday}
                         className="cursor-pointer rounded-lg border border-border/40 bg-card px-4 py-2 text-xs font-medium text-text-muted transition-colors hover:border-border hover:text-text sm:px-3 sm:py-1.5"

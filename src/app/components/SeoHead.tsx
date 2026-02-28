@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router-dom'
 
 const DEFAULT_SITE_URL = 'https://ohbang-it.kr'
-const DEFAULT_IMAGE_PATH = '/og-default.svg'
+const DEFAULT_IMAGE_PATH = '/api/og'
 
 const SITE_KEYWORDS =
     '치지직,치지직 스케줄,치지직 방송일정,스트리밍 일정,오뱅잇,방송 스케줄,치지직 라이브'

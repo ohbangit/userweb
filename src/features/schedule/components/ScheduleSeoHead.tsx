@@ -8,9 +8,17 @@ import { getDayName, getWeekNumber } from '../utils'
 const SITE_URL =
     (import.meta.env.VITE_SITE_URL as string | undefined) ??
     'https://ohbang-it.kr'
-const OG_IMAGE_URL =
-    (import.meta.env.VITE_OG_IMAGE_URL as string | undefined) ??
-    `${SITE_URL}/og-default.svg`
+/** 동적 OG 이미지 URL 생성 (api/og Edge Function) */
+function buildOgImageUrl(
+    siteUrl: string,
+    title: string,
+    description: string,
+): string {
+    const params = new URLSearchParams()
+    params.set('title', title)
+    params.set('description', description)
+    return `${siteUrl}/api/og?${params.toString()}`
+}
 
 interface ScheduleSeoHeadProps {
     broadcasts: Broadcast[]
@@ -193,6 +201,11 @@ export function ScheduleSeoHead({
         })
     }, [broadcasts, title])
 
+    const ogImageUrl = useMemo(
+        () => buildOgImageUrl(SITE_URL, title, description),
+        [title, description],
+    )
+
     return (
         <Helmet>
             <title>{title}</title>
@@ -201,11 +214,11 @@ export function ScheduleSeoHead({
 
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
-            <meta property="og:image" content={OG_IMAGE_URL} />
+            <meta property="og:image" content={ogImageUrl} />
 
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
-            <meta name="twitter:image" content={OG_IMAGE_URL} />
+            <meta name="twitter:image" content={ogImageUrl} />
 
             {jsonLd !== null && (
                 <script type="application/ld+json">{jsonLd}</script>
