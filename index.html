@@ -79,7 +79,8 @@
         <meta name="format-detection" content="telephone=no" />
         <link rel="canonical" href="https://ohbang-it.kr/" />
 
-        <!-- Open Graph (정적 폴백) -->
+        <!-- OG_META_START -->
+        <!-- Open Graph (정적 폴백 — 미들웨어가 봇 UA 감지 시 이 블록을 동적 태그로 교체) -->
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="오뱅잇" />
         <meta property="og:locale" content="ko_KR" />
@@ -111,6 +112,7 @@
             name="twitter:image"
             content="https://ohbang-it.kr/api/og"
         />
+        <!-- OG_META_END -->
     </head>
     <body>
         <div id="root"></div>
