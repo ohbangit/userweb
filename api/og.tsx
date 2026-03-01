@@ -1,7 +1,7 @@
 import { ImageResponse } from '@vercel/og'
-import React from 'react'
 
-export const runtime = 'edge'
+
+export const config = { runtime: 'edge' }
 
 async function loadGoogleFont(
     font: string,
@@ -9,12 +9,12 @@ async function loadGoogleFont(
 ): Promise<ArrayBuffer | undefined> {
     try {
         const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`
-        const css = await (await fetch(url)).text()
+        const css = await (await fetch(url, { signal: AbortSignal.timeout(4000) })).text()
         const match = css.match(
             /src: url\((.+)\) format\('(opentype|truetype)'\)/,
         )
         if (match) {
-            const res = await fetch(match[1])
+            const res = await fetch(match[1], { signal: AbortSignal.timeout(4000) })
             if (res.status === 200) return res.arrayBuffer()
         }
         return undefined
