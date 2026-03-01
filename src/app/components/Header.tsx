@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Sun, Moon, ChevronDown, Trophy, Menu, X } from 'lucide-react'
+import { Sun, Moon, ChevronDown, ChevronRight, Trophy, Menu, X } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
 import { useTournamentList } from '../../features/tournament/hooks/useTournamentList'
 import logoDarkSrc from '../../assets/logo_dark.png'
@@ -207,6 +208,15 @@ export function Header() {
             </div>
 
             {/* 모바일 메뉴 패널 */}
+            {mobileMenuOpen &&
+                createPortal(
+                    <div
+                        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-200"
+                        aria-hidden="true"
+                        onClick={() => setMobileMenuOpen(false)}
+                    />,
+                    document.body,
+                )}
             {mobileMenuOpen && (
                 <div
                     id="mobile-nav-menu"
@@ -214,14 +224,14 @@ export function Header() {
                     aria-label="모바일 메뉴"
                     className="absolute left-0 right-0 top-full z-50 border-b border-border/30 bg-bg shadow-lg md:hidden"
                 >
-                    <div className="flex flex-col px-4 py-2">
+                    <div className="flex flex-col py-2">
                         {/* 방송일정 */}
                         <button
                             type="button"
-                            className={`flex w-full cursor-pointer items-center rounded-lg px-4 py-3 text-left text-base font-medium transition-colors ${
+                            className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-left text-base font-medium transition-colors ${
                                 isScheduleActive
-                                    ? 'bg-border/20 text-text'
-                                    : 'text-text-muted hover:bg-border/10 hover:text-text'
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-text hover:bg-border/10'
                             }`}
                             onClick={() => {
                                 navigate('/')
@@ -229,11 +239,15 @@ export function Header() {
                             }}
                         >
                             방송일정
+                            <ChevronRight className="h-4 w-4 text-text-muted" />
                         </button>
 
+                        {/* 구분선 */}
+                        <div className="mx-4 my-2 border-t border-border/30" />
+
                         {/* 대회 섹션 */}
-                        <div className="mt-2">
-                            <div className="px-4 py-2 text-sm font-semibold text-text-muted">
+                        <div>
+                            <div className="px-4 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
                                 대회
                             </div>
                             {tournaments.length === 0 ? (
@@ -253,8 +267,8 @@ export function Header() {
                                                     type="button"
                                                     className={`flex w-full cursor-pointer items-center gap-2 rounded-lg px-4 py-3 text-left text-base transition-colors ${
                                                         isActive
-                                                            ? 'bg-border/20 text-text'
-                                                            : 'text-text-muted hover:bg-border/10 hover:text-text'
+                                                            ? 'bg-primary/10 text-primary'
+                                                            : 'text-text hover:bg-border/10'
                                                     }`}
                                                     onClick={() => {
                                                         navigate(
@@ -263,10 +277,11 @@ export function Header() {
                                                         setMobileMenuOpen(false)
                                                     }}
                                                 >
-                                                    <Trophy className="h-4 w-4 shrink-0" />
-                                                    <span>
+                                                    <Trophy className="h-4 w-4 shrink-0 text-text-muted" />
+                                                    <span className="flex-1">
                                                         {tournament.name}
                                                     </span>
+                                                    <ChevronRight className="h-4 w-4 text-text-muted" />
                                                 </button>
                                             </li>
                                         )

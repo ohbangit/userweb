@@ -172,7 +172,7 @@ export function TeamsPanelView({ title, teams }: Props) {
                                                         href={getMemberBroadcastUrl(
                                                             member,
                                                         )}
-                                                        className={`group relative flex flex-none basis-[calc(33.333%-4px)] flex-col items-center gap-1.5 overflow-hidden rounded-lg bg-[#041524] px-2 py-1.5 sm:basis-auto sm:flex-1 sm:min-w-[120px] ${ROLE_THEME[member.slot as OverwatchRole].card}`}
+                                                        className={`group relative flex flex-none basis-[calc(33.333%-4px)] flex-col items-center gap-1.5 overflow-hidden rounded-lg bg-[#041524] px-2 py-1.5 sm:basis-auto sm:flex-1 ${ROLE_THEME[member.slot as OverwatchRole].card}`}
                                                     >
                                                         <div className="pointer-events-none absolute inset-x-2 top-0 h-px bg-gradient-to-r from-transparent via-[#0596e8]/80 to-transparent" />
                                                         <div
