@@ -11,3 +11,5 @@ export { NavButton } from './NavButton'
 export { PeriodDisplay } from './PeriodDisplay'
 
 export { ScheduleSeoHead } from './ScheduleSeoHead'
+
+export { BannerCarousel } from './BannerCarousel'

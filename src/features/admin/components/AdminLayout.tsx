@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import {
     Users,
     CalendarDays,
     FolderOpen,
     Gamepad2,
+    Image,
     Search,
     Radio,
     PanelLeftClose,
     PanelLeftOpen,
     LogOut,
+    Home,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useAdminAuth } from '../hooks'
@@ -39,11 +41,14 @@ const NAV_SECTIONS: NavSection[] = [
             { to: '/admin/streamers', label: '스트리머 관리', icon: Users },
             { to: '/admin/schedule', label: '일정 관리', icon: CalendarDays },
             { to: '/admin/categories', label: '카테고리 관리', icon: FolderOpen },
+            { to: '/admin/banners', label: '배너 관리', icon: Image },
         ],
     },
     {
-        title: '대회',
-        items: [{ to: '/admin/tournaments', label: '오버워치', icon: Gamepad2 }],
+        title: '컨텐츠',
+        items: [
+            { to: '/admin/tournaments', label: '오버워치', icon: Gamepad2 },
+        ],
     },
     {
         title: '운영',
@@ -58,7 +63,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     const { logout } = useAdminAuth()
     const navigate = useNavigate()
     const { theme, toggleTheme } = useTheme()
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(
+        () => localStorage.getItem('admin-sidebar-collapsed') === 'true',
+    )
+    function handleToggleSidebar() {
+        setSidebarCollapsed((prev) => {
+            const next = !prev
+            localStorage.setItem('admin-sidebar-collapsed', String(next))
+            return next
+        })
+    }
     function handleLogout() {
         logout()
         navigate('/admin', { replace: true })
@@ -85,6 +99,17 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                             </span>
                         )}
                         <div className="flex items-center gap-1">
+                            {!sidebarCollapsed && (
+                                <Link
+                                    to="/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title="메인페이지로"
+                                    className="cursor-pointer rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
+                                >
+                                    <Home className="h-4 w-4" />
+                                </Link>
+                            )}
                             {!sidebarCollapsed && (
                                 <button
                                     onClick={toggleTheme}
@@ -127,7 +152,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                 </button>
                             )}
                             <button
-                                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                                onClick={handleToggleSidebar}
                                 title={sidebarCollapsed ? '사이드바 열기' : '사이드바 닫기'}
                                 className="cursor-pointer rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
                             >

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { useViewMode } from '../../../hooks/useViewMode'
-import { useSchedule } from '../hooks'
+import { useSchedule, usePublicBanners } from '../hooks'
 import { addDays, addMonths, isSameDay } from '../utils'
 import {
     DailySchedule,
@@ -14,6 +14,7 @@ import {
     NavButton,
     PeriodDisplay,
     ScheduleSeoHead,
+    BannerCarousel,
 } from '../components'
 
 export default function SchedulePage() {
@@ -33,6 +34,7 @@ export default function SchedulePage() {
         isError,
         refetch,
     } = useSchedule(viewMode, currentDate)
+    const { data: bannersData } = usePublicBanners()
 
     const handlePrev = () => {
         setCurrentDate((prev) => {
@@ -71,6 +73,7 @@ export default function SchedulePage() {
                 viewMode={viewMode}
             />
             <div className="space-y-4 sm:space-y-6">
+                <BannerCarousel banners={bannersData?.banners ?? []} />
                 <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 sm:gap-3">
                         <NavButton direction="prev" onClick={handlePrev} />

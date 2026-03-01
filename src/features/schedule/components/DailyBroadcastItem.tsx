@@ -1,11 +1,7 @@
 import { memo } from 'react'
 import type { Broadcast } from '../types/schedule'
 import { formatTime } from '../utils/date'
-import {
-    resolveParticipants,
-    sortParticipants,
-    getParticipantLabel,
-} from '../utils/participant'
+import { resolveParticipants, sortParticipants } from '../utils/participant'
 import { ParticipantStack } from './ParticipantStack'
 import partnerMark from '../../../assets/mark.png'
 
@@ -14,14 +10,9 @@ export interface DailyBroadcastItemProps {
     onClick: () => void
 }
 
-function DailyBroadcastItemComponent({
-    broadcast,
-    onClick,
-}: DailyBroadcastItemProps) {
+function DailyBroadcastItemComponent({ broadcast, onClick }: DailyBroadcastItemProps) {
     const startTime = formatTime(broadcast.startTime)
-    const endTime = broadcast.endTime
-        ? formatTime(broadcast.endTime)
-        : undefined
+    const endTime = broadcast.endTime ? formatTime(broadcast.endTime) : undefined
     const categoryName = broadcast.category?.name ?? undefined
     const tags = broadcast.tags ?? []
     const participants = resolveParticipants(
@@ -31,7 +22,9 @@ function DailyBroadcastItemComponent({
         broadcast.streamerProfileUrl,
     )
     const sortedParticipants = sortParticipants(participants)
-    const participantLabel = getParticipantLabel(sortedParticipants)
+    const representative = sortedParticipants.find((p) => p.isHost) ?? sortedParticipants[0]
+    const representativeName = representative ? (representative.nickname ?? representative.name) : ''
+    const remaining = sortedParticipants.length - 1
 
     return (
         <button
@@ -46,41 +39,27 @@ function DailyBroadcastItemComponent({
             <div
                 className={[
                     'w-1 shrink-0 self-stretch rounded-full bg-gradient-to-b',
-                    broadcast.isCollab
-                        ? 'from-collab/90 via-collab/60 to-collab/20'
-                        : 'from-primary/90 via-primary/60 to-primary/20',
+                    broadcast.isCollab ? 'from-collab/90 via-collab/60 to-collab/20' : 'from-primary/90 via-primary/60 to-primary/20',
                 ].join(' ')}
             />
 
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-text">
-                        {startTime}
-                    </span>
-                    {endTime && (
-                        <span className="text-[11px] text-text-dim">
-                            – {endTime}
-                        </span>
-                    )}
+                    <span className="text-sm font-semibold text-text">{startTime}</span>
+                    {endTime && <span className="text-[11px] text-text-dim">– {endTime}</span>}
                 </div>
                 <div className="flex items-start gap-2">
-                    <h3 className="text-base font-bold leading-snug text-text">
-                        {broadcast.title}
-                    </h3>
+                    <h3 className="text-base font-bold leading-snug text-text">{broadcast.title}</h3>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <ParticipantStack participants={sortedParticipants} />
-                    <span className="flex items-center gap-1 text-[11px] text-text-dim">
-                        {participantLabel}
-                        {sortedParticipants.some((p) => p.isPartner) && (
-                            <img
-                                src={partnerMark}
-                                alt="파트너"
-                                className="h-3 w-3 shrink-0"
-                                loading="lazy"
-                            />
+                    <span className="flex items-center gap-0.5 text-[11px] text-text-dim">
+                        {representativeName}
+                        {representative?.isPartner === true && (
+                            <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />
                         )}
+                        {remaining > 0 && ` 외 ${remaining}명`}
                     </span>
                 </div>
 

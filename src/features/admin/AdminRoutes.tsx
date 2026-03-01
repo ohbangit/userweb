@@ -11,6 +11,7 @@ const BroadcastSchedulePage = lazy(
 )
 const CategoryManagePage = lazy(() => import('./pages/CategoryManagePage'))
 const TournamentManagePage = lazy(() => import('./pages/TournamentManagePage'))
+const BannerManagePage = lazy(() => import('./pages/BannerManagePage'))
 
 export default function AdminRoutes() {
     return (
@@ -38,7 +39,11 @@ export default function AdminRoutes() {
                         <Route
                             path="tournaments"
                             element={<TournamentManagePage />}
-                        />
+        />
+        <Route
+            path="banners"
+            element={<BannerManagePage />}
+        />
                         <Route
                             path="*"
                             element={<Navigate to="streamers" replace />}

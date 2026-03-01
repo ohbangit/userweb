@@ -67,23 +67,14 @@ function ParticipantRow({
             </div>
             <div className="flex min-w-0 flex-1 flex-col">
                 <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-semibold text-text">
-                        {participant.nickname ?? participant.name}
-                    </span>
+                    <span className="text-sm font-semibold text-text">{participant.nickname ?? participant.name}</span>
                     {isHost && (
                         <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                             <Crown className="h-2.5 w-2.5" />
                             주최
                         </span>
                     )}
-                    {isPartner && (
-                        <img
-                            src={partnerMark}
-                            alt="파트너"
-                            className="h-3 w-3 shrink-0"
-                            loading="lazy"
-                        />
-                    )}
+                    {isPartner && <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />}
                 </div>
             </div>
             <div className="flex items-center gap-1.5">
@@ -95,12 +86,7 @@ function ParticipantRow({
                         className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
                         aria-label={`${participant.nickname ?? participant.name} 치지직 채널 열기`}
                     >
-                        <img
-                            src={chzzkIcon}
-                            alt="치지직"
-                            className="h-4 w-4"
-                            loading="lazy"
-                        />
+                        <img src={chzzkIcon} alt="치지직" className="h-4 w-4" loading="lazy" />
                     </a>
                 )}
                 {youtubeUrl && (
@@ -122,12 +108,7 @@ function ParticipantRow({
                         className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
                         aria-label={`${participant.nickname ?? participant.name} 팬카페 열기`}
                     >
-                        <img
-                            src={cafeIcon}
-                            alt="팬카페"
-                            className="h-4 w-4"
-                            loading="lazy"
-                        />
+                        <img src={cafeIcon} alt="팬카페" className="h-4 w-4" loading="lazy" />
                     </a>
                 )}
             </div>
@@ -148,19 +129,14 @@ function InfoRow({
         <div className="flex items-start gap-3">
             <div className="flex w-20 shrink-0 items-center gap-1.5 pt-0.5">
                 <Icon className="h-3.5 w-3.5 text-text-dim" />
-                <span className="text-xs font-medium text-text-dim">
-                    {label}
-                </span>
+                <span className="text-xs font-medium text-text-dim">{label}</span>
             </div>
             <div className="min-w-0 flex-1 text-sm text-text">{children}</div>
         </div>
     )
 }
 
-export function BroadcastDetailModal({
-    broadcast,
-    onClose,
-}: BroadcastDetailModalProps) {
+export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModalProps) {
     const { data: detailData } = useBroadcastDetail(broadcast?.id ?? null)
     const displayBroadcast: Broadcast | null = detailData ?? broadcast
     useModalKeydown(displayBroadcast !== null, onClose)
@@ -168,8 +144,7 @@ export function BroadcastDetailModal({
     const sortedParticipants = useMemo(() => {
         if (!displayBroadcast) return []
         const participants: Participant[] =
-            displayBroadcast.participants &&
-            displayBroadcast.participants.length > 0
+            displayBroadcast.participants && displayBroadcast.participants.length > 0
                 ? displayBroadcast.participants
                 : [
                       {
@@ -184,9 +159,7 @@ export function BroadcastDetailModal({
 
     const date = dayjs(displayBroadcast.startTime)
     const startTime = formatTime(displayBroadcast.startTime)
-    const endTime = displayBroadcast.endTime
-        ? formatTime(displayBroadcast.endTime)
-        : undefined
+    const endTime = displayBroadcast.endTime ? formatTime(displayBroadcast.endTime) : undefined
     const dayName = getDayName(date)
     const dateLabel = `${date.month() + 1}월 ${date.date()}일 (${dayName})`
     const categoryName = displayBroadcast.category?.name ?? undefined
@@ -194,11 +167,7 @@ export function BroadcastDetailModal({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
-            <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={onClose}
-                role="presentation"
-            />
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} role="presentation" />
 
             <div
                 className="relative flex max-h-[85vh] w-full flex-col overflow-hidden rounded-t-2xl border border-border/40 bg-bg shadow-[0_-8px_40px_rgba(0,0,0,0.3)] sm:max-h-[80vh] sm:max-w-lg sm:rounded-2xl sm:shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
@@ -220,9 +189,7 @@ export function BroadcastDetailModal({
                 <div className="flex-1 overflow-y-auto scrollbar-hide">
                     <div className="space-y-5 px-5 py-5">
                         <div>
-                            <h2 className="text-lg font-bold leading-snug text-text sm:text-xl">
-                                {displayBroadcast.title}
-                            </h2>
+                            <h2 className="text-lg font-bold leading-snug text-text sm:text-xl">{displayBroadcast.title}</h2>
                         </div>
 
                         <div className="space-y-3">
@@ -230,15 +197,8 @@ export function BroadcastDetailModal({
                                 {dateLabel}
                             </InfoRow>
                             <InfoRow icon={Clock} label="시간">
-                                <span className="font-semibold">
-                                    {startTime}
-                                </span>
-                                {endTime && (
-                                    <span className="text-text-muted">
-                                        {' '}
-                                        – {endTime}
-                                    </span>
-                                )}
+                                <span className="font-semibold">{startTime}</span>
+                                {endTime && <span className="text-text-muted"> – {endTime}</span>}
                             </InfoRow>
                             {categoryName !== undefined && (
                                 <InfoRow icon={Gamepad2} label="카테고리">
@@ -247,12 +207,10 @@ export function BroadcastDetailModal({
                                     </span>
                                 </InfoRow>
                             )}
-                            {(displayBroadcast.isChzzkSupport === true ||
-                                tags.length > 0) && (
+                            {(displayBroadcast.isChzzkSupport === true || tags.length > 0) && (
                                 <InfoRow icon={Hash} label="태그">
                                     <div className="flex flex-wrap gap-1.5">
-                                        {displayBroadcast.isChzzkSupport ===
-                                            true && (
+                                        {displayBroadcast.isChzzkSupport === true && (
                                             <span className="rounded-md border border-primary/60 bg-bg-secondary px-2 py-0.5 text-xs font-medium text-primary">
                                                 치지직 제작지원
                                             </span>
@@ -276,41 +234,27 @@ export function BroadcastDetailModal({
                                 참여자 ({sortedParticipants.length})
                             </h3>
                             <div className="space-y-1.5">
-                                {sortedParticipants.map(
-                                    (participant, index) => (
-                                        <ParticipantRow
-                                            key={`${participant.name}-${index}`}
-                                            participant={participant}
-                                            channelUrl={
-                                                participant.channelUrl ??
-                                                (participant.name ===
-                                                displayBroadcast.streamerName
-                                                    ? (displayBroadcast.streamerChannelUrl ??
-                                                      undefined)
-                                                    : undefined)
-                                            }
-                                            isHost={participant.isHost ?? false}
-                                            isPartner={
-                                                participant.isPartner ?? false
-                                            }
-                                            youtubeUrl={
-                                                participant.youtubeUrl ??
-                                                undefined
-                                            }
-                                            fanCafeUrl={
-                                                participant.fanCafeUrl ??
-                                                undefined
-                                            }
-                                            avatarFallbackUrl={
-                                                participant.name ===
-                                                displayBroadcast.streamerName
-                                                    ? (displayBroadcast.streamerProfileUrl ??
-                                                      undefined)
-                                                    : undefined
-                                            }
-                                        />
-                                    ),
-                                )}
+                                {sortedParticipants.map((participant, index) => (
+                                    <ParticipantRow
+                                        key={`${participant.name}-${index}`}
+                                        participant={participant}
+                                        channelUrl={
+                                            participant.channelUrl ??
+                                            (participant.name === displayBroadcast.streamerName
+                                                ? (displayBroadcast.streamerChannelUrl ?? undefined)
+                                                : undefined)
+                                        }
+                                        isHost={participant.isHost ?? false}
+                                        isPartner={participant.isPartner ?? false}
+                                        youtubeUrl={participant.youtubeUrl ?? undefined}
+                                        fanCafeUrl={participant.fanCafeUrl ?? undefined}
+                                        avatarFallbackUrl={
+                                            participant.name === displayBroadcast.streamerName
+                                                ? (displayBroadcast.streamerProfileUrl ?? undefined)
+                                                : undefined
+                                        }
+                                    />
+                                ))}
                             </div>
                         </div>
                     </div>
