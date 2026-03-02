@@ -23,18 +23,18 @@ interface TournamentDetail {
     bannerUrl: string | null
 }
 
+declare const process: {
+    env: Record<string, string | undefined>
+}
+
 // ---------------------------------------------------------------------------
 // 상수
 // ---------------------------------------------------------------------------
-const SITE_URL =
-    (process.env.VITE_SITE_URL as string | undefined) ?? 'https://ohbang-it.kr'
+const SITE_URL = process.env.VITE_SITE_URL ?? 'https://ohbang-it.kr'
 
-const API_BASE_URL =
-    (process.env.VITE_API_BASE_URL as string | undefined) ??
-    'http://localhost:3000'
+const API_BASE_URL = process.env.VITE_API_BASE_URL ?? 'http://localhost:3000'
 
-const DEFAULT_DESCRIPTION =
-    '치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요.'
+const DEFAULT_DESCRIPTION = '치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요.'
 
 const DEFAULT_OG: OgMeta = {
     title: '오뱅잇 - 치지직 스트리밍 스케줄',
@@ -84,11 +84,7 @@ function isBot(ua: string): boolean {
 // HTML 이스케이프
 // ---------------------------------------------------------------------------
 function esc(str: string): string {
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
 // ---------------------------------------------------------------------------
@@ -160,9 +156,7 @@ async function buildTournamentOg(url: URL, slug: string): Promise<OgMeta> {
                 title,
                 description,
                 url: url.href,
-                imageUrl:
-                    data.bannerUrl ??
-                    `${SITE_URL}/api/og?${ogParams.toString()}`,
+                imageUrl: data.bannerUrl ?? `${SITE_URL}/api/og?${ogParams.toString()}`,
             }
         }
     } catch {
@@ -228,9 +222,7 @@ function injectOgMeta(html: string, meta: OgMeta): string {
 // ---------------------------------------------------------------------------
 // Edge Middleware 진입점
 // ---------------------------------------------------------------------------
-export default async function middleware(
-    req: Request,
-): Promise<Response | undefined> {
+export default async function middleware(req: Request): Promise<Response | undefined> {
     const ua = req.headers.get('user-agent') ?? ''
 
     // 봇이 아니면 정상 통과
@@ -241,9 +233,7 @@ export default async function middleware(
     // 정적 에셋·API 라우트는 스킵 (확장자 있는 경로, /api/, /src/)
     const { pathname } = url
     const isAsset =
-        /\.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|map|json|webp|avif)$/i.test(
-            pathname,
-        ) ||
+        /\.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|map|json|webp|avif)$/i.test(pathname) ||
         pathname.startsWith('/api/') ||
         pathname.startsWith('/src/')
     if (isAsset) return undefined
