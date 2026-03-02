@@ -1,4 +1,3 @@
-import { Zap } from 'lucide-react'
 import { memo } from 'react'
 import type { Dayjs } from 'dayjs'
 import { getDayName, isToday } from '../utils/date'
@@ -12,7 +11,7 @@ interface WeeklyDateTabsProps {
 
 function WeeklyDateTabsComponent({ weekDays, broadcastCountByDate, activeDateKey, onSelectDate }: WeeklyDateTabsProps) {
     return (
-        <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide border-b border-border/30 px-2">
+        <div className="flex border-b border-border/30 px-2 sm:overflow-x-auto sm:scrollbar-hide">
             {weekDays.map((day) => {
                 const key = day.format('YYYY-MM-DD')
                 const today = isToday(day)
@@ -25,7 +24,7 @@ function WeeklyDateTabsComponent({ weekDays, broadcastCountByDate, activeDateKey
                         type="button"
                         onClick={() => onSelectDate(day)}
                         className={[
-                            'flex min-w-[48px] shrink-0 cursor-pointer flex-col items-center gap-0.5 rounded-t-xl px-2 pt-2 pb-2.5 transition-all',
+                            'flex flex-1 sm:flex-none sm:min-w-[48px] sm:shrink-0 cursor-pointer flex-col items-center gap-0.5 rounded-t-xl px-2 pt-2 pb-2.5 transition-all',
                             isActive ? 'bg-primary/10' : 'hover:bg-bg-secondary',
                         ].join(' ')}
                     >
@@ -50,17 +49,7 @@ function WeeklyDateTabsComponent({ weekDays, broadcastCountByDate, activeDateKey
                     </button>
                 )
             })}
-            {/* Legend — 같은 행 우측 끝 */}
-            <div className="ml-auto flex shrink-0 items-center gap-3 px-3">
-                <span className="flex items-center gap-1 text-[10px] text-text-dim">
-                    <span className="h-1.5 w-1.5 rounded-full bg-live" />
-                    LIVE
-                </span>
-                <span className="flex items-center gap-1 text-[10px] text-text-dim">
-                    <Zap className="h-3 w-3 fill-primary text-primary" />
-                    치지직 제작지원
-                </span>
-            </div>
+
         </div>
     )
 }

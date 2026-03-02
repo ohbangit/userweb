@@ -3,6 +3,7 @@ import type { Dayjs } from 'dayjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Broadcast } from '../types/schedule'
 import { getWeekDays, getDayName, isToday } from '../utils/date'
+import { Zap } from 'lucide-react'
 import { WeeklyDateTabs } from './WeeklyDateTabs'
 import { WeeklyBroadcastRow } from './WeeklyBroadcastRow'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
@@ -89,6 +90,18 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
                 activeDateKey={activeDateKey}
                 onSelectDate={handleSelectDate}
             />
+
+            {/* Legend */}
+            <div className="flex items-center gap-3 border-b border-border/20 px-4 py-1.5">
+                <span className="flex items-center gap-1 text-[10px] text-text-dim">
+                    <span className="h-1.5 w-1.5 rounded-full bg-live" />
+                    LIVE
+                </span>
+                <span className="flex items-center gap-1 text-[10px] text-text-dim">
+                    <Zap className="h-3 w-3 fill-primary text-primary" />
+                    치지직 제작지원
+                </span>
+            </div>
 
             {/* 내부 스크롤 영역 — 탭은 항상 위에 고정 */}
             <div
