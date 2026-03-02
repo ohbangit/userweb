@@ -23,24 +23,32 @@ interface TournamentDetail {
     bannerUrl: string | null
 }
 
-declare const process: {
-    env: Record<string, string | undefined>
-}
-
 // ---------------------------------------------------------------------------
 // 상수
 // ---------------------------------------------------------------------------
-const SITE_URL = process.env.VITE_SITE_URL ?? 'https://ohbang-it.kr'
-
-const API_BASE_URL = process.env.VITE_API_BASE_URL ?? 'http://localhost:3000'
-
 const DEFAULT_DESCRIPTION = '치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요.'
 
-const DEFAULT_OG: OgMeta = {
-    title: '오뱅잇 - 치지직 스트리밍 스케줄',
-    description: DEFAULT_DESCRIPTION,
-    url: SITE_URL,
-    imageUrl: `${SITE_URL}/api/og`,
+function readRuntimeEnv(key: string): string | undefined {
+    const runtimeProcess = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process
+    return runtimeProcess?.env?.[key]
+}
+
+function resolveSiteUrl(url: URL): string {
+    return readRuntimeEnv('VITE_SITE_URL') ?? url.origin
+}
+
+function resolveApiBaseUrl(): string {
+    return readRuntimeEnv('VITE_API_BASE_URL') ?? 'http://localhost:3000'
+}
+
+function buildDefaultOg(url: URL): OgMeta {
+    const siteUrl = resolveSiteUrl(url)
+    return {
+        title: '오뱅잇 - 치지직 스트리밍 스케줄',
+        description: DEFAULT_DESCRIPTION,
+        url: url.href,
+        imageUrl: `${siteUrl}/api/og`,
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -106,13 +114,15 @@ function parseKstDate(dateStr: string): Date | null {
 
 /** 스케줄 페이지: URL 파라미터 기반 제목·설명 생성 (API 호출 없음) */
 function buildScheduleOg(url: URL): OgMeta {
+    const defaultOg = buildDefaultOg(url)
+    const siteUrl = resolveSiteUrl(url)
     const dateParam = url.searchParams.get('date')
     const view = url.searchParams.get('view') ?? 'daily'
 
-    if (!dateParam) return { ...DEFAULT_OG, url: url.href }
+    if (!dateParam) return defaultOg
 
     const d = parseKstDate(dateParam)
-    if (!d) return { ...DEFAULT_OG, url: url.href }
+    if (!d) return defaultOg
 
     const m = d.getMonth() + 1
     const day = d.getDate()
@@ -134,14 +144,16 @@ function buildScheduleOg(url: URL): OgMeta {
         title,
         description,
         url: url.href,
-        imageUrl: `${SITE_URL}/api/og?${ogParams.toString()}`,
+        imageUrl: `${siteUrl}/api/og?${ogParams.toString()}`,
     }
 }
 
 /** 토너먼트 페이지: 백엔드 API 조회 (2초 타임아웃, 실패 시 기본값 반환) */
 async function buildTournamentOg(url: URL, slug: string): Promise<OgMeta> {
+    const siteUrl = resolveSiteUrl(url)
+    const apiBaseUrl = resolveApiBaseUrl()
     try {
-        const res = await fetch(`${API_BASE_URL}/api/tournaments/${slug}`, {
+        const res = await fetch(`${apiBaseUrl}/api/tournaments/${slug}`, {
             signal: AbortSignal.timeout(2000),
             headers: { 'Content-Type': 'application/json' },
         })
@@ -156,7 +168,7 @@ async function buildTournamentOg(url: URL, slug: string): Promise<OgMeta> {
                 title,
                 description,
                 url: url.href,
-                imageUrl: data.bannerUrl ?? `${SITE_URL}/api/og?${ogParams.toString()}`,
+                imageUrl: data.bannerUrl ?? `${siteUrl}/api/og?${ogParams.toString()}`,
             }
         }
     } catch {
@@ -167,7 +179,7 @@ async function buildTournamentOg(url: URL, slug: string): Promise<OgMeta> {
         title: '오뱅잇 - 대회 정보',
         description: '오뱅잇에서 대회 정보와 일정을 확인하세요.',
         url: url.href,
-        imageUrl: `${SITE_URL}/api/og?${new URLSearchParams({ title: '오뱅잇 - 대회 정보', description: '오뱅잇에서 대회 정보와 일정을 확인하세요.' }).toString()}`,
+        imageUrl: `${siteUrl}/api/og?${new URLSearchParams({ title: '오뱅잇 - 대회 정보', description: '오뱅잇에서 대회 정보와 일정을 확인하세요.' }).toString()}`,
     }
 }
 
@@ -184,7 +196,7 @@ async function resolveOgMeta(url: URL): Promise<OgMeta> {
         return buildScheduleOg(url)
     }
 
-    return { ...DEFAULT_OG, url: url.href }
+    return buildDefaultOg(url)
 }
 
 // ---------------------------------------------------------------------------
