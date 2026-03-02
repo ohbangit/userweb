@@ -54,7 +54,7 @@ export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: Monthl
     return (
         <div className="flex flex-col gap-4 md:flex-row md:gap-6">
             {/* 좌측: 히트맵 캘린더 */}
-            <div className="md:w-80 md:shrink-0 lg:w-96">
+            <div className="-mx-2 sm:mx-0 md:w-80 md:shrink-0 lg:w-96">
                 <div className="overflow-hidden rounded-xl border border-border/60 shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
                     {/* 요일 헤더 */}
                     <div className="grid grid-cols-7 border-b border-border/30 bg-bg-secondary">

@@ -82,7 +82,7 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
     }, [weekDays])
 
     return (
-        <div className="overflow-hidden rounded-xl border border-border/40 bg-bg">
+        <div className="-mx-4 overflow-hidden bg-bg sm:mx-0 sm:rounded-xl sm:border sm:border-border/40">
             {/* 날짜 탭 바 */}
             <WeeklyDateTabs
                 weekDays={weekDays}

@@ -91,7 +91,7 @@ export default function SchedulePage() {
                             onClick={handleToday}
                             disabled={isToday}
                             className={[
-                                'rounded-lg border px-2.5 py-2 text-xs font-medium transition-colors sm:px-3 sm:py-1.5',
+                                'inline-flex h-9 items-center rounded-lg border px-2.5 text-xs font-medium transition-colors sm:h-8 sm:px-3',
                                 isToday
                                     ? 'cursor-default border-primary/40 bg-primary/10 text-primary'
                                     : 'cursor-pointer border-border/40 bg-card text-text-muted hover:border-border hover:text-text',

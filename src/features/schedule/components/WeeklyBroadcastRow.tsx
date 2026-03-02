@@ -39,21 +39,21 @@ function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowP
         >
             {/* 상태 도트: LIVE=빨강 애니메이션, 합방=보라, 일반=primary */}
             {broadcast.isLive ? (
-                <span className="relative flex h-2 w-2 shrink-0">
+                <span className="relative hidden h-2 w-2 shrink-0 sm:flex">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-live opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-live" />
                 </span>
             ) : (
                 <span
                     className={[
-                        'h-2 w-2 shrink-0 rounded-full',
+                        'hidden h-2 w-2 shrink-0 rounded-full sm:block',
                         broadcast.isCollab ? 'bg-collab' : 'bg-primary/60',
                     ].join(' ')}
                 />
             )}
 
             {/* 시작 시간 */}
-            <span className="w-10 shrink-0 text-sm font-bold tabular-nums text-text sm:w-11">{startTime}</span>
+            <span className="w-10 shrink-0 text-sm font-bold tabular-nums text-text-muted sm:w-11">{startTime}</span>
 
             {/* 합방 배지 + 방송 제목 */}
             <div className="flex min-w-0 flex-1 items-center gap-1.5">

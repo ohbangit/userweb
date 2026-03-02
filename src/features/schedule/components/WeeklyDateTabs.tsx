@@ -11,7 +11,7 @@ interface WeeklyDateTabsProps {
 
 function WeeklyDateTabsComponent({ weekDays, broadcastCountByDate, activeDateKey, onSelectDate }: WeeklyDateTabsProps) {
     return (
-        <div className="flex border-b border-border/30 px-2 sm:overflow-x-auto sm:scrollbar-hide">
+        <div className="flex border-b border-border/30 sm:overflow-x-auto sm:px-2 sm:scrollbar-hide">
             {weekDays.map((day) => {
                 const key = day.format('YYYY-MM-DD')
                 const today = isToday(day)

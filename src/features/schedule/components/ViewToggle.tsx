@@ -11,7 +11,7 @@ export function ViewToggle({ viewMode, onChange }: ViewToggleProps) {
             <button
                 onClick={() => onChange('daily')}
                 className={[
-                    'cursor-pointer rounded-md px-2.5 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
+                    'cursor-pointer rounded-md px-2.5 py-1.5 text-sm font-medium transition-all sm:px-4',
                     viewMode === 'daily'
                         ? 'bg-card text-text shadow-sm'
                         : 'text-text-muted hover:text-text',
@@ -23,7 +23,7 @@ export function ViewToggle({ viewMode, onChange }: ViewToggleProps) {
             <button
                 onClick={() => onChange('weekly')}
                 className={[
-                    'cursor-pointer rounded-md px-2.5 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
+                    'cursor-pointer rounded-md px-2.5 py-1.5 text-sm font-medium transition-all sm:px-4',
                     viewMode === 'weekly'
                         ? 'bg-card text-text shadow-sm'
                         : 'text-text-muted hover:text-text',
@@ -35,7 +35,7 @@ export function ViewToggle({ viewMode, onChange }: ViewToggleProps) {
             <button
                 onClick={() => onChange('monthly')}
                 className={[
-                    'cursor-pointer rounded-md px-2.5 py-2 text-sm font-medium transition-all sm:px-4 sm:py-1.5',
+                    'cursor-pointer rounded-md px-2.5 py-1.5 text-sm font-medium transition-all sm:px-4',
                     viewMode === 'monthly'
                         ? 'bg-card text-text shadow-sm'
                         : 'text-text-muted hover:text-text',
