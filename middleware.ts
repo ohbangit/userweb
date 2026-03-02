@@ -37,8 +37,8 @@ function resolveSiteUrl(url: URL): string {
     return readRuntimeEnv('VITE_SITE_URL') ?? url.origin
 }
 
-function resolveApiBaseUrl(): string {
-    return readRuntimeEnv('VITE_API_BASE_URL') ?? 'http://localhost:3000'
+function resolveApiBaseUrl(url: URL): string {
+    return readRuntimeEnv('VITE_API_BASE_URL') ?? url.origin
 }
 
 function buildDefaultOg(url: URL): OgMeta {
@@ -151,7 +151,7 @@ function buildScheduleOg(url: URL): OgMeta {
 /** 토너먼트 페이지: 백엔드 API 조회 (2초 타임아웃, 실패 시 기본값 반환) */
 async function buildTournamentOg(url: URL, slug: string): Promise<OgMeta> {
     const siteUrl = resolveSiteUrl(url)
-    const apiBaseUrl = resolveApiBaseUrl()
+    const apiBaseUrl = resolveApiBaseUrl(url)
     try {
         const res = await fetch(`${apiBaseUrl}/api/tournaments/${slug}`, {
             signal: AbortSignal.timeout(2000),
@@ -171,8 +171,12 @@ async function buildTournamentOg(url: URL, slug: string): Promise<OgMeta> {
                 imageUrl: data.bannerUrl ?? `${siteUrl}/api/og?${ogParams.toString()}`,
             }
         }
-    } catch {
-        // 타임아웃 또는 네트워크 오류 → 기본값 사용
+    } catch (error) {
+        console.error('[middleware] buildTournamentOg failed', {
+            slug,
+            apiBaseUrl,
+            message: error instanceof Error ? error.message : 'unknown error',
+        })
     }
 
     return {
@@ -270,8 +274,11 @@ export default async function middleware(req: Request): Promise<Response | undef
                 'X-Og-Injected': '1',
             },
         })
-    } catch {
-        // 예외 발생 시 정상 통과 (기존 정적 폴백 OG 사용)
+    } catch (error) {
+        console.error('[middleware] og injection failed', {
+            url: req.url,
+            message: error instanceof Error ? error.message : 'unknown error',
+        })
         return undefined
     }
 }

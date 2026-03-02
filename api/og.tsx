@@ -1,7 +1,7 @@
 import { ImageResponse } from '@vercel/og'
 import { createElement } from 'react'
 
-export const config = { runtime: 'nodejs' }
+export const config = { runtime: 'edge' }
 
 async function loadGoogleFont(font: string, text: string): Promise<ArrayBuffer | undefined> {
     try {
