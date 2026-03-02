@@ -10,7 +10,7 @@ export function AppLayout({ children }: LayoutProps) {
     return (
         <div className="min-h-screen bg-bg">
             <Header />
-            <main className="mx-auto max-w-[1200px] px-4 py-4 sm:px-6 sm:py-6">
+            <main className="mx-auto max-w-[1290px] px-4 py-4 sm:px-6 sm:py-6">
                 {children}
             </main>
             <ContactPanel />

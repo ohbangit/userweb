@@ -1,26 +1,31 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Broadcast } from '../types/schedule'
 import { getWeekDays, getDayName, isToday } from '../utils/date'
-import { BroadcastCard } from './BroadcastCard'
+import { WeeklyDateTabs } from './WeeklyDateTabs'
+import { WeeklyBroadcastRow } from './WeeklyBroadcastRow'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
-import { DayBroadcastListModal } from './DayBroadcastListModal'
-
-const MAX_VISIBLE = 3
 
 interface WeeklyScheduleProps {
     broadcasts: Broadcast[]
     currentDate: Dayjs
 }
 
-export function WeeklySchedule({
-    broadcasts,
-    currentDate,
-}: WeeklyScheduleProps) {
-    const [selectedBroadcast, setSelectedBroadcast] =
-        useState<Broadcast | null>(null)
-    const [expandedDay, setExpandedDay] = useState<Dayjs | null>(null)
+export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps) {
+    const [selectedBroadcast, setSelectedBroadcast] = useState<Broadcast | null>(null)
+    const [activeDateKey, setActiveDateKey] = useState<string>(() => currentDate.format('YYYY-MM-DD'))
+
+    // 주가 바뀌면 activeDateKey 초기화
+    useEffect(() => {
+        setActiveDateKey(currentDate.format('YYYY-MM-DD'))
+    }, [currentDate])
+
+    const sectionRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+    const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+    const weekDays = useMemo(() => getWeekDays(currentDate), [currentDate])
+
     const broadcastsByDate = useMemo(() => {
         const map = new Map<string, Broadcast[]>()
         for (const b of broadcasts) {
@@ -29,117 +34,126 @@ export function WeeklySchedule({
             if (arr) arr.push(b)
             else map.set(key, [b])
         }
-
         for (const arr of map.values()) {
-            arr.sort(
-                (a, b) =>
-                    dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf(),
-            )
+            arr.sort((a, b) => dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf())
         }
-
         return map
     }, [broadcasts])
 
-    const weekDays = useMemo(() => getWeekDays(currentDate), [currentDate])
+    const broadcastCountByDate = useMemo(() => {
+        const countMap = new Map<string, number>()
+        for (const [key, arr] of broadcastsByDate.entries()) {
+            countMap.set(key, arr.length)
+        }
+        return countMap
+    }, [broadcastsByDate])
 
-    const getBroadcastsForDay = (day: Dayjs) =>
-        broadcastsByDate.get(day.format('YYYY-MM-DD')) ?? []
+    // 탭 클릭 → 컨테이너 내부 스크롤
+    const handleSelectDate = (day: Dayjs) => {
+        const key = day.format('YYYY-MM-DD')
+        setActiveDateKey(key)
+        const sectionEl = sectionRefs.current.get(key)
+        const containerEl = scrollContainerRef.current
+        if (!sectionEl || !containerEl) return
+        const containerRect = containerEl.getBoundingClientRect()
+        const sectionRect = sectionEl.getBoundingClientRect()
+        const scrollOffset =
+            containerEl.scrollTop + (sectionRect.top - containerRect.top)
+        containerEl.scrollTo({ top: scrollOffset, behavior: 'smooth' })
+    }
 
-    const expandedDayBroadcasts = useMemo(
-        () =>
-            expandedDay
-                ? (broadcastsByDate.get(expandedDay.format('YYYY-MM-DD')) ?? [])
-                : [],
-        [expandedDay, broadcastsByDate],
-    )
+    // 내부 스크롤 시 활성 탭 자동 업데이트
+    useEffect(() => {
+        const container = scrollContainerRef.current
+        if (!container) return
+        const handleScroll = () => {
+            const containerRect = container.getBoundingClientRect()
+            let activeKey = weekDays[0].format('YYYY-MM-DD')
+            for (const [key, el] of sectionRefs.current.entries()) {
+                if (el.getBoundingClientRect().top <= containerRect.top + 1) {
+                    activeKey = key
+                }
+            }
+            setActiveDateKey(activeKey)
+        }
+        container.addEventListener('scroll', handleScroll, { passive: true })
+        return () => container.removeEventListener('scroll', handleScroll)
+    }, [weekDays])
 
     return (
-        <div className="flex gap-px overflow-x-auto overflow-y-hidden rounded-xl border border-border/40 bg-border/20 scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-7 md:snap-none">
-            {weekDays.map((day) => {
-                const dayBroadcasts = getBroadcastsForDay(day)
-                const today = isToday(day)
-                const hiddenCount = dayBroadcasts.length - MAX_VISIBLE
-                const visibleBroadcasts = dayBroadcasts.slice(0, MAX_VISIBLE)
+        <div className="overflow-hidden rounded-xl border border-border/40 bg-bg">
+            {/* 날짜 탭 바 */}
+            <WeeklyDateTabs
+                weekDays={weekDays}
+                broadcastCountByDate={broadcastCountByDate}
+                activeDateKey={activeDateKey}
+                onSelectDate={handleSelectDate}
+            />
 
-                return (
-                    <div
-                        key={day.toISOString()}
-                        className={[
-                            'flex min-w-[200px] shrink-0 snap-start flex-col bg-bg md:min-w-0 md:shrink',
-                            'min-h-[300px] sm:min-h-[360px]',
-                            today ? 'bg-primary/[0.02]' : '',
-                        ].join(' ')}
-                    >
+            {/* 내부 스크롤 영역 — 탭은 항상 위에 고정 */}
+            <div
+                ref={scrollContainerRef}
+                className="max-h-[70vh] overflow-y-auto scrollbar-hide"
+            >
+            <div className="divide-y divide-border/20">
+                {weekDays.map((day) => {
+                    const key = day.format('YYYY-MM-DD')
+                    const today = isToday(day)
+                    const dayBroadcasts = broadcastsByDate.get(key) ?? []
+
+                    return (
                         <div
-                            className={[
-                                'flex items-center gap-2 border-b border-border/30 px-3 py-2.5',
-                                today ? 'border-b-primary/30' : '',
-                            ].join(' ')}
+                            key={key}
+                            ref={(el) => {
+                                if (el) sectionRefs.current.set(key, el)
+                                else sectionRefs.current.delete(key)
+                            }}
                         >
-                            <span
-                                className={[
-                                    'text-xs font-medium',
-                                    today ? 'text-primary' : 'text-text-muted',
-                                ].join(' ')}
-                            >
-                                {getDayName(day)}
-                            </span>
-                            <span
-                                className={[
-                                    'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold',
-                                    today ? 'bg-primary text-bg' : 'text-text',
-                                ].join(' ')}
-                            >
-                                {day.date()}
-                            </span>
-                        </div>
+                            {/* 날짜 섹션 헤더 */}
+                            <div className={['flex items-center justify-between px-4 py-3', today ? 'bg-primary/[0.03]' : ''].join(' ')}>
+                                <div className="flex items-center gap-2">
+                                    <span className={['text-xs font-bold', today ? 'text-primary' : 'text-text-muted'].join(' ')}>
+                                        {getDayName(day)}요일
+                                    </span>
+                                    <span className={['text-xs', today ? 'text-primary/70' : 'text-text-dim'].join(' ')}>
+                                        {day.month() + 1}/{day.date()}
+                                    </span>
+                                    {today && (
+                                        <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                                            오늘
+                                        </span>
+                                    )}
+                                </div>
+                                {dayBroadcasts.length > 0 && (
+                                    <span className="rounded-full bg-bg-secondary px-2 py-0.5 text-[10px] font-medium text-text-dim">
+                                        {dayBroadcasts.length}개
+                                    </span>
+                                )}
+                            </div>
 
-                        <div className="flex flex-1 flex-col gap-2 p-2">
+                            {/* 방송 행 목록 */}
                             {dayBroadcasts.length > 0 ? (
-                                <>
-                                    {visibleBroadcasts.map((broadcast) => (
-                                        <BroadcastCard
+                                <div className="px-2 pb-3">
+                                    {dayBroadcasts.map((broadcast) => (
+                                        <WeeklyBroadcastRow
                                             key={broadcast.id}
                                             broadcast={broadcast}
-                                            variant="compact"
-                                            onClick={() =>
-                                                setSelectedBroadcast(broadcast)
-                                            }
+                                            onClick={() => setSelectedBroadcast(broadcast)}
                                         />
                                     ))}
-                                    {hiddenCount > 0 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setExpandedDay(day)}
-                                            className="cursor-pointer rounded-lg border border-border/30 bg-bg-secondary/60 px-2 py-1.5 text-xs font-semibold text-primary transition-colors hover:border-primary/40 hover:bg-primary/10"
-                                        >
-                                            +{hiddenCount}개 더보기
-                                        </button>
-                                    )}
-                                </>
+                                </div>
                             ) : (
-                                <div className="flex flex-1 items-center justify-center">
-                                    <span className="text-xs text-text-dim">
-                                        방송 없음
-                                    </span>
+                                <div className="flex items-center justify-center py-6">
+                                    <span className="text-xs text-text-dim">방송 없음</span>
                                 </div>
                             )}
                         </div>
-                    </div>
-                )
-            })}
-            <DayBroadcastListModal
-                day={expandedDay}
-                broadcasts={expandedDayBroadcasts}
-                onClose={() => setExpandedDay(null)}
-                onSelectBroadcast={(broadcast) =>
-                    setSelectedBroadcast(broadcast)
-                }
-            />
-            <BroadcastDetailModal
-                broadcast={selectedBroadcast}
-                onClose={() => setSelectedBroadcast(null)}
-            />
+                    )
+                })}
+            </div>
+            </div>
+
+            <BroadcastDetailModal broadcast={selectedBroadcast} onClose={() => setSelectedBroadcast(null)} />
         </div>
     )
 }

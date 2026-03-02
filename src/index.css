@@ -33,6 +33,7 @@
 
 /* Light mode (default) — 치지직 화이트 테마 */
 html {
+    font-size: 112.5%; /* 18px base: text-xs=13.5px ≈ 네이버 기준 13.65px */
     --theme-primary: #00dc82;
     --theme-primary-dim: #00b368;
     --theme-bg: #ffffff;

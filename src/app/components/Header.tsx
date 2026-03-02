@@ -82,7 +82,7 @@ export function Header() {
             ref={headerRef}
             className="sticky top-0 z-50 border-b border-border/30 bg-bg backdrop-blur-xl"
         >
-            <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-4 sm:px-6">
+            <div className="mx-auto flex h-14 max-w-[1290px] items-center justify-between px-4 sm:px-6">
                 {/* 왼쪽: 로고 + 네비게이션 */}
                 <div className="flex items-center gap-4">
                     <img
