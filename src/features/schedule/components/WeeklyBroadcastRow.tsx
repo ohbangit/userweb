@@ -4,6 +4,7 @@ import type { Broadcast } from '../types/schedule'
 import { formatTime } from '../utils/date'
 import { resolveParticipants, sortParticipants } from '../utils/participant'
 import { ParticipantStack } from './ParticipantStack'
+import partnerMark from '../../../assets/mark.png'
 
 interface WeeklyBroadcastRowProps {
     broadcast: Broadcast
@@ -13,7 +14,7 @@ interface WeeklyBroadcastRowProps {
 function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowProps) {
     const startTime = formatTime(broadcast.startTime)
 
-    const { sortedParticipants, representativeName, remaining } = useMemo(() => {
+    const { sortedParticipants, representativeName, remaining, isRepresentativePartner } = useMemo(() => {
         const participants = resolveParticipants(
             broadcast.participants,
             broadcast.streamerName,
@@ -26,6 +27,7 @@ function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowP
             sortedParticipants: sorted,
             representativeName: representative?.nickname ?? representative?.name ?? '',
             remaining: sorted.length - 1,
+            isRepresentativePartner: representative?.isPartner === true,
         }
     }, [broadcast])
 
@@ -36,12 +38,19 @@ function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowP
             className="group flex w-full cursor-pointer items-center gap-2.5 rounded-xl border border-transparent px-3 py-2.5 text-left transition-all hover:border-border/40 hover:bg-card sm:gap-3"
         >
             {/* 상태 도트: LIVE=빨강 애니메이션, 합방=보라, 일반=primary */}
-            <span
-                className={[
-                    'h-2 w-2 shrink-0 rounded-full',
-                    broadcast.isLive ? 'bg-live' : broadcast.isCollab ? 'bg-collab' : 'bg-primary/60',
-                ].join(' ')}
-            />
+            {broadcast.isLive ? (
+                <span className="relative flex h-2 w-2 shrink-0">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-live opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-live" />
+                </span>
+            ) : (
+                <span
+                    className={[
+                        'h-2 w-2 shrink-0 rounded-full',
+                        broadcast.isCollab ? 'bg-collab' : 'bg-primary/60',
+                    ].join(' ')}
+                />
+            )}
 
             {/* 시작 시간 */}
             <span className="w-10 shrink-0 text-sm font-bold tabular-nums text-text sm:w-11">{startTime}</span>
@@ -61,8 +70,11 @@ function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowP
             <div className="flex shrink-0 items-center gap-1.5">
 
                 <ParticipantStack participants={sortedParticipants} />
-                <span className="hidden max-w-[100px] truncate text-[11px] text-text-muted sm:block">
-                    {representativeName}
+                <span className="hidden items-center gap-0.5 text-[11px] text-text-muted sm:flex">
+                    <span className="max-w-[80px] truncate">{representativeName}</span>
+                    {isRepresentativePartner && (
+                        <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />
+                    )}
                     {remaining > 0 && ` 외 ${remaining}명`}
                 </span>
             </div>

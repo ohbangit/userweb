@@ -20,6 +20,7 @@ import {
 export default function SchedulePage() {
     const [searchParams, setSearchParams] = useSearchParams()
     const { viewMode, setViewMode } = useViewMode(searchParams.get('view'))
+    const [monthlyResetKey, setMonthlyResetKey] = useState(0)
     const [currentDate, setCurrentDate] = useState<Dayjs>(() => {
         const dateParam = searchParams.get('date')
         if (dateParam) {
@@ -54,6 +55,7 @@ export default function SchedulePage() {
 
     const handleToday = () => {
         setCurrentDate(dayjs())
+        setMonthlyResetKey((prev) => prev + 1)
     }
 
     const isToday = isSameDay(currentDate, dayjs())
@@ -136,6 +138,7 @@ export default function SchedulePage() {
                     />
                 ) : (
                     <MonthlySchedule
+                        key={`${currentDate.format('YYYY-MM')}-${monthlyResetKey}`}
                         broadcasts={broadcasts}
                         currentDate={currentDate}
                         onSelectDay={(day) => {
