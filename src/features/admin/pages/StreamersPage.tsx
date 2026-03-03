@@ -9,12 +9,15 @@ import {
     useRefreshStreamer,
     useDeleteStreamer,
     useUpdateNickname,
+    useAffiliations,
+    useUpdateStreamerAffiliations,
 } from '../hooks'
 import type { StreamerItem } from '../types'
+import { getAffiliationColor } from '../types'
 import { ApiError } from '../../../lib/apiClient'
 
 type TabType = 'all' | 'missing'
-type EditingField = 'channel' | 'nickname' | 'youtube' | 'fanCafe' | null
+type EditingField = 'channel' | 'nickname' | 'youtube' | 'fanCafe' | 'affiliations' | null
 
 function errMsg(err: Error | null): string | null {
     if (err === null) return null
@@ -143,11 +146,17 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
     const [youtubeInput, setYoutubeInput] = useState(streamer.youtubeUrl ?? '')
     const [fanCafeInput, setFanCafeInput] = useState(streamer.fanCafeUrl ?? '')
     const [nicknameInput, setNicknameInput] = useState(streamer.nickname)
+    const [selectedAffiliationIds, setSelectedAffiliationIds] = useState<number[]>(
+        streamer.affiliations.map((a) => a.id),
+    )
 
     const sync = useSyncStreamer(streamer.id)
     const updateYoutube = useUpdateYoutubeUrl(streamer.channelId ?? '')
     const updateFanCafe = useUpdateFanCafeUrl(streamer.channelId ?? '')
     const updateNickname = useUpdateNickname(streamer.id)
+    const updateAffiliations = useUpdateStreamerAffiliations(streamer.id)
+    const { data: affiliationsData } = useAffiliations()
+    const allAffiliations = affiliationsData?.affiliations ?? []
 
     function cancelEdit() {
         setEditing(null)
@@ -155,10 +164,12 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
         setYoutubeInput(streamer.youtubeUrl ?? '')
         setFanCafeInput(streamer.fanCafeUrl ?? '')
         setNicknameInput(streamer.nickname)
+        setSelectedAffiliationIds(streamer.affiliations.map((a) => a.id))
         sync.reset()
         updateYoutube.reset()
         updateFanCafe.reset()
         updateNickname.reset()
+        updateAffiliations.reset()
     }
 
     return (
@@ -392,7 +403,121 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                         )}
                     </FieldRow>
 
-                    <FieldRow label="팔로워 수">
+                    <FieldRow label="소속">
+                        {editing === 'affiliations' ? (
+                            <div className="space-y-3">
+                                {allAffiliations.length === 0 ? (
+                                    <p className="text-xs text-gray-400 dark:text-[#848494]">
+                                        등록된 소속이 없습니다. 소속 관리 페이지에서 먼저 소속을 추가해주세요.
+                                    </p>
+                                ) : (
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {allAffiliations.map((a) => {
+                                            const selected = selectedAffiliationIds.includes(a.id)
+                                            const color = getAffiliationColor(a.id)
+                                            return (
+                                                <button
+                                                    key={a.id}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSelectedAffiliationIds((prev) =>
+                                                            selected
+                                                                ? prev.filter((id) => id !== a.id)
+                                                                : [...prev, a.id],
+                                                        )
+                                                    }}
+                                                    className="cursor-pointer inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-all"
+                                                    style={{
+                                                        backgroundColor: selected ? `${color}20` : 'transparent',
+                                                        color: selected ? color : '#9ca3af',
+                                                        outline: selected ? `1.5px solid ${color}60` : '1.5px solid #e5e7eb',
+                                                    }}
+                                                >
+                                                    {selected && (
+                                                        <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="currentColor">
+                                                            <path d="M10 3L5 8.5 2 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                                                        </svg>
+                                                    )}
+                                                    {a.name}
+                                                </button>
+                                            )
+                                        })}
+                                    </div>
+                                )}
+                                <div className="flex items-center justify-between border-t border-gray-100 pt-2 dark:border-[#2e2e38]">
+                                    <span className="text-[11px] text-gray-400 dark:text-[#848494]">
+                                        {selectedAffiliationIds.length > 0
+                                            ? `${selectedAffiliationIds.length}개 선택됨`
+                                            : '선택된 소속 없음'}
+                                    </span>
+                                    <div className="flex items-center gap-1.5">
+                                        <button
+                                            type="button"
+                                            onClick={cancelEdit}
+                                            className="h-7 rounded-md border border-gray-300 px-3 text-xs font-medium text-gray-500 transition hover:bg-gray-50 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:bg-[#2e2e38]"
+                                        >
+                                            취소
+                                        </button>
+                                        <button
+                                            type="button"
+                                            disabled={updateAffiliations.isPending}
+                                            onClick={() => {
+                                                updateAffiliations.mutate(
+                                                    { affiliationIds: selectedAffiliationIds },
+                                                    { onSuccess: () => setEditing(null) },
+                                                )
+                                            }}
+                                            className="h-7 rounded-md bg-gray-900 px-3 text-xs font-medium text-white transition hover:bg-gray-700 disabled:opacity-40 dark:bg-[#efeff1] dark:text-[#0e0e10] dark:hover:bg-[#adadb8]"
+                                        >
+                                            {updateAffiliations.isPending ? '…' : '저장'}
+                                        </button>
+                                    </div>
+                                </div>
+                                {updateAffiliations.error !== null && (
+                                    <p className="text-[11px] text-red-500 dark:text-red-400">
+                                        {updateAffiliations.error instanceof Error
+                                            ? updateAffiliations.error.message
+                                            : '오류가 발생했습니다.'}
+                                    </p>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex items-start justify-between gap-2">
+                                <div className="flex min-h-[22px] flex-wrap gap-1">
+                                    {streamer.affiliations.length > 0
+                                        ? streamer.affiliations.map((a) => {
+                                              const color = getAffiliationColor(a.id)
+                                              return (
+                                                  <span
+                                                      key={a.id}
+                                                      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                                      style={{
+                                                          backgroundColor: `${color}20`,
+                                                          color,
+                                                          outline: `1.5px solid ${color}40`,
+                                                      }}
+                                                  >
+                                                      {a.name}
+                                                  </span>
+                                              )
+                                          })
+                                        : (
+                                            <span className="text-sm text-gray-400 dark:text-[#848494]">
+                                                —
+                                            </span>
+                                        )}
+                                </div>
+                                <button
+                                    onClick={() => setEditing('affiliations')}
+                                    className="shrink-0 text-xs text-gray-400 transition hover:text-gray-700 dark:text-[#848494] dark:hover:text-[#efeff1]"
+                                >
+                                    수정
+                                </button>
+                            </div>
+                        )}
+                    </FieldRow>
+
+                    <FieldRow label="팸로워 수">
                         <span className="text-sm text-gray-900 dark:text-[#efeff1]">
                             {streamer.followerCount != null
                                 ? streamer.followerCount.toLocaleString()
@@ -528,6 +653,30 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                             <span className="mt-0.5 block text-xs text-red-400 dark:text-red-400">
                                 채널 미연결
                             </span>
+                        )}
+                        {streamer.affiliations.length > 0 && (
+                            <div className="mt-1 flex flex-wrap gap-1">
+                                {streamer.affiliations.slice(0, 3).map((a) => {
+                                    const color = getAffiliationColor(a.id)
+                                    return (
+                                        <span
+                                            key={a.id}
+                                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+                                            style={{
+                                                backgroundColor: `${color}18`,
+                                                color,
+                                            }}
+                                        >
+                                            {a.name}
+                                        </span>
+                                    )
+                                })}
+                                {streamer.affiliations.length > 3 && (
+                                    <span className="text-[11px] text-gray-400 dark:text-[#848494]">
+                                        +{streamer.affiliations.length - 3}
+                                    </span>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>

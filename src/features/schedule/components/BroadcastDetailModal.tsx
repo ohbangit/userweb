@@ -10,6 +10,7 @@ import chzzkIcon from '../../../assets/chzzk_icon.png'
 import youtubeIcon from '../../../assets/youtube.png'
 import cafeIcon from '../../../assets/cafe.png'
 import partnerMark from '../../../assets/mark.png'
+import { AffiliationBadge } from '../../../app/components/AffiliationBadge'
 
 interface BroadcastDetailModalProps {
     broadcast: Broadcast | null
@@ -35,6 +36,7 @@ function ParticipantRow({
     participant,
     isHost,
     isPartner,
+    affiliations,
     channelUrl,
     youtubeUrl,
     fanCafeUrl,
@@ -43,6 +45,7 @@ function ParticipantRow({
     participant: Participant
     isHost?: boolean
     isPartner?: boolean
+    affiliations?: Broadcast['streamerAffiliations']
     channelUrl?: string
     youtubeUrl?: string
     fanCafeUrl?: string
@@ -50,7 +53,7 @@ function ParticipantRow({
 }) {
     const avatarUrl = participant.avatarUrl ?? avatarFallbackUrl
     return (
-        <div className="flex items-center gap-3 rounded-xl bg-bg-secondary/60 px-3 py-2.5">
+        <div className="flex items-center gap-3 rounded-xl bg-bg-secondary/60 px-3 py-3">
             <div className="relative h-9 w-9 overflow-hidden rounded-full border border-border/60 bg-bg-secondary text-sm font-semibold text-text">
                 {avatarUrl ? (
                     <img
@@ -76,6 +79,13 @@ function ParticipantRow({
                     )}
                     {isPartner && <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />}
                 </div>
+                {affiliations !== undefined && affiliations.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                        {affiliations.map((affiliation) => (
+                            <AffiliationBadge key={affiliation.id} affiliation={affiliation} size="sm" />
+                        ))}
+                    </div>
+                )}
             </div>
             <div className="flex items-center gap-1.5">
                 {channelUrl && (
@@ -164,6 +174,7 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
     const dateLabel = `${date.month() + 1}월 ${date.date()}일 (${dayName})`
     const categoryName = displayBroadcast.category?.name ?? undefined
     const tags = displayBroadcast.tags ?? []
+    const streamerAffiliations = displayBroadcast.streamerAffiliations ?? []
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
@@ -246,6 +257,7 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                                         }
                                         isHost={participant.isHost ?? false}
                                         isPartner={participant.isPartner ?? false}
+                                        affiliations={participant.name === displayBroadcast.streamerName ? streamerAffiliations : undefined}
                                         youtubeUrl={participant.youtubeUrl ?? undefined}
                                         fanCafeUrl={participant.fanCafeUrl ?? undefined}
                                         avatarFallbackUrl={

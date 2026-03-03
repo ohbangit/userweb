@@ -7,6 +7,7 @@ import {
     FolderOpen,
     Gamepad2,
     Image,
+    Tag,
     Search,
     Radio,
     PanelLeftClose,
@@ -39,6 +40,7 @@ const NAV_SECTIONS: NavSection[] = [
         title: '관리',
         items: [
             { to: '/admin/streamers', label: '스트리머 관리', icon: Users },
+            { to: '/admin/affiliations', label: '소속 관리', icon: Tag },
             { to: '/admin/schedule', label: '일정 관리', icon: CalendarDays },
             { to: '/admin/categories', label: '카테고리 관리', icon: FolderOpen },
             { to: '/admin/banners', label: '배너 관리', icon: Image },

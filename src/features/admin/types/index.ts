@@ -1,4 +1,14 @@
 export type {
+    AffiliationItem,
+    ListAffiliationsResponse,
+    CreateAffiliationRequest,
+    UpdateAffiliationRequest,
+    UpdateStreamerAffiliationsRequest,
+    UpdateStreamerAffiliationsResponse,
+} from './affiliation'
+export { getAffiliationColor } from './affiliation'
+
+export type {
     StreamerItem,
     RegisterStreamerRequest,
     UpdateChannelRequest,

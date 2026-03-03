@@ -1,3 +1,6 @@
+import type { AffiliationItem } from './affiliation'
+
+
 export interface StreamerItem {
     id: number
     name: string
@@ -8,6 +11,7 @@ export interface StreamerItem {
     followerCount: number | null
     youtubeUrl: string | null
     fanCafeUrl: string | null
+    affiliations: AffiliationItem[]
 }
 
 export interface RegisterStreamerRequest {

@@ -25,7 +25,6 @@ function DailyBroadcastItemComponent({ broadcast, onClick }: DailyBroadcastItemP
     const representative = sortedParticipants.find((p) => p.isHost) ?? sortedParticipants[0]
     const representativeName = representative ? (representative.nickname ?? representative.name) : ''
     const remaining = sortedParticipants.length - 1
-
     return (
         <button
             type="button"
@@ -62,7 +61,6 @@ function DailyBroadcastItemComponent({ broadcast, onClick }: DailyBroadcastItemP
                         {remaining > 0 && ` 외 ${remaining}명`}
                     </span>
                 </div>
-
                 <div className="flex flex-wrap items-center gap-2">
                     {categoryName !== undefined && (
                         <span className="rounded-md border border-border/40 bg-category px-2 py-0.5 text-[10px] font-semibold text-text-muted">

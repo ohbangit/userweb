@@ -1,3 +1,5 @@
+import type { AffiliationItem } from '../../../types/affiliation'
+
 export interface Participant {
     id?: string
     name: string
@@ -26,6 +28,7 @@ export interface Broadcast {
     streamerProfileUrl?: string | null
     streamerChannelUrl?: string | null
     streamerIsPartner?: boolean
+    streamerAffiliations?: AffiliationItem[]
     category?: Category | null
     tags?: string[]
     participants?: Participant[]

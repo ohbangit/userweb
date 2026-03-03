@@ -62,3 +62,11 @@ export {
     useUpdateBanner,
     useDeleteBanner,
 } from './useBanners'
+
+export {
+    useAffiliations,
+    useCreateAffiliation,
+    useUpdateAffiliation,
+    useDeleteAffiliation,
+    useUpdateStreamerAffiliations,
+} from './useAffiliations'
