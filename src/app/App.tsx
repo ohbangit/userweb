@@ -5,6 +5,7 @@ import { SeoHead } from './components/SeoHead'
 import SchedulePage from '../features/schedule/pages/SchedulePage'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
+import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics'
 
 const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
 const TournamentPromotionPage = lazy(
@@ -12,6 +13,7 @@ const TournamentPromotionPage = lazy(
 )
 
 function App() {
+    useGoogleAnalytics()
     return (
         <>
             <SeoHead />
