@@ -11,8 +11,28 @@ interface WeeklyBroadcastRowProps {
     onClick: () => void
 }
 
+type RowTone = 'collab' | 'internal' | 'tournament' | 'content' | 'default'
+
+const TYPE_ROW_BG_CLASS: Record<RowTone, string> = {
+    collab: 'bg-[linear-gradient(270deg,rgba(139,92,246,0.1)_0%,rgba(139,92,246,0.015)_100%)]',
+    internal: 'bg-[linear-gradient(270deg,rgba(244,63,94,0.1)_0%,rgba(244,63,94,0.015)_100%)]',
+    tournament: 'bg-[linear-gradient(270deg,rgba(245,158,11,0.1)_0%,rgba(245,158,11,0.015)_100%)]',
+    content: 'bg-[linear-gradient(270deg,rgba(14,165,233,0.1)_0%,rgba(14,165,233,0.015)_100%)]',
+    default: 'bg-[linear-gradient(270deg,rgba(148,163,184,0.07)_0%,rgba(148,163,184,0.01)_100%)]',
+}
+
+function normalizeTypeTone(broadcast: Broadcast): RowTone {
+    const type = (broadcast.broadcastType ?? '').trim().toLowerCase()
+    if (broadcast.isCollab || type === '합방' || type === 'collab') return 'collab'
+    if (type === '내전' || type === 'internal') return 'internal'
+    if (type === '대회' || type === 'tournament') return 'tournament'
+    if (type === '콘텐츠' || type === 'content') return 'content'
+    return 'default'
+}
+
 function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowProps) {
     const startTime = formatTime(broadcast.startTime)
+    const typeTone = normalizeTypeTone(broadcast)
 
     const { sortedParticipants, representativeName, remaining, isRepresentativePartner } = useMemo(() => {
         const participants = resolveParticipants(
@@ -35,21 +55,11 @@ function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowP
         <button
             type="button"
             onClick={onClick}
-            className="group flex w-full cursor-pointer items-center gap-2.5 rounded-xl border border-transparent px-3 py-2.5 text-left transition-all hover:border-border/40 hover:bg-card sm:gap-3"
+            className={[
+                'group flex w-full cursor-pointer items-center gap-2.5 rounded-xl border border-transparent px-3 py-2.5 text-left transition-all hover:border-border/40 hover:bg-card sm:gap-3',
+                TYPE_ROW_BG_CLASS[typeTone],
+            ].join(' ')}
         >
-            {broadcast.isLive ? (
-                <span className="relative hidden h-2 w-2 shrink-0 sm:flex">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-live opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-live" />
-                </span>
-            ) : (
-                <span
-                    className={['hidden h-2 w-2 shrink-0 rounded-full sm:block', broadcast.isCollab ? 'bg-collab' : 'bg-primary/60'].join(
-                        ' ',
-                    )}
-                />
-            )}
-
             <span className="w-10 shrink-0 text-sm font-bold tabular-nums text-text-muted sm:w-11">{startTime}</span>
 
             <div className="flex min-w-0 flex-1 items-center gap-1.5">

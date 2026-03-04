@@ -85,7 +85,7 @@ export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: Monthl
                                         key={day.toISOString()}
                                         onClick={() => setSelectedDay(day)}
                                         className={[
-                                        'flex min-h-[64px] cursor-pointer flex-col items-center justify-center gap-1 py-2 transition-colors hover:bg-card-hover/50 md:min-h-[76px]',
+                                            'flex min-h-[64px] cursor-pointer flex-col items-center justify-center gap-1 py-2 transition-colors hover:bg-card-hover/50 md:min-h-[76px]',
                                             isSelected ? 'bg-primary/10' : inMonth ? 'bg-bg' : 'bg-bg-secondary/50',
                                         ].join(' ')}
                                     >
@@ -160,13 +160,9 @@ export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: Monthl
                         <p className="text-sm text-text-dim">이 날은 방송이 없습니다</p>
                     </div>
                 ) : (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col space-y-1.5">
                         {selectedBroadcasts.map((broadcast) => (
-                            <WeeklyBroadcastRow
-                                key={broadcast.id}
-                                broadcast={broadcast}
-                                onClick={() => onSelectDay?.(selectedDay)}
-                            />
+                            <WeeklyBroadcastRow key={broadcast.id} broadcast={broadcast} onClick={() => onSelectDay?.(selectedDay)} />
                         ))}
                     </div>
                 )}

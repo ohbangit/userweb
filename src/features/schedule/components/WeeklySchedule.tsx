@@ -58,8 +58,7 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
         if (!sectionEl || !containerEl) return
         const containerRect = containerEl.getBoundingClientRect()
         const sectionRect = sectionEl.getBoundingClientRect()
-        const scrollOffset =
-            containerEl.scrollTop + (sectionRect.top - containerRect.top)
+        const scrollOffset = containerEl.scrollTop + (sectionRect.top - containerRect.top)
         containerEl.scrollTo({ top: scrollOffset, behavior: 'smooth' })
     }
 
@@ -104,66 +103,65 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
             </div>
 
             {/* 내부 스크롤 영역 — 탭은 항상 위에 고정 */}
-            <div
-                ref={scrollContainerRef}
-                className="max-h-[70vh] overflow-y-auto scrollbar-hide"
-            >
-            <div className="divide-y divide-border/20">
-                {weekDays.map((day) => {
-                    const key = day.format('YYYY-MM-DD')
-                    const today = isToday(day)
-                    const dayBroadcasts = broadcastsByDate.get(key) ?? []
+            <div ref={scrollContainerRef} className="max-h-[70vh] overflow-y-auto scrollbar-hide">
+                <div className="divide-y divide-border/20">
+                    {weekDays.map((day) => {
+                        const key = day.format('YYYY-MM-DD')
+                        const today = isToday(day)
+                        const dayBroadcasts = broadcastsByDate.get(key) ?? []
 
-                    return (
-                        <div
-                            key={key}
-                            ref={(el) => {
-                                if (el) sectionRefs.current.set(key, el)
-                                else sectionRefs.current.delete(key)
-                            }}
-                        >
-                            {/* 날짜 섹션 헤더 */}
-                            <div className={['flex items-center justify-between px-4 py-3', today ? 'bg-primary/[0.03]' : ''].join(' ')}>
-                                <div className="flex items-center gap-2">
-                                    <span className={['text-xs font-bold', today ? 'text-primary' : 'text-text-muted'].join(' ')}>
-                                        {getDayName(day)}요일
-                                    </span>
-                                    <span className={['text-xs', today ? 'text-primary/70' : 'text-text-dim'].join(' ')}>
-                                        {day.month() + 1}/{day.date()}
-                                    </span>
-                                    {today && (
-                                        <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                                            오늘
+                        return (
+                            <div
+                                key={key}
+                                ref={(el) => {
+                                    if (el) sectionRefs.current.set(key, el)
+                                    else sectionRefs.current.delete(key)
+                                }}
+                            >
+                                {/* 날짜 섹션 헤더 */}
+                                <div
+                                    className={['flex items-center justify-between px-4 py-3', today ? 'bg-primary/[0.03]' : ''].join(' ')}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <span className={['text-xs font-bold', today ? 'text-primary' : 'text-text-muted'].join(' ')}>
+                                            {getDayName(day)}요일
+                                        </span>
+                                        <span className={['text-xs', today ? 'text-primary/70' : 'text-text-dim'].join(' ')}>
+                                            {day.month() + 1}/{day.date()}
+                                        </span>
+                                        {today && (
+                                            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                                                오늘
+                                            </span>
+                                        )}
+                                    </div>
+                                    {dayBroadcasts.length > 0 && (
+                                        <span className="rounded-full bg-bg-secondary px-2 py-0.5 text-[10px] font-medium text-text-dim">
+                                            {dayBroadcasts.length}개
                                         </span>
                                     )}
                                 </div>
-                                {dayBroadcasts.length > 0 && (
-                                    <span className="rounded-full bg-bg-secondary px-2 py-0.5 text-[10px] font-medium text-text-dim">
-                                        {dayBroadcasts.length}개
-                                    </span>
+
+                                {/* 방송 행 목록 */}
+                                {dayBroadcasts.length > 0 ? (
+                                    <div className="space-y-1.5 px-2 pb-3">
+                                        {dayBroadcasts.map((broadcast) => (
+                                            <WeeklyBroadcastRow
+                                                key={broadcast.id}
+                                                broadcast={broadcast}
+                                                onClick={() => setSelectedBroadcast(broadcast)}
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center justify-center py-6">
+                                        <span className="text-xs text-text-dim">방송 없음</span>
+                                    </div>
                                 )}
                             </div>
-
-                            {/* 방송 행 목록 */}
-                            {dayBroadcasts.length > 0 ? (
-                                <div className="px-2 pb-3">
-                                    {dayBroadcasts.map((broadcast) => (
-                                        <WeeklyBroadcastRow
-                                            key={broadcast.id}
-                                            broadcast={broadcast}
-                                            onClick={() => setSelectedBroadcast(broadcast)}
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="flex items-center justify-center py-6">
-                                    <span className="text-xs text-text-dim">방송 없음</span>
-                                </div>
-                            )}
-                        </div>
-                    )
-                })}
-            </div>
+                        )
+                    })}
+                </div>
             </div>
 
             <BroadcastDetailModal broadcast={selectedBroadcast} onClose={() => setSelectedBroadcast(null)} />

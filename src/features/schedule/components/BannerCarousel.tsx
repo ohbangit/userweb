@@ -10,6 +10,13 @@ const TYPE_BADGE: Record<string, string> = {
     내전: 'bg-rose-500/90 text-white',
 }
 
+const TYPE_CARD_TINT: Record<string, string> = {
+    tournament: 'bg-[linear-gradient(270deg,rgba(245,158,11,0.1)_0%,rgba(245,158,11,0.015)_100%)]',
+    collab: 'bg-[linear-gradient(270deg,rgba(139,92,246,0.1)_0%,rgba(139,92,246,0.015)_100%)]',
+    content: 'bg-[linear-gradient(270deg,rgba(14,165,233,0.1)_0%,rgba(14,165,233,0.015)_100%)]',
+    내전: 'bg-[linear-gradient(270deg,rgba(244,63,94,0.1)_0%,rgba(244,63,94,0.015)_100%)]',
+}
+
 const TYPE_LABEL: Record<string, string> = {
     tournament: '대회',
     collab: '콜라보',
@@ -175,12 +182,14 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
         <section className="group relative space-y-2" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
             <div
                 ref={trackRef}
-                className="grid snap-x snap-mandatory grid-flow-col auto-cols-[100%] gap-2 overflow-x-hidden sm:auto-cols-[calc((100%-0.5rem)/2)] sm:gap-3 xl:auto-cols-[calc((100%-2.25rem)/4)]"
+                className="grid snap-x snap-mandatory grid-flow-col auto-cols-[100%] gap-3 overflow-x-hidden sm:auto-cols-[calc((100%-0.75rem)/2)] sm:gap-3 xl:auto-cols-[calc((100%-3rem)/4)] xl:gap-4"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
             >
                 {banners.map((banner, index) => {
                     const badgeClass = TYPE_BADGE[banner.type] ?? 'bg-primary/90 text-white'
+                    const cardTintClass =
+                        TYPE_CARD_TINT[banner.type] ?? 'bg-[linear-gradient(270deg,rgba(16,185,129,0.07)_0%,rgba(16,185,129,0.01)_100%)]'
                     const typeLabel = TYPE_LABEL[banner.type] ?? banner.type
                     const scheduleText = formatScheduleText(banner)
                     const ended = isBannerEnded(banner)
@@ -207,6 +216,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                                         handleImageLoad(banner.id, event.currentTarget)
                                     }}
                                 />
+                                <div className={['absolute inset-0', cardTintClass].join(' ')} />
                                 <div className="absolute inset-0 bg-gradient-to-br from-black/72 via-black/50 to-black/22" />
                                 {useDiagonalDetail && (
                                     <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.32)_0%,rgba(255,255,255,0)_28%,rgba(0,0,0,0.36)_100%)]" />
