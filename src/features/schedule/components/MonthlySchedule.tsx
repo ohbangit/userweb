@@ -82,7 +82,7 @@ export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: Monthl
                                 return (
                                     <button
                                         type="button"
-                                        key={day.toISOString()}
+                                        key={day.format('YYYY-MM-DD')}
                                         onClick={() => setSelectedDay(day)}
                                         className={[
                                             'flex min-h-[64px] cursor-pointer flex-col items-center justify-center gap-1 py-2 transition-colors hover:bg-card-hover/50 md:min-h-[76px]',

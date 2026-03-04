@@ -50,6 +50,10 @@ interface PanelRendererProps {
     }>
 }
 
+function isDefaultExpanded(content: Record<string, unknown>): boolean {
+    return content.defaultExpanded === true
+}
+
 function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
     const { data: teamsData } = useTournamentTeams(
         slug,
@@ -73,11 +77,18 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
     }
 
     if (panel.type === 'PLAYER_LIST') {
-        return <PlayerListPanelView title={panelTitle} teams={teams} participants={draftParticipants} />
+        return (
+            <PlayerListPanelView
+                title={panelTitle}
+                teams={teams}
+                participants={draftParticipants}
+                defaultExpanded={isDefaultExpanded(panel.content)}
+            />
+        )
     }
 
     if (panel.type === 'TEAMS') {
-        return <TeamsPanelView title={panelTitle} teams={teams} />
+        return <TeamsPanelView title={panelTitle} teams={teams} defaultExpanded={isDefaultExpanded(panel.content)} />
     }
 
     if (panel.type === 'SCHEDULE') {
@@ -91,7 +102,14 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
                   })),
               }))
             : []
-        return <SchedulePanelView title={panelTitle} content={{ groups: safeGroups }} teams={teams} />
+        return (
+            <SchedulePanelView
+                title={panelTitle}
+                content={{ groups: safeGroups }}
+                teams={teams}
+                defaultExpanded={isDefaultExpanded(panel.content)}
+            />
+        )
     }
 
     if (panel.type === 'FINAL_RESULT') {
@@ -104,6 +122,7 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
                     mvpPlayerId: typeof content.mvpPlayerId === 'number' ? content.mvpPlayerId : null,
                 }}
                 teams={teams}
+                defaultExpanded={isDefaultExpanded(panel.content)}
             />
         )
     }

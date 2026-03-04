@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronDown, Zap } from 'lucide-react'
 import tnkSrc from '../../../assets/tnk.svg'
 import dpsSrc from '../../../assets/dps.svg'
@@ -27,6 +27,7 @@ interface Props {
     title: string
     content: ScheduleContent
     teams: TournamentTeam[]
+    defaultExpanded?: boolean
 }
 
 function getTeamName(teams: TournamentTeam[], teamId: number): string {
@@ -37,10 +38,7 @@ function getTeamLogo(teams: TournamentTeam[], teamId: number): string | null {
     return teams.find((t) => t.id === teamId)?.logoUrl ?? null
 }
 
-function getTeam(
-    teams: TournamentTeam[],
-    teamId: number,
-): TournamentTeam | null {
+function getTeam(teams: TournamentTeam[], teamId: number): TournamentTeam | null {
     return teams.find((t) => t.id === teamId) ?? null
 }
 
@@ -76,12 +74,8 @@ function MatchCard({ match, teams }: MatchCardProps) {
                 <div className="min-w-0 space-y-1 text-right">
                     <div className="mb-2 flex items-center justify-end gap-2.5">
                         <div className="min-w-0 text-right pr-2">
-                            <p className="text-xs font-bold tracking-[0.2em] text-[#0596e8]/80">
-                                TEAM
-                            </p>
-                            <span className="truncate text-[28px] font-black text-[#e8f4fd]">
-                                {getTeamName(teams, match.teamAId)}
-                            </span>
+                            <p className="text-xs font-bold tracking-[0.2em] text-[#0596e8]/80">TEAM</p>
+                            <span className="truncate text-[28px] font-black text-[#e8f4fd]">{getTeamName(teams, match.teamAId)}</span>
                         </div>
                         {logoA !== null && (
                             <img
@@ -94,29 +88,20 @@ function MatchCard({ match, teams }: MatchCardProps) {
 
                     <div className="space-y-1.5">
                         {teamAPlayers.map((player) => {
-                            const mvpCount = match.mvpPlayerIds.filter(
-                                (id) => id === player.id,
-                            ).length
-                            const isDimmed =
-                                isCompleted && !teamAWon && mvpCount === 0
+                            const mvpCount = match.mvpPlayerIds.filter((id) => id === player.id).length
+                            const isDimmed = isCompleted && !teamAWon && mvpCount === 0
                             return (
                                 <div
                                     key={player.id}
                                     className={[
                                         'relative grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
-                                        mvpCount > 0
-                                            ? 'ring-1 ring-amber-300/50'
-                                            : '',
+                                        mvpCount > 0 ? 'ring-1 ring-amber-300/50' : '',
                                     ].join(' ')}
                                 >
                                     <span
                                         className={`flex h-6 w-6 items-center justify-center rounded ${ROLE_TONE[player.slot] ?? 'bg-[#041524] ring-[#1e3a5f]/40'} ring-1 ${isDimmed ? 'opacity-55' : ''}`}
                                     >
-                                        <img
-                                            src={ROLE_IMG[player.slot]}
-                                            alt={player.slot}
-                                            className="h-4 w-4 shrink-0"
-                                        />
+                                        <img src={ROLE_IMG[player.slot]} alt={player.slot} className="h-4 w-4 shrink-0" />
                                     </span>
                                     <span
                                         className={`flex min-w-0 items-center justify-end gap-1 truncate pr-2 text-[15px] font-semibold text-[#e8f4fd] ${isDimmed ? 'opacity-55' : ''}`}
@@ -124,12 +109,7 @@ function MatchCard({ match, teams }: MatchCardProps) {
                                         {mvpCount > 0 &&
                                             Array.from({
                                                 length: mvpCount,
-                                            }).map((_, i) => (
-                                                <Zap
-                                                    key={i}
-                                                    className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
-                                                />
-                                            ))}
+                                            }).map((_, i) => <Zap key={i} className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400" />)}
                                         {player.nickname ?? player.name}
                                     </span>
                                     <div className="hidden sm:block">
@@ -160,9 +140,7 @@ function MatchCard({ match, teams }: MatchCardProps) {
                                 >
                                     {scoreA}
                                 </span>
-                                <span className="text-xl text-[#6aadcc]/50">
-                                    :
-                                </span>
+                                <span className="text-xl text-[#6aadcc]/50">:</span>
                                 <span
                                     className={`text-4xl font-black italic sm:text-5xl ${teamBWon ? 'text-[#ff6b7f]' : 'text-[#6aadcc]/55'}`}
                                 >
@@ -170,17 +148,13 @@ function MatchCard({ match, teams }: MatchCardProps) {
                                 </span>
                             </>
                         ) : (
-                            <span className="text-sm font-bold italic text-[#6aadcc]/70">
-                                VS
-                            </span>
+                            <span className="text-sm font-bold italic text-[#6aadcc]/70">VS</span>
                         )}
                     </div>
 
                     {(teamAPlayers.length > 0 || teamBPlayers.length > 0) && (
                         <div className="flex flex-1 items-center">
-                            <span className="text-5xl font-black italic text-[#6aadcc]/65">
-                                VS
-                            </span>
+                            <span className="text-5xl font-black italic text-[#6aadcc]/65">VS</span>
                         </div>
                     )}
                 </div>
@@ -195,30 +169,21 @@ function MatchCard({ match, teams }: MatchCardProps) {
                             />
                         )}
                         <div className="min-w-0 text-left pr-2">
-                            <p className="text-xs font-bold tracking-[0.2em] text-[#0596e8]/80">
-                                TEAM
-                            </p>
-                            <span className="truncate text-2xl font-black text-[#e8f4fd]">
-                                {getTeamName(teams, match.teamBId)}
-                            </span>
+                            <p className="text-xs font-bold tracking-[0.2em] text-[#0596e8]/80">TEAM</p>
+                            <span className="truncate text-2xl font-black text-[#e8f4fd]">{getTeamName(teams, match.teamBId)}</span>
                         </div>
                     </div>
 
                     <div className="space-y-1.5">
                         {teamBPlayers.map((player) => {
-                            const mvpCount = match.mvpPlayerIds.filter(
-                                (id) => id === player.id,
-                            ).length
-                            const isDimmed =
-                                isCompleted && !teamBWon && mvpCount === 0
+                            const mvpCount = match.mvpPlayerIds.filter((id) => id === player.id).length
+                            const isDimmed = isCompleted && !teamBWon && mvpCount === 0
                             return (
                                 <div
                                     key={player.id}
                                     className={[
                                         'relative grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
-                                        mvpCount > 0
-                                            ? 'ring-1 ring-amber-300/50'
-                                            : '',
+                                        mvpCount > 0 ? 'ring-1 ring-amber-300/50' : '',
                                     ].join(' ')}
                                 >
                                     <div className="hidden sm:block">
@@ -241,21 +206,12 @@ function MatchCard({ match, teams }: MatchCardProps) {
                                         {mvpCount > 0 &&
                                             Array.from({
                                                 length: mvpCount,
-                                            }).map((_, i) => (
-                                                <Zap
-                                                    key={i}
-                                                    className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
-                                                />
-                                            ))}
+                                            }).map((_, i) => <Zap key={i} className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400" />)}
                                     </span>
                                     <span
                                         className={`flex h-6 w-6 items-center justify-center rounded ${ROLE_TONE[player.slot] ?? 'bg-[#041524] ring-[#1e3a5f]/40'} ring-1 ${isDimmed ? 'opacity-55' : ''}`}
                                     >
-                                        <img
-                                            src={ROLE_IMG[player.slot]}
-                                            alt={player.slot}
-                                            className="h-4 w-4 shrink-0"
-                                        />
+                                        <img src={ROLE_IMG[player.slot]} alt={player.slot} className="h-4 w-4 shrink-0" />
                                     </span>
                                 </div>
                             )
@@ -267,12 +223,14 @@ function MatchCard({ match, teams }: MatchCardProps) {
     )
 }
 
-export function SchedulePanelView({ title, content, teams }: Props) {
+export function SchedulePanelView({ title, content, teams, defaultExpanded = false }: Props) {
     const sortedGroups = [...content.groups].sort((a, b) => a.order - b.order)
-    const [collapsed, setCollapsed] = useState(true)
-    const [collapsedGroups, setCollapsedGroups] = useState<
-        Record<string, boolean>
-    >({})
+    const [collapsed, setCollapsed] = useState(!defaultExpanded)
+    const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({})
+
+    useEffect(() => {
+        setCollapsed(!defaultExpanded)
+    }, [defaultExpanded])
 
     return (
         <section className="w-full mt-10">
@@ -284,52 +242,36 @@ export function SchedulePanelView({ title, content, teams }: Props) {
             >
                 <h2 className="text-3xl font-bold text-[#e8f4fd]">{title}</h2>
                 <ChevronDown
-                    className={[
-                        'h-6 w-6 text-[#6aadcc] transition-transform duration-200',
-                        collapsed ? '-rotate-90' : '',
-                    ].join(' ')}
+                    className={['h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : ''].join(' ')}
                 />
             </button>
             <div className="mt-6 h-px w-full bg-gradient-to-r from-[#0596e8]/60 via-[#1e3a5f]/40 to-transparent" />
 
             {!collapsed && sortedGroups.length === 0 ? (
-                <p className="mt-4 text-base text-[#6aadcc]/60">
-                    등록된 일정이 없습니다.
-                </p>
+                <p className="mt-4 text-base text-[#6aadcc]/60">등록된 일정이 없습니다.</p>
             ) : !collapsed ? (
                 <div className="mt-4 flex flex-col gap-5">
                     {sortedGroups.map((group) => {
-                        const sortedMatches = [...group.matches].sort(
-                            (a, b) => a.order - b.order,
-                        )
-                        const isGroupCollapsed =
-                            collapsedGroups[String(group.id)] !== false
+                        const sortedMatches = [...group.matches].sort((a, b) => a.order - b.order)
+                        const isGroupCollapsed = collapsedGroups[String(group.id)] !== false
                         return (
-                            <div
-                                key={group.id}
-                                className="rounded-xl bg-[#062035] p-3 ring-1 ring-[#1e3a5f]/70"
-                            >
+                            <div key={group.id} className="rounded-xl bg-[#062035] p-3 ring-1 ring-[#1e3a5f]/70">
                                 <button
                                     type="button"
                                     onClick={() => {
                                         setCollapsedGroups((prev) => ({
                                             ...prev,
-                                            [String(group.id)]:
-                                                !isGroupCollapsed,
+                                            [String(group.id)]: !isGroupCollapsed,
                                         }))
                                     }}
                                     aria-expanded={!isGroupCollapsed}
                                     className="mb-3 flex w-full items-center justify-between text-left cursor-pointer"
                                 >
                                     <div className="flex items-baseline gap-2.5">
-                                        <h3 className="text-2xl font-black text-[#e8f4fd]">
-                                            {group.title}
-                                        </h3>
+                                        <h3 className="text-2xl font-black text-[#e8f4fd]">{group.title}</h3>
                                         {group.groupDate !== null && (
                                             <span className="rounded-full bg-[#041524] px-2.5 py-1 text-sm text-[#6aadcc]">
-                                                {new Date(
-                                                    group.groupDate,
-                                                ).toLocaleDateString('ko-KR', {
+                                                {new Date(group.groupDate).toLocaleDateString('ko-KR', {
                                                     year: 'numeric',
                                                     month: 'long',
                                                     day: 'numeric',
@@ -340,9 +282,7 @@ export function SchedulePanelView({ title, content, teams }: Props) {
                                     <ChevronDown
                                         className={[
                                             'h-5 w-5 text-[#6aadcc] transition-transform duration-200',
-                                            isGroupCollapsed
-                                                ? '-rotate-90'
-                                                : '',
+                                            isGroupCollapsed ? '-rotate-90' : '',
                                         ].join(' ')}
                                     />
                                 </button>
@@ -350,11 +290,7 @@ export function SchedulePanelView({ title, content, teams }: Props) {
                                 {!isGroupCollapsed && (
                                     <div className="grid gap-2">
                                         {sortedMatches.map((match) => (
-                                            <MatchCard
-                                                key={match.id}
-                                                match={match}
-                                                teams={teams}
-                                            />
+                                            <MatchCard key={match.id} match={match} teams={teams} />
                                         ))}
                                     </div>
                                 )}

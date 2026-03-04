@@ -20,7 +20,7 @@ export function getMonthDays(date: Dayjs): Dayjs[] {
     const firstDay = dayjs().year(year).month(month).date(1).startOf('day')
     const lastDay = firstDay.endOf('month')
 
-    const startOffset = (firstDay.day() + 6) % 7
+    const startOffset = firstDay.day()
     const startDate = firstDay.subtract(startOffset, 'day')
 
     const days: Dayjs[] = []

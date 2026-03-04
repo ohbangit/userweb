@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Crown } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -11,6 +11,7 @@ import type { OverwatchRole, TournamentTeam } from '../types'
 interface Props {
     title: string
     teams: TournamentTeam[]
+    defaultExpanded?: boolean
 }
 
 const ROLE_IMG: Record<OverwatchRole, string> = {
@@ -78,8 +79,12 @@ function MemberCardLink({ href, className, children }: { href: string | null; cl
     )
 }
 
-export function TeamsPanelView({ title, teams }: Props) {
-    const [collapsed, setCollapsed] = useState(true)
+export function TeamsPanelView({ title, teams, defaultExpanded = false }: Props) {
+    const [collapsed, setCollapsed] = useState(!defaultExpanded)
+
+    useEffect(() => {
+        setCollapsed(!defaultExpanded)
+    }, [defaultExpanded])
 
     return (
         <section className="w-full mt-10">

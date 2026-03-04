@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Crown } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -36,6 +36,7 @@ interface Props {
     title: string
     teams: TournamentTeam[]
     participants?: DraftParticipantPreview[]
+    defaultExpanded?: boolean
 }
 
 function getBroadcastUrl(member: { profileUrl?: string | null; channelId?: string | null }): string | null {
@@ -67,8 +68,12 @@ function AvatarLink({ href, label, children }: { href: string | null; label: str
     )
 }
 
-export function PlayerListPanelView({ title, teams, participants = [] }: Props) {
-    const [collapsed, setCollapsed] = useState(true)
+export function PlayerListPanelView({ title, teams, participants = [], defaultExpanded = false }: Props) {
+    const [collapsed, setCollapsed] = useState(!defaultExpanded)
+
+    useEffect(() => {
+        setCollapsed(!defaultExpanded)
+    }, [defaultExpanded])
 
     const players = teams
         .flatMap((team) =>

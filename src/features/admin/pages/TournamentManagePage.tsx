@@ -354,6 +354,37 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
         [addToast, promotionData, updatePromotionPanels],
     )
 
+    const handleTogglePanelDefaultExpanded = useCallback(
+        async (panelId: number) => {
+            if (promotionData === undefined) return
+            const panel = promotionData.panels.find((p) => p.id === panelId)
+            if (panel === undefined) return
+
+            const currentContent = typeof panel.content === 'object' && panel.content !== null ? panel.content : {}
+            const nextDefaultExpanded = currentContent.defaultExpanded !== true
+
+            try {
+                await updatePromotionPanels.mutateAsync({
+                    panels: [
+                        {
+                            id: panelId,
+                            content: {
+                                ...currentContent,
+                                defaultExpanded: nextDefaultExpanded,
+                            },
+                        },
+                    ],
+                })
+            } catch {
+                addToast({
+                    message: '패널 기본 펼침 설정 변경에 실패했습니다.',
+                    variant: 'error',
+                })
+            }
+        },
+        [addToast, promotionData, updatePromotionPanels],
+    )
+
     const handleSavePanelContent = useCallback(
         async (
             panelId: number,
@@ -496,6 +527,22 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                                     <span>{panel.enabled && !panel.hidden ? 'ON' : 'OFF'}</span>
                                     <span>{panel.enabled && !panel.hidden ? '노출' : '비노출'}</span>
                                 </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        void handleTogglePanelDefaultExpanded(panel.id)
+                                    }}
+                                    className={[
+                                        'mt-1 flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition',
+                                        panel.content.defaultExpanded === true
+                                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                            : 'bg-gray-100 text-gray-500 dark:bg-[#2e2e38] dark:text-[#adadb8]',
+                                    ].join(' ')}
+                                >
+                                    <span>기본 펼침</span>
+                                    <span>{panel.content.defaultExpanded === true ? 'ON' : 'OFF'}</span>
+                                </button>
                             </div>
                         ))}
                     </div>
@@ -507,6 +554,7 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
         draggingPanelId,
         handleCreatePromotion,
         handleDropPanel,
+        handleTogglePanelDefaultExpanded,
         handleTogglePanelVisibility,
         hoveredPanelId,
         isPromotionLoading,
