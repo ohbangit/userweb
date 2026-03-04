@@ -14,6 +14,7 @@ function parseDraftContent(raw: Record<string, unknown>): DraftContent {
               id: participant.id,
               streamerId: typeof participant.streamerId === 'number' ? participant.streamerId : null,
               name: participant.name,
+              channelId: typeof participant.channelId === 'string' ? participant.channelId : null,
               teamId: typeof participant.teamId === 'number' ? participant.teamId : null,
               position: ['TNK', 'DPS', 'SPT'].includes(participant.position as string)
                   ? (participant.position as 'TNK' | 'DPS' | 'SPT')

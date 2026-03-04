@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Crown } from 'lucide-react'
+import type { ReactNode } from 'react'
 import partnerMark from '../../../assets/mark.png'
 import tnkSrc from '../../../assets/tnk.svg'
 import dpsSrc from '../../../assets/dps.svg'
@@ -24,6 +25,7 @@ const SLOT_LABEL: Record<string, string> = {
 interface DraftParticipantPreview {
     id: string
     name: string
+    channelId: string | null
     position: OverwatchRole | null
     avatarUrl: string | null
     isPartner: boolean
@@ -34,6 +36,35 @@ interface Props {
     title: string
     teams: TournamentTeam[]
     participants?: DraftParticipantPreview[]
+}
+
+function getBroadcastUrl(member: { profileUrl?: string | null; channelId?: string | null }): string | null {
+    if (member.profileUrl !== undefined && member.profileUrl !== null && member.profileUrl.length > 0) {
+        return member.profileUrl
+    }
+    if (member.channelId !== undefined && member.channelId !== null && member.channelId.length > 0) {
+        return `https://chzzk.naver.com/live/${member.channelId}`
+    }
+    return null
+}
+
+function AvatarLink({ href, label, children }: { href: string | null; label: string; children: ReactNode }) {
+    if (href === null) {
+        return <>{children}</>
+    }
+
+    return (
+        <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer rounded-full transition hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#59b5df]/70"
+            aria-label={label}
+            title="방송국으로 이동"
+        >
+            {children}
+        </a>
+    )
 }
 
 export function PlayerListPanelView({ title, teams, participants = [] }: Props) {
@@ -78,15 +109,20 @@ export function PlayerListPanelView({ title, teams, participants = [] }: Props) 
                                     )}
                                     <div className="flex items-stretch justify-between gap-2 sm:hidden">
                                         <div className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-md bg-[#041524]/70 px-2 py-2 ring-1 ring-[#1e3a5f]">
-                                            {p.avatarUrl !== null ? (
-                                                <img
-                                                    src={p.avatarUrl}
-                                                    alt={p.name}
-                                                    className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e3a5f]"
-                                                />
-                                            ) : (
-                                                <div className="h-14 w-14 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
-                                            )}
+                                            <AvatarLink
+                                                href={getBroadcastUrl({ channelId: p.channelId })}
+                                                label={`${p.name} 방송국으로 이동`}
+                                            >
+                                                {p.avatarUrl !== null ? (
+                                                    <img
+                                                        src={p.avatarUrl}
+                                                        alt={p.name}
+                                                        className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e3a5f]"
+                                                    />
+                                                ) : (
+                                                    <div className="h-14 w-14 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
+                                                )}
+                                            </AvatarLink>
                                             <div className="flex w-full min-w-0 items-center justify-center gap-1.5">
                                                 <span className="truncate pr-[2px] text-center text-[15px] font-semibold text-[#e8f4fd]">
                                                     {p.name}
@@ -106,15 +142,17 @@ export function PlayerListPanelView({ title, teams, participants = [] }: Props) 
                                     </div>
 
                                     <div className="hidden w-full items-center justify-between gap-3 sm:flex">
-                                        {p.avatarUrl !== null ? (
-                                            <img
-                                                src={p.avatarUrl}
-                                                alt={p.name}
-                                                className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-[#1e3a5f]"
-                                            />
-                                        ) : (
-                                            <div className="h-14 w-14 shrink-0 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
-                                        )}
+                                        <AvatarLink href={getBroadcastUrl({ channelId: p.channelId })} label={`${p.name} 방송국으로 이동`}>
+                                            {p.avatarUrl !== null ? (
+                                                <img
+                                                    src={p.avatarUrl}
+                                                    alt={p.name}
+                                                    className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-[#1e3a5f]"
+                                                />
+                                            ) : (
+                                                <div className="h-14 w-14 shrink-0 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
+                                            )}
+                                        </AvatarLink>
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-center gap-1.5">
                                                 <span className="truncate pr-[2px] text-[17px] font-semibold text-[#e8f4fd]">{p.name}</span>
@@ -149,15 +187,23 @@ export function PlayerListPanelView({ title, teams, participants = [] }: Props) 
                                     )}
                                     <div className="flex items-stretch justify-between gap-2 sm:hidden">
                                         <div className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-md bg-[#041524]/70 px-2 py-2 ring-1 ring-[#1e3a5f]">
-                                            {player.avatarUrl !== null ? (
-                                                <img
-                                                    src={player.avatarUrl}
-                                                    alt={player.nickname ?? player.name}
-                                                    className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e3a5f]"
-                                                />
-                                            ) : (
-                                                <div className="h-14 w-14 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
-                                            )}
+                                            <AvatarLink
+                                                href={getBroadcastUrl({
+                                                    channelId: player.channelId,
+                                                    profileUrl: player.profileUrl,
+                                                })}
+                                                label={`${player.nickname ?? player.name} 방송국으로 이동`}
+                                            >
+                                                {player.avatarUrl !== null ? (
+                                                    <img
+                                                        src={player.avatarUrl}
+                                                        alt={player.nickname ?? player.name}
+                                                        className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e3a5f]"
+                                                    />
+                                                ) : (
+                                                    <div className="h-14 w-14 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
+                                                )}
+                                            </AvatarLink>
                                             <div className="flex w-full min-w-0 items-center justify-center gap-1.5">
                                                 <span className="truncate pr-[2px] text-center text-[15px] font-semibold text-[#e8f4fd]">
                                                     {player.nickname ?? player.name}
@@ -181,15 +227,23 @@ export function PlayerListPanelView({ title, teams, participants = [] }: Props) 
                                     </div>
 
                                     <div className="hidden w-full items-center justify-between gap-3 sm:flex">
-                                        {player.avatarUrl !== null ? (
-                                            <img
-                                                src={player.avatarUrl}
-                                                alt={player.nickname ?? player.name}
-                                                className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-[#1e3a5f]"
-                                            />
-                                        ) : (
-                                            <div className="h-14 w-14 shrink-0 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
-                                        )}
+                                        <AvatarLink
+                                            href={getBroadcastUrl({
+                                                channelId: player.channelId,
+                                                profileUrl: player.profileUrl,
+                                            })}
+                                            label={`${player.nickname ?? player.name} 방송국으로 이동`}
+                                        >
+                                            {player.avatarUrl !== null ? (
+                                                <img
+                                                    src={player.avatarUrl}
+                                                    alt={player.nickname ?? player.name}
+                                                    className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-[#1e3a5f]"
+                                                />
+                                            ) : (
+                                                <div className="h-14 w-14 shrink-0 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
+                                            )}
+                                        </AvatarLink>
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-center gap-1.5">
                                                 <span className="truncate pr-[2px] text-[17px] font-semibold text-[#e8f4fd]">

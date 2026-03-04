@@ -42,6 +42,7 @@ interface PanelRendererProps {
     draftParticipants: Array<{
         id: string
         name: string
+        channelId: string | null
         position: OverwatchRole | null
         avatarUrl: string | null
         isPartner: boolean
@@ -210,6 +211,7 @@ export default function TournamentPromotionPage() {
             Array<{
                 id: string
                 name: string
+                channelId: string | null
                 position: OverwatchRole | null
                 avatarUrl: string | null
                 isPartner: boolean
@@ -223,6 +225,7 @@ export default function TournamentPromotionPage() {
             acc.push({
                 id: participant.id,
                 name: participant.name,
+                channelId: typeof participant.channelId === 'string' ? participant.channelId : null,
                 position: (['TNK', 'DPS', 'SPT'] as const).includes(participant.position as OverwatchRole)
                     ? (participant.position as OverwatchRole)
                     : null,
@@ -234,9 +237,10 @@ export default function TournamentPromotionPage() {
             return acc
         }, [])
         .sort((a, b) => a.order - b.order)
-        .map(({ id, name, position, avatarUrl, isPartner, isCaptain }) => ({
+        .map(({ id, name, channelId, position, avatarUrl, isPartner, isCaptain }) => ({
             id,
             name,
+            channelId,
             position,
             avatarUrl,
             isPartner,

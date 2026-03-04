@@ -28,6 +28,7 @@ export interface DraftParticipant {
     id: string
     streamerId: number | null
     name: string
+    channelId: string | null
     teamId: number | null
     position: OverwatchRole | null
     avatarUrl: string | null

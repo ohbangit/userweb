@@ -27,6 +27,7 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
     const [selectedStreamerId, setSelectedStreamerId] = useState<number>()
     const [selectedStreamerName, setSelectedStreamerName] = useState('')
     const [selectedStreamerAvatarUrl, setSelectedStreamerAvatarUrl] = useState<string | null>(null)
+    const [selectedStreamerChannelId, setSelectedStreamerChannelId] = useState<string | null>(null)
     const [selectedStreamerIsPartner, setSelectedStreamerIsPartner] = useState(false)
 
     const showSuggestions = searchInput.trim().length > 0 && selectedStreamerId === undefined
@@ -39,6 +40,7 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
             id: crypto.randomUUID(),
             streamerId: selectedStreamerId,
             name: selectedStreamerName,
+            channelId: selectedStreamerChannelId,
             teamId: null,
             position: null,
             avatarUrl: selectedStreamerAvatarUrl,
@@ -51,6 +53,7 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
         setSelectedStreamerId(undefined)
         setSelectedStreamerName('')
         setSelectedStreamerAvatarUrl(null)
+        setSelectedStreamerChannelId(null)
         setSelectedStreamerIsPartner(false)
     }
 
@@ -92,6 +95,7 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
                                 setSelectedStreamerId(undefined)
                                 setSelectedStreamerName('')
                                 setSelectedStreamerAvatarUrl(null)
+                                setSelectedStreamerChannelId(null)
                                 setSelectedStreamerIsPartner(false)
                             }}
                             readOnly={selectedStreamerId !== undefined}
@@ -114,6 +118,7 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
                                 setSelectedStreamerId(undefined)
                                 setSelectedStreamerName('')
                                 setSelectedStreamerAvatarUrl(null)
+                                setSelectedStreamerChannelId(null)
                                 setSelectedStreamerIsPartner(false)
                                 setSearchInput('')
                             }}
@@ -139,6 +144,7 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
                                             setSelectedStreamerId(streamer.id)
                                             setSelectedStreamerName(streamer.nickname)
                                             setSelectedStreamerAvatarUrl(streamer.channelImageUrl)
+                                            setSelectedStreamerChannelId(streamer.channelId)
                                             setSelectedStreamerIsPartner(streamer.isPartner)
                                             setSearchInput(streamer.nickname)
                                         }}
