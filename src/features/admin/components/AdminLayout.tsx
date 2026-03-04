@@ -6,6 +6,7 @@ import {
     CalendarDays,
     FolderOpen,
     Gamepad2,
+    Flag,
     Image,
     Tag,
     Search,
@@ -50,6 +51,7 @@ const NAV_SECTIONS: NavSection[] = [
         title: '컨텐츠',
         items: [
             { to: '/admin/tournaments', label: '오버워치', icon: Gamepad2 },
+            { to: '/admin/racing', label: '레이싱', icon: Flag },
         ],
     },
     {
@@ -65,9 +67,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     const { logout } = useAdminAuth()
     const navigate = useNavigate()
     const { theme, toggleTheme } = useTheme()
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(
-        () => localStorage.getItem('admin-sidebar-collapsed') === 'true',
-    )
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem('admin-sidebar-collapsed') === 'true')
     function handleToggleSidebar() {
         setSidebarCollapsed((prev) => {
             const next = !prev
@@ -95,11 +95,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                             sidebarCollapsed ? 'justify-center px-0' : 'justify-between px-5',
                         ].join(' ')}
                     >
-                        {!sidebarCollapsed && (
-                            <span className="text-sm font-bold text-gray-900 dark:text-[#efeff1]">
-                                어드민
-                            </span>
-                        )}
+                        {!sidebarCollapsed && <span className="text-sm font-bold text-gray-900 dark:text-[#efeff1]">어드민</span>}
                         <div className="flex items-center gap-1">
                             {!sidebarCollapsed && (
                                 <Link
@@ -115,21 +111,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                             {!sidebarCollapsed && (
                                 <button
                                     onClick={toggleTheme}
-                                    title={
-                                        theme === 'dark'
-                                            ? '라이트 모드로 전환'
-                                            : '다크 모드로 전환'
-                                    }
+                                    title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
                                     className="cursor-pointer rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
                                 >
                                     {theme === 'dark' ? (
-                                        <svg
-                                            className="h-4 w-4"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth={2}
-                                        >
+                                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                                             <circle cx="12" cy="12" r="5" />
                                             <path
                                                 strokeLinecap="round"
@@ -137,13 +123,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                             />
                                         </svg>
                                     ) : (
-                                        <svg
-                                            className="h-4 w-4"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth={2}
-                                        >
+                                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                                             <path
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
@@ -158,11 +138,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                 title={sidebarCollapsed ? '사이드바 열기' : '사이드바 닫기'}
                                 className="cursor-pointer rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
                             >
-                                {sidebarCollapsed ? (
-                                    <PanelLeftOpen className="h-4 w-4" />
-                                ) : (
-                                    <PanelLeftClose className="h-4 w-4" />
-                                )}
+                                {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
                             </button>
                         </div>
                     </div>
@@ -173,15 +149,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                 key={section.title}
                                 className={[
                                     'space-y-1',
-                                    sectionIndex > 0
-                                        ? 'mt-3 border-t border-gray-300 pt-3 dark:border-[#3a3a44]'
-                                        : '',
+                                    sectionIndex > 0 ? 'mt-3 border-t border-gray-300 pt-3 dark:border-[#3a3a44]' : '',
                                 ].join(' ')}
                             >
                                 {!sidebarCollapsed && (
-                                    <div className="mb-2 px-3 text-xs font-semibold text-gray-400 dark:text-gray-500">
-                                        {section.title}
-                                    </div>
+                                    <div className="mb-2 px-3 text-xs font-semibold text-gray-400 dark:text-gray-500">{section.title}</div>
                                 )}
                                 {section.items.map((item) => (
                                     <NavLink
@@ -195,7 +167,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                                 isActive
                                                     ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
                                                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]',
-                                ].join(' ')}
+                                            ].join(' ')
+                                        }
                                     >
                                         <item.icon className="h-4 w-4 shrink-0" />
                                         {!sidebarCollapsed && <span>{item.label}</span>}
@@ -221,9 +194,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </aside>
 
                 <main className="flex-1 overflow-auto">
-                    <div className="mx-auto max-w-5xl px-6 py-8">
-                        {children}
-                    </div>
+                    <div className="mx-auto max-w-5xl px-6 py-8">{children}</div>
                 </main>
             </div>
         </AdminToastProvider>

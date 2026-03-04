@@ -4,6 +4,10 @@ export type PromotionPanelType =
     | 'PLAYER_LIST'
     | 'SCHEDULE'
     | 'FINAL_RESULT'
+    | 'F1_DRIVERS'
+    | 'F1_RACE_SCHEDULE'
+    | 'F1_RACE_RESULT'
+    | 'F1_STANDINGS'
 export type PromotionConfigStatus = 'draft' | 'published'
 
 export interface PromotionPanel {
@@ -132,4 +136,75 @@ export interface PromotionConfigRaw {
         title_override: string | null
         content: Record<string, unknown>
     }>
+}
+
+// ── F1_DRIVERS 패널 content 타입 ──────────────────────────
+export interface F1Driver {
+    id: string
+    streamerId: number | null
+    name: string
+    nickname?: string
+    avatarUrl: string | null
+    channelUrl: string | null
+    isPartner: boolean
+    carNumber: number | null
+    order: number
+}
+
+export interface F1DriversContent {
+    participants: F1Driver[]
+}
+
+// ── F1_RACE_SCHEDULE 패널 content 타입 ────────────────────
+export type F1RaceStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED'
+
+export interface F1RaceEvent {
+    id: string
+    title: string
+    circuit: string
+    scheduledAt: string | null
+    status: F1RaceStatus
+    order: number
+}
+
+export interface F1RaceScheduleContent {
+    races: F1RaceEvent[]
+}
+
+// ── F1_RACE_RESULT 패널 content 타입 ──────────────────────
+export interface F1DriverRaceResult {
+    driverId: string
+    name: string
+    position: number | null
+    points: number | null
+    dnf: boolean
+    fastestLap: boolean
+}
+
+export interface F1SingleRaceResult {
+    id: string
+    raceId: string
+    raceTitle: string
+    results: F1DriverRaceResult[]
+}
+
+export interface F1RaceResultContent {
+    races: F1SingleRaceResult[]
+}
+
+// ── F1_STANDINGS 패널 content 타입 ────────────────────────
+export interface F1StandingEntry {
+    driverId: string
+    name: string
+    avatarUrl: string | null
+    rank: number
+    totalPoints: number
+    wins: number
+    podiums: number
+    fastestLaps: number
+    note: string
+}
+
+export interface F1StandingsContent {
+    standings: F1StandingEntry[]
 }

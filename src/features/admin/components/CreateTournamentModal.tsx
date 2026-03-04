@@ -5,15 +5,16 @@ import { getErrorMessage } from '../utils'
 
 interface CreateTournamentModalProps {
     onClose: () => void
+    defaultGame?: string
 }
 
-export function CreateTournamentModal({ onClose }: CreateTournamentModalProps) {
+export function CreateTournamentModal({ onClose, defaultGame }: CreateTournamentModalProps) {
     const { addToast } = useAdminToast()
     const createTournament = useCreateTournament()
     const [form, setForm] = useState<CreateTournamentRequest>({
         slug: '',
         name: '',
-        game: 'overwatch',
+        game: defaultGame ?? 'overwatch',
     })
 
     async function handleSubmit(e: React.FormEvent) {
@@ -37,9 +38,7 @@ export function CreateTournamentModal({ onClose }: CreateTournamentModalProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
             <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
-                <h2 className="mb-4 text-base font-bold text-gray-900 dark:text-[#efeff1]">
-                    대회 추가
-                </h2>
+                <h2 className="mb-4 text-base font-bold text-gray-900 dark:text-[#efeff1]">대회 추가</h2>
                 <form
                     onSubmit={(e) => {
                         void handleSubmit(e)
