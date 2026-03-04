@@ -14,9 +14,7 @@ export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {
     if (viewMode === 'daily') {
         return (
             <div className={containerClass}>
-                <h2 className="text-sm font-semibold text-text sm:text-lg">
-                    {formatFullDate(currentDate)}
-                </h2>
+                <h2 className="text-sm font-semibold text-text sm:text-lg">{formatFullDate(currentDate)}</h2>
             </div>
         )
     }
@@ -26,7 +24,7 @@ export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {
         const range = getWeekRange(currentDate)
         return (
             <div className={containerClass}>
-                <h2 className="text-sm font-semibold text-text sm:text-lg">
+                <h2 className="text-xs font-semibold text-text sm:text-lg">
                     {month}월 {weekNum}주차
                 </h2>
                 <p className="mt-0.5 hidden text-xs text-text-dim sm:block">
@@ -38,9 +36,7 @@ export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {
 
     return (
         <div className={containerClass}>
-                <h2 className="text-sm font-semibold text-text sm:text-lg">
-                {month}월
-            </h2>
+            <h2 className="text-sm font-semibold text-text sm:text-lg">{month}월</h2>
         </div>
     )
 }

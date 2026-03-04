@@ -11,6 +11,7 @@ export interface Participant {
     streamerId?: number | null
     isHost?: boolean
     isPartner?: boolean
+    affiliations?: AffiliationItem[] | null
 }
 
 export interface Category {
@@ -28,7 +29,6 @@ export interface Broadcast {
     streamerProfileUrl?: string | null
     streamerChannelUrl?: string | null
     streamerIsPartner?: boolean
-    streamerAffiliations?: AffiliationItem[]
     category?: Category | null
     tags?: string[]
     participants?: Participant[]

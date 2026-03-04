@@ -45,7 +45,7 @@ function ParticipantRow({
     participant: Participant
     isHost?: boolean
     isPartner?: boolean
-    affiliations?: Broadcast['streamerAffiliations']
+    affiliations?: Participant['affiliations']
     channelUrl?: string
     youtubeUrl?: string
     fanCafeUrl?: string
@@ -79,7 +79,7 @@ function ParticipantRow({
                     )}
                     {isPartner && <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />}
                 </div>
-                {affiliations !== undefined && affiliations.length > 0 && (
+                {Array.isArray(affiliations) && affiliations.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-1">
                         {affiliations.map((affiliation) => (
                             <AffiliationBadge key={affiliation.id} affiliation={affiliation} size="sm" />
@@ -174,7 +174,6 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
     const dateLabel = `${date.month() + 1}월 ${date.date()}일 (${dayName})`
     const categoryName = displayBroadcast.category?.name ?? undefined
     const tags = displayBroadcast.tags ?? []
-    const streamerAffiliations = displayBroadcast.streamerAffiliations ?? []
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
@@ -257,7 +256,7 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                                         }
                                         isHost={participant.isHost ?? false}
                                         isPartner={participant.isPartner ?? false}
-                                        affiliations={participant.name === displayBroadcast.streamerName ? streamerAffiliations : undefined}
+                                        affiliations={participant.affiliations}
                                         youtubeUrl={participant.youtubeUrl ?? undefined}
                                         fanCafeUrl={participant.fanCafeUrl ?? undefined}
                                         avatarFallbackUrl={

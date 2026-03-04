@@ -1,3 +1,5 @@
+import type { AffiliationItem } from './affiliation'
+
 export type BroadcastType = '합방' | '대회' | '콘텐츠' | '내전'
 
 export interface AdminScheduleParticipant {
@@ -9,6 +11,7 @@ export interface AdminScheduleParticipant {
     streamerId?: number | null
     isHost?: boolean
     isPartner?: boolean
+    affiliations?: AffiliationItem[] | null
 }
 
 export interface AdminBroadcastItem {

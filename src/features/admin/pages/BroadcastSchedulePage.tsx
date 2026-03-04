@@ -139,7 +139,7 @@ function toParticipantDrafts(participants: Participant[] | undefined): DraftPart
         isHost: participant.isHost ?? false,
         avatarUrl: participant.avatarUrl ?? undefined,
         isPartner: participant.isPartner ?? false,
-        affiliations: [],
+        affiliations: participant.affiliations ?? [],
     }))
 }
 

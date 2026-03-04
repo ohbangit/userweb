@@ -75,21 +75,14 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
     const touchStartXRef = useRef<number | null>(null)
     const [paused, setPaused] = useState(false)
-    const [cardsPerView, setCardsPerView] = useState(() =>
-        getCardsPerView(window.innerWidth),
-    )
+    const [cardsPerView, setCardsPerView] = useState(() => getCardsPerView(window.innerWidth))
     const [currentIndex, setCurrentIndex] = useState(0)
-    const [largeImageIds, setLargeImageIds] = useState<Record<number, boolean>>(
-        {},
-    )
+    const [largeImageIds, setLargeImageIds] = useState<Record<number, boolean>>({})
 
     const total = banners.length
     const maxStartIndex = Math.max(0, total - cardsPerView)
 
-    const pageCount = useMemo(
-        () => Math.max(1, Math.ceil(total / cardsPerView)),
-        [total, cardsPerView],
-    )
+    const pageCount = useMemo(() => Math.max(1, Math.ceil(total / cardsPerView)), [total, cardsPerView])
 
     useEffect(() => {
         const handleResize = () => {
@@ -140,18 +133,14 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
         }
     }, [cardsPerView, goNext, paused, total])
 
-    const handleTouchStart = useCallback(
-        (e: React.TouchEvent<HTMLDivElement>) => {
-            touchStartXRef.current = e.touches[0].clientX
-        },
-        [],
-    )
+    const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+        touchStartXRef.current = e.touches[0].clientX
+    }, [])
 
     const handleTouchEnd = useCallback(
         (e: React.TouchEvent<HTMLDivElement>) => {
             if (touchStartXRef.current === null) return
-            const deltaX =
-                touchStartXRef.current - e.changedTouches[0].clientX
+            const deltaX = touchStartXRef.current - e.changedTouches[0].clientX
             touchStartXRef.current = null
             if (Math.abs(deltaX) < 40) return
             if (deltaX > 0) {
@@ -183,11 +172,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
     }
 
     return (
-        <section
-            className="group relative space-y-2"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-        >
+        <section className="group relative space-y-2" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
             <div
                 ref={trackRef}
                 className="grid snap-x snap-mandatory grid-flow-col auto-cols-[100%] gap-2 overflow-x-hidden sm:auto-cols-[calc((100%-0.5rem)/2)] sm:gap-3 xl:auto-cols-[calc((100%-2.25rem)/4)]"
@@ -195,8 +180,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                 onTouchEnd={handleTouchEnd}
             >
                 {banners.map((banner, index) => {
-                    const badgeClass =
-                        TYPE_BADGE[banner.type] ?? 'bg-primary/90 text-white'
+                    const badgeClass = TYPE_BADGE[banner.type] ?? 'bg-primary/90 text-white'
                     const typeLabel = TYPE_LABEL[banner.type] ?? banner.type
                     const scheduleText = formatScheduleText(banner)
                     const ended = isBannerEnded(banner)
@@ -212,9 +196,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                         >
                             <button
                                 type="button"
-                                onClick={() =>
-                                    handleBannerClick(banner.linkUrl)
-                                }
+                                onClick={() => handleBannerClick(banner.linkUrl)}
                                 className="group relative h-full w-full cursor-pointer text-left"
                             >
                                 <img
@@ -222,10 +204,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                                     alt={banner.title}
                                     className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
                                     onLoad={(event) => {
-                                        handleImageLoad(
-                                            banner.id,
-                                            event.currentTarget,
-                                        )
+                                        handleImageLoad(banner.id, event.currentTarget)
                                     }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-br from-black/72 via-black/50 to-black/22" />
@@ -240,15 +219,12 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                                         </p>
                                         <div className="flex items-center justify-between gap-2">
                                             <p className="truncate text-[11px] text-white/90">
-                                                {banner.description?.trim().length
-                                                    ? banner.description
-                                                    : '주요 콘텐츠 안내'}
+                                                {banner.description?.trim().length ? banner.description : '주요 콘텐츠 안내'}
                                             </p>
                                             <span
-                                                className={[
-                                                    'shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold',
-                                                    badgeClass,
-                                                ].join(' ')}
+                                                className={['shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold', badgeClass].join(
+                                                    ' ',
+                                                )}
                                             >
                                                 {typeLabel}
                                             </span>
@@ -257,12 +233,9 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
 
                                     <div className="flex items-center gap-2">
                                         <span
-                                            className={[
-                                                'truncate text-[11px] font-semibold',
-                                                ended
-                                                    ? 'text-rose-300'
-                                                    : 'text-white',
-                                            ].join(' ')}
+                                            className={['truncate text-[11px] font-semibold', ended ? 'text-rose-300' : 'text-white'].join(
+                                                ' ',
+                                            )}
                                         >
                                             {scheduleText}
                                         </span>
@@ -295,35 +268,23 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                 </>
             )}
 
-            <div
-                className={[
-                    'justify-center py-1',
-                    cardsPerView === 1 && total > 1 ? 'flex' : 'hidden',
-                ].join(' ')}
-            >
+            <div className={['justify-center py-1', cardsPerView === 1 && total > 1 ? 'flex' : 'hidden'].join(' ')}>
                 <div className="flex items-center gap-1.5">
                     {Array.from({ length: pageCount }).map((_, pageIndex) => {
-                        const activePage = Math.floor(
-                            currentIndex / cardsPerView,
-                        )
+                        const activePage = Math.floor(currentIndex / cardsPerView)
                         const isActive = activePage === pageIndex
                         return (
                             <button
                                 key={pageIndex}
                                 type="button"
                                 onClick={() => {
-                                    const nextIndex = Math.min(
-                                        pageIndex * cardsPerView,
-                                        maxStartIndex,
-                                    )
+                                    const nextIndex = Math.min(pageIndex * cardsPerView, maxStartIndex)
                                     setCurrentIndex(nextIndex)
                                     scrollToIndex(nextIndex)
                                 }}
                                 className={[
                                     'h-1.5 cursor-pointer rounded-full transition-all',
-                                    isActive
-                                        ? 'w-4 bg-primary'
-                                        : 'w-1.5 bg-border hover:bg-text-dim',
+                                    isActive ? 'w-4 bg-primary' : 'w-1.5 bg-border hover:bg-text-dim',
                                 ].join(' ')}
                                 aria-label={`배너 페이지 ${pageIndex + 1}`}
                             />
