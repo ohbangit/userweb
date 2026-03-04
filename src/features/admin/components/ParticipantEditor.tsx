@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Crown } from 'lucide-react'
 import { useAdminStreamerSearch } from '../hooks'
 import type { DraftParticipant, OverwatchRole } from '../types'
 
@@ -20,32 +21,20 @@ interface ParticipantEditorProps {
     isSaving: boolean
 }
 
-export function ParticipantEditor({
-    participants: initialParticipants,
-    onSave,
-    isSaving,
-}: ParticipantEditorProps) {
-    const [participants, setParticipants] =
-        useState<DraftParticipant[]>(initialParticipants)
+export function ParticipantEditor({ participants: initialParticipants, onSave, isSaving }: ParticipantEditorProps) {
+    const [participants, setParticipants] = useState<DraftParticipant[]>(initialParticipants)
     const [searchInput, setSearchInput] = useState('')
     const [selectedStreamerId, setSelectedStreamerId] = useState<number>()
     const [selectedStreamerName, setSelectedStreamerName] = useState('')
-    const [selectedStreamerAvatarUrl, setSelectedStreamerAvatarUrl] = useState<
-        string | null
-    >(null)
-    const [selectedStreamerIsPartner, setSelectedStreamerIsPartner] =
-        useState(false)
+    const [selectedStreamerAvatarUrl, setSelectedStreamerAvatarUrl] = useState<string | null>(null)
+    const [selectedStreamerIsPartner, setSelectedStreamerIsPartner] = useState(false)
 
-    const showSuggestions =
-        searchInput.trim().length > 0 && selectedStreamerId === undefined
-    const { data: suggestions, isFetching } = useAdminStreamerSearch(
-        selectedStreamerId === undefined ? searchInput : '',
-    )
+    const showSuggestions = searchInput.trim().length > 0 && selectedStreamerId === undefined
+    const { data: suggestions, isFetching } = useAdminStreamerSearch(selectedStreamerId === undefined ? searchInput : '')
 
     function handleAddParticipant() {
         if (selectedStreamerId === undefined) return
-        if (participants.some((p) => p.streamerId === selectedStreamerId))
-            return
+        if (participants.some((p) => p.streamerId === selectedStreamerId)) return
         const next: DraftParticipant = {
             id: crypto.randomUUID(),
             streamerId: selectedStreamerId,
@@ -54,6 +43,7 @@ export function ParticipantEditor({
             position: null,
             avatarUrl: selectedStreamerAvatarUrl,
             isPartner: selectedStreamerIsPartner,
+            isCaptain: false,
             order: participants.length,
         }
         setParticipants((prev) => [...prev, next])
@@ -65,38 +55,38 @@ export function ParticipantEditor({
     }
 
     function handleRemoveParticipant(id: string) {
-        setParticipants((prev) =>
-            prev.filter((p) => p.id !== id).map((p, i) => ({ ...p, order: i })),
-        )
+        setParticipants((prev) => prev.filter((p) => p.id !== id).map((p, i) => ({ ...p, order: i })))
     }
 
     function handleUpdatePosition(id: string, role: OverwatchRole) {
+        setParticipants((prev) => prev.map((p) => (p.id === id ? { ...p, position: p.position === role ? null : role } : p)))
+    }
+
+    function handleToggleCaptain(id: string) {
         setParticipants((prev) =>
-            prev.map((p) =>
-                p.id === id
-                    ? { ...p, position: p.position === role ? null : role }
-                    : p,
-            ),
+            prev.map((participant) => {
+                if (participant.id === id) {
+                    return { ...participant, isCaptain: !participant.isCaptain }
+                }
+                if (participant.isCaptain) {
+                    return { ...participant, isCaptain: false }
+                }
+                return participant
+            }),
         )
     }
 
     return (
         <div className="p-4">
             <div className="space-y-4 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-[#2e2e38] dark:bg-[#20202a]">
-                <p className="text-xs font-semibold text-gray-500 dark:text-[#adadb8]">
-                    참여자 ({participants.length}명)
-                </p>
+                <p className="text-xs font-semibold text-gray-500 dark:text-[#adadb8]">참여자 ({participants.length}명)</p>
 
                 {/* 검색 + 추가 */}
                 <div className="relative">
                     <div className="flex gap-2">
                         <input
                             type="text"
-                            value={
-                                selectedStreamerId !== undefined
-                                    ? selectedStreamerName
-                                    : searchInput
-                            }
+                            value={selectedStreamerId !== undefined ? selectedStreamerName : searchInput}
                             onChange={(e) => {
                                 setSearchInput(e.target.value)
                                 setSelectedStreamerId(undefined)
@@ -135,17 +125,10 @@ export function ParticipantEditor({
                     )}
                     {showSuggestions && (
                         <div className="absolute z-50 mt-1 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#26262e]">
-                            {isFetching && (
-                                <p className="px-3 py-2 text-xs text-gray-500">
-                                    검색 중...
-                                </p>
+                            {isFetching && <p className="px-3 py-2 text-xs text-gray-500">검색 중...</p>}
+                            {!isFetching && (suggestions?.length ?? 0) === 0 && (
+                                <p className="px-3 py-2 text-xs text-gray-500">결과 없음</p>
                             )}
-                            {!isFetching &&
-                                (suggestions?.length ?? 0) === 0 && (
-                                    <p className="px-3 py-2 text-xs text-gray-500">
-                                        결과 없음
-                                    </p>
-                                )}
                             {!isFetching &&
                                 suggestions?.map((streamer) => (
                                     <button
@@ -154,15 +137,9 @@ export function ParticipantEditor({
                                         onMouseDown={(e) => e.preventDefault()}
                                         onClick={() => {
                                             setSelectedStreamerId(streamer.id)
-                                            setSelectedStreamerName(
-                                                streamer.nickname,
-                                            )
-                                            setSelectedStreamerAvatarUrl(
-                                                streamer.channelImageUrl,
-                                            )
-                                            setSelectedStreamerIsPartner(
-                                                streamer.isPartner,
-                                            )
+                                            setSelectedStreamerName(streamer.nickname)
+                                            setSelectedStreamerAvatarUrl(streamer.channelImageUrl)
+                                            setSelectedStreamerIsPartner(streamer.isPartner)
                                             setSearchInput(streamer.nickname)
                                         }}
                                         className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-gray-800 transition hover:bg-gray-50 dark:text-[#efeff1] dark:hover:bg-[#3a3a44]"
@@ -176,14 +153,8 @@ export function ParticipantEditor({
                                         ) : (
                                             <div className="h-5 w-5 rounded-full bg-gray-100 dark:bg-[#3a3a44]" />
                                         )}
-                                        <span className="flex-1 truncate">
-                                            {streamer.nickname}
-                                        </span>
-                                        {streamer.isPartner && (
-                                            <span className="text-[10px] text-amber-500">
-                                                파트너
-                                            </span>
-                                        )}
+                                        <span className="flex-1 truncate">{streamer.nickname}</span>
+                                        {streamer.isPartner && <span className="text-[10px] text-amber-500">파트너</span>}
                                     </button>
                                 ))}
                         </div>
@@ -198,30 +169,20 @@ export function ParticipantEditor({
                                 key={p.id}
                                 className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-[#2e2e38] dark:bg-[#1a1a23]"
                             >
-                                <span className="w-5 shrink-0 text-center text-xs text-gray-400 dark:text-[#6b6b7a]">
-                                    {i + 1}
-                                </span>
+                                <span className="w-5 shrink-0 text-center text-xs text-gray-400 dark:text-[#6b6b7a]">{i + 1}</span>
                                 {p.avatarUrl !== null ? (
-                                    <img
-                                        src={p.avatarUrl}
-                                        alt={p.name}
-                                        className="h-6 w-6 shrink-0 rounded-full object-cover"
-                                    />
+                                    <img src={p.avatarUrl} alt={p.name} className="h-6 w-6 shrink-0 rounded-full object-cover" />
                                 ) : (
                                     <div className="h-6 w-6 shrink-0 rounded-full bg-gray-100 dark:bg-[#2e2e38]" />
                                 )}
-                                <span className="flex-1 truncate text-sm text-gray-700 dark:text-[#efeff1]">
-                                    {p.name}
-                                </span>
+                                <span className="flex-1 truncate text-sm text-gray-700 dark:text-[#efeff1]">{p.name}</span>
                                 {/* 포지션 토글 */}
                                 <div className="flex gap-1">
                                     {POSITIONS.map(({ role, label }) => (
                                         <button
                                             key={role}
                                             type="button"
-                                            onClick={() =>
-                                                handleUpdatePosition(p.id, role)
-                                            }
+                                            onClick={() => handleUpdatePosition(p.id, role)}
                                             className={[
                                                 'rounded px-1.5 py-0.5 text-[10px] font-semibold transition',
                                                 p.position === role
@@ -235,9 +196,21 @@ export function ParticipantEditor({
                                 </div>
                                 <button
                                     type="button"
-                                    onClick={() =>
-                                        handleRemoveParticipant(p.id)
-                                    }
+                                    onClick={() => handleToggleCaptain(p.id)}
+                                    className={[
+                                        'cursor-pointer rounded p-1 transition',
+                                        p.isCaptain
+                                            ? 'bg-amber-100 text-amber-500 dark:bg-amber-900/30'
+                                            : 'text-gray-400 hover:bg-gray-100 hover:text-amber-500 dark:text-[#6b6b7a] dark:hover:bg-[#2e2e38] dark:hover:text-amber-400',
+                                    ].join(' ')}
+                                    aria-label={`${p.name} 팀장 토글`}
+                                    title={p.isCaptain ? '팀장 해제' : '팀장 지정'}
+                                >
+                                    <Crown className={['h-4 w-4', p.isCaptain ? 'fill-current' : ''].join(' ')} />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveParticipant(p.id)}
                                     className="shrink-0 text-gray-300 transition hover:text-red-400 dark:text-[#3a3a44] dark:hover:text-red-500"
                                     aria-label="참여자 삭제"
                                 >
@@ -247,9 +220,7 @@ export function ParticipantEditor({
                         ))}
                     </div>
                 ) : (
-                    <p className="text-center text-xs text-gray-400 dark:text-[#6b6b7a]">
-                        참여자가 없습니다.
-                    </p>
+                    <p className="text-center text-xs text-gray-400 dark:text-[#6b6b7a]">참여자가 없습니다.</p>
                 )}
 
                 {/* 저장 */}

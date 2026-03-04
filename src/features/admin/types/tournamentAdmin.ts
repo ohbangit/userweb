@@ -7,6 +7,7 @@ type TournamentAdminMember = {
     name: string
     channelId: string | null
     isPartner: boolean
+    isCaptain: boolean
     avatarUrl: string | null
     profileUrl: string | null
 }
@@ -90,6 +91,7 @@ type UpsertTournamentMemberRequest = {
     streamerId?: number
     name?: string
     profileUrl?: string
+    isCaptain?: boolean
 }
 
 export type {

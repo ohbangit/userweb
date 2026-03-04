@@ -41,6 +41,7 @@ export interface DraftParticipant {
     position: OverwatchRole | null
     avatarUrl: string | null
     isPartner: boolean
+    isCaptain: boolean
     order: number
 }
 

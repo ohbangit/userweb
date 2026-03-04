@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { Crown } from 'lucide-react'
 import partnerMark from '../../../assets/mark.png'
-import { useAdminToast, useDeleteTournamentMember } from '../hooks'
+import { useAdminToast, useDeleteTournamentMember, useUpsertTournamentMember } from '../hooks'
 import type { SlotType, TournamentAdminMember } from '../types'
 import { getErrorMessage } from '../utils'
 import { AssignDropdown } from './AssignDropdown'
@@ -15,17 +16,10 @@ interface MemberRowProps {
     isStaff: boolean
 }
 
-export function MemberRow({
-    tournamentId,
-    teamId,
-    slot,
-    label,
-    member,
-    isFirst,
-    isStaff,
-}: MemberRowProps) {
+export function MemberRow({ tournamentId, teamId, slot, label, member, isFirst, isStaff }: MemberRowProps) {
     const { addToast } = useAdminToast()
     const deleteMember = useDeleteTournamentMember(tournamentId, teamId)
+    const upsertMember = useUpsertTournamentMember(tournamentId, teamId)
     const [assignOpen, setAssignOpen] = useState(false)
 
     async function handleDelete(memberId: number) {
@@ -37,15 +31,27 @@ export function MemberRow({
         }
     }
 
+    async function handleToggleCaptain() {
+        if (member === undefined) return
+        try {
+            await upsertMember.mutateAsync({
+                slot,
+                streamerId: member.streamerId ?? undefined,
+                name: member.streamerId === null ? member.name : undefined,
+                profileUrl: member.profileUrl ?? undefined,
+                isCaptain: !member.isCaptain,
+            })
+            addToast({
+                message: member.isCaptain ? '팀장 지정이 해제되었습니다.' : '팀장으로 지정되었습니다.',
+                variant: 'success',
+            })
+        } catch (error) {
+            addToast({ message: getErrorMessage(error), variant: 'error' })
+        }
+    }
+
     return (
-        <tr
-            className={[
-                'group',
-                !isFirst
-                    ? 'border-t border-gray-100 dark:border-[#2e2e38]'
-                    : '',
-            ].join(' ')}
-        >
+        <tr className={['group', !isFirst ? 'border-t border-gray-100 dark:border-[#2e2e38]' : ''].join(' ')}>
             <td className="w-16 py-2 pl-4 pr-2">
                 <span
                     className={[
@@ -63,26 +69,14 @@ export function MemberRow({
                 {member !== undefined ? (
                     <div className="flex items-center gap-2">
                         {member.avatarUrl !== null ? (
-                            <img
-                                src={member.avatarUrl}
-                                alt={member.name}
-                                className="h-6 w-6 rounded-full object-cover"
-                            />
+                            <img src={member.avatarUrl} alt={member.name} className="h-6 w-6 rounded-full object-cover" />
                         ) : (
                             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-[10px] font-bold text-gray-500 dark:bg-[#3a3a44]">
                                 {member.name.charAt(0)}
                             </div>
                         )}
-                        <span className="text-sm text-gray-900 dark:text-[#efeff1]">
-                            {member.name}
-                        </span>
-                        {member.isPartner && (
-                            <img
-                                src={partnerMark}
-                                alt="파트너"
-                                className="h-3.5 w-3.5"
-                            />
-                        )}
+                        <span className="text-sm text-gray-900 dark:text-[#efeff1]">{member.name}</span>
+                        {member.isPartner && <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5" />}
                         {member.profileUrl !== null && (
                             <a
                                 href={member.profileUrl}
@@ -91,13 +85,7 @@ export function MemberRow({
                                 title="프로필 링크"
                                 className="text-gray-300 transition hover:text-blue-500 dark:text-[#3a3a44] dark:hover:text-blue-400"
                             >
-                                <svg
-                                    className="h-3.5 w-3.5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth={2}
-                                >
+                                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
@@ -117,42 +105,48 @@ export function MemberRow({
                             + 배정
                         </button>
                         {assignOpen && (
-                            <AssignDropdown
-                                tournamentId={tournamentId}
-                                teamId={teamId}
-                                slot={slot}
-                                onClose={() => setAssignOpen(false)}
-                            />
+                            <AssignDropdown tournamentId={tournamentId} teamId={teamId} slot={slot} onClose={() => setAssignOpen(false)} />
                         )}
                     </div>
                 )}
             </td>
 
-            <td className="w-10 py-2 pr-3 text-right">
+            <td className="w-20 py-2 pr-3 text-right">
                 {member !== undefined && (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            void handleDelete(member.id)
-                        }}
-                        disabled={deleteMember.isPending}
-                        title="삭제"
-                        className="text-gray-200 opacity-0 transition group-hover:opacity-100 hover:text-red-400 disabled:opacity-40 dark:text-[#3a3a44] dark:hover:text-red-400"
-                    >
-                        <svg
-                            className="h-3.5 w-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
+                    <div className="flex items-center justify-end gap-2">
+                        {!isStaff && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    void handleToggleCaptain()
+                                }}
+                                disabled={upsertMember.isPending}
+                                title={member.isCaptain ? '팀장 해제' : '팀장 지정'}
+                                className={[
+                                    'cursor-pointer rounded p-1 transition disabled:opacity-40',
+                                    member.isCaptain
+                                        ? 'bg-amber-100 text-amber-500 dark:bg-amber-900/30'
+                                        : 'text-gray-300 hover:bg-gray-100 hover:text-amber-500 dark:text-[#3a3a44] dark:hover:bg-[#2e2e38] dark:hover:text-amber-400',
+                                ].join(' ')}
+                                aria-label={member.isCaptain ? '팀장 해제' : '팀장 지정'}
+                            >
+                                <Crown className={['h-3.5 w-3.5', member.isCaptain ? 'fill-current' : ''].join(' ')} />
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                void handleDelete(member.id)
+                            }}
+                            disabled={deleteMember.isPending}
+                            title="삭제"
+                            className="cursor-pointer text-gray-200 opacity-0 transition group-hover:opacity-100 hover:text-red-400 disabled:opacity-40 dark:text-[#3a3a44] dark:hover:text-red-400"
                         >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
+                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                 )}
             </td>
         </tr>

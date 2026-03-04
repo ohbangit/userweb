@@ -45,6 +45,7 @@ interface PanelRendererProps {
         position: OverwatchRole | null
         avatarUrl: string | null
         isPartner: boolean
+        isCaptain: boolean
     }>
 }
 
@@ -212,6 +213,7 @@ export default function TournamentPromotionPage() {
                 position: OverwatchRole | null
                 avatarUrl: string | null
                 isPartner: boolean
+                isCaptain: boolean
                 order: number
             }>
         >((acc, item, index) => {
@@ -226,17 +228,19 @@ export default function TournamentPromotionPage() {
                     : null,
                 avatarUrl: typeof participant.avatarUrl === 'string' ? participant.avatarUrl : null,
                 isPartner: participant.isPartner === true,
+                isCaptain: participant.isCaptain === true,
                 order: typeof participant.order === 'number' ? participant.order : index,
             })
             return acc
         }, [])
         .sort((a, b) => a.order - b.order)
-        .map(({ id, name, position, avatarUrl, isPartner }) => ({
+        .map(({ id, name, position, avatarUrl, isPartner, isCaptain }) => ({
             id,
             name,
             position,
             avatarUrl,
             isPartner,
+            isCaptain,
         }))
 
     return (

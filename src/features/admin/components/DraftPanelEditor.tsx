@@ -10,34 +10,19 @@ interface DraftPanelEditorProps {
 
 function parseDraftContent(raw: Record<string, unknown>): DraftContent {
     const parsedParticipants = Array.isArray(raw.participants)
-        ? (raw.participants as DraftParticipant[]).map(
-              (participant, index) => ({
-                  id: participant.id,
-                  streamerId:
-                      typeof participant.streamerId === 'number'
-                          ? participant.streamerId
-                          : null,
-                  name: participant.name,
-                  teamId:
-                      typeof participant.teamId === 'number'
-                          ? participant.teamId
-                          : null,
-                  position: ['TNK', 'DPS', 'SPT'].includes(
-                      participant.position as string,
-                  )
-                      ? (participant.position as 'TNK' | 'DPS' | 'SPT')
-                      : null,
-                  avatarUrl:
-                      typeof participant.avatarUrl === 'string'
-                          ? participant.avatarUrl
-                          : null,
-                  isPartner: participant.isPartner === true,
-                  order:
-                      typeof participant.order === 'number'
-                          ? participant.order
-                          : index,
-              }),
-          )
+        ? (raw.participants as DraftParticipant[]).map((participant, index) => ({
+              id: participant.id,
+              streamerId: typeof participant.streamerId === 'number' ? participant.streamerId : null,
+              name: participant.name,
+              teamId: typeof participant.teamId === 'number' ? participant.teamId : null,
+              position: ['TNK', 'DPS', 'SPT'].includes(participant.position as string)
+                  ? (participant.position as 'TNK' | 'DPS' | 'SPT')
+                  : null,
+              avatarUrl: typeof participant.avatarUrl === 'string' ? participant.avatarUrl : null,
+              isPartner: participant.isPartner === true,
+              isCaptain: participant.isCaptain === true,
+              order: typeof participant.order === 'number' ? participant.order : index,
+          }))
         : []
     return {
         startsOn: typeof raw.startsOn === 'string' ? raw.startsOn : null,
@@ -46,11 +31,7 @@ function parseDraftContent(raw: Record<string, unknown>): DraftContent {
     }
 }
 
-export function DraftPanelEditor({
-    content,
-    onSave,
-    isSaving,
-}: DraftPanelEditorProps) {
+export function DraftPanelEditor({ content, onSave, isSaving }: DraftPanelEditorProps) {
     const parsed = parseDraftContent(content)
     const [startsOn, setStartsOn] = useState(parsed.startsOn ?? '')
     const [meta, setMeta] = useState(parsed.meta)
@@ -69,20 +50,13 @@ export function DraftPanelEditor({
         <div className="mt-3 space-y-4 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-[#2e2e38] dark:bg-[#20202a]">
             {/* 드래프트 일정 */}
             <div>
-                <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">
-                    드래프트 일자
-                </p>
-                <CalendarPicker
-                    value={startsOn.length > 0 ? startsOn : null}
-                    onChange={(v) => setStartsOn(v ?? '')}
-                />
+                <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">드래프트 일자</p>
+                <CalendarPicker value={startsOn.length > 0 ? startsOn : null} onChange={(v) => setStartsOn(v ?? '')} />
             </div>
 
             {/* 메타 메모 */}
             <div>
-                <label className="mb-1 block text-xs font-semibold text-gray-500 dark:text-[#adadb8]">
-                    메모 (선택)
-                </label>
+                <label className="mb-1 block text-xs font-semibold text-gray-500 dark:text-[#adadb8]">메모 (선택)</label>
                 <textarea
                     value={meta}
                     onChange={(e) => setMeta(e.target.value)}

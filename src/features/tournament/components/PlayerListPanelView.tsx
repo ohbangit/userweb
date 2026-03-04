@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { Crown } from 'lucide-react'
 import partnerMark from '../../../assets/mark.png'
 import tnkSrc from '../../../assets/tnk.svg'
 import dpsSrc from '../../../assets/dps.svg'
@@ -26,6 +27,7 @@ interface DraftParticipantPreview {
     position: OverwatchRole | null
     avatarUrl: string | null
     isPartner: boolean
+    isCaptain: boolean
 }
 
 interface Props {
@@ -68,7 +70,12 @@ export function PlayerListPanelView({ title, teams, participants = [] }: Props) 
                     {hasDraftParticipants ? (
                         <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-4">
                             {participants.map((p) => (
-                                <div key={p.id} className="w-full min-w-0 rounded-xl bg-[#062035] px-3 py-3 sm:px-4">
+                                <div key={p.id} className="relative w-full min-w-0 rounded-xl bg-[#062035] px-3 py-3 sm:px-4">
+                                    {p.isCaptain && (
+                                        <span className="absolute left-1.5 top-1.5 z-10 inline-flex items-center justify-center rounded-md bg-[#041524]/80 p-1 ring-1 ring-amber-400/50">
+                                            <Crown className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                                        </span>
+                                    )}
                                     <div className="flex items-stretch justify-between gap-2 sm:hidden">
                                         <div className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-md bg-[#041524]/70 px-2 py-2 ring-1 ring-[#1e3a5f]">
                                             {p.avatarUrl !== null ? (
@@ -133,8 +140,13 @@ export function PlayerListPanelView({ title, teams, participants = [] }: Props) 
                             {players.map((player) => (
                                 <div
                                     key={`${player.teamId}-${player.id}`}
-                                    className="w-full min-w-0 rounded-xl bg-[#062035] px-3 py-3 sm:px-4"
+                                    className="relative w-full min-w-0 rounded-xl bg-[#062035] px-3 py-3 sm:px-4"
                                 >
+                                    {player.isCaptain && (
+                                        <span className="absolute left-1.5 top-1.5 z-10 inline-flex items-center justify-center rounded-md bg-[#041524]/80 p-1 ring-1 ring-amber-400/50">
+                                            <Crown className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                                        </span>
+                                    )}
                                     <div className="flex items-stretch justify-between gap-2 sm:hidden">
                                         <div className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-md bg-[#041524]/70 px-2 py-2 ring-1 ring-[#1e3a5f]">
                                             {player.avatarUrl !== null ? (

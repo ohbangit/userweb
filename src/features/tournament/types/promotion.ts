@@ -1,9 +1,4 @@
-export type PromotionPanelType =
-    | 'DRAFT'
-    | 'TEAMS'
-    | 'PLAYER_LIST'
-    | 'SCHEDULE'
-    | 'FINAL_RESULT'
+export type PromotionPanelType = 'DRAFT' | 'TEAMS' | 'PLAYER_LIST' | 'SCHEDULE' | 'FINAL_RESULT'
 export type PromotionConfigStatus = 'draft' | 'published'
 
 export interface PublicPromotionPanel {
@@ -37,6 +32,7 @@ export interface DraftParticipant {
     position: OverwatchRole | null
     avatarUrl: string | null
     isPartner: boolean
+    isCaptain: boolean
     order: number
 }
 
@@ -96,6 +92,7 @@ export interface TournamentMember {
     nickname?: string
     channelId: string | null
     isPartner: boolean
+    isCaptain: boolean
     avatarUrl: string | null
     profileUrl: string | null
 }
