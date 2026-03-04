@@ -12,7 +12,6 @@ interface TournamentHeroProps {
     bannerUrl: string | null
     startedAt: string | null
     endedAt: string | null
-    isActive: boolean
     tags: string[]
     isChzzkSupport: boolean
     hostName: string | null
@@ -24,15 +23,21 @@ interface TournamentHeroProps {
 
 type TournamentStatus = 'before' | 'ongoing' | 'ended'
 
-function getTournamentStatus(
-    startedAt: string | null,
-    endedAt: string | null,
-    isActive: boolean,
-): TournamentStatus {
+function getTournamentStatus(startedAt: string | null, endedAt: string | null): TournamentStatus {
     const now = new Date()
-    if (endedAt !== null && new Date(endedAt) < now) return 'ended'
-    if (isActive || (startedAt !== null && new Date(startedAt) <= now))
-        return 'ongoing'
+
+    if (endedAt !== null) {
+        const endedDate = new Date(endedAt)
+        endedDate.setHours(23, 59, 59, 999)
+        if (endedDate < now) return 'ended'
+    }
+
+    if (startedAt !== null) {
+        const startedDate = new Date(startedAt)
+        startedDate.setHours(0, 0, 0, 0)
+        if (startedDate <= now) return 'ongoing'
+    }
+
     return 'before'
 }
 
@@ -46,10 +51,7 @@ function formatDate(dateStr: string | null): string {
     })
 }
 
-const STATUS_CONFIG: Record<
-    TournamentStatus,
-    { label: string; className: string; dot: string | null }
-> = {
+const STATUS_CONFIG: Record<TournamentStatus, { label: string; className: string; dot: string | null }> = {
     before: {
         label: '진행전',
         className: 'border-gray-600/40 bg-gray-500/10 text-gray-400',
@@ -72,7 +74,6 @@ export function TournamentHero({
     bannerUrl,
     startedAt,
     endedAt,
-    isActive,
     tags,
     isChzzkSupport,
     hostName,
@@ -82,7 +83,7 @@ export function TournamentHero({
     links,
 }: TournamentHeroProps) {
     const hasBanner = bannerUrl !== null && bannerUrl.length > 0
-    const status = getTournamentStatus(startedAt, endedAt, isActive)
+    const status = getTournamentStatus(startedAt, endedAt)
     const statusConfig = STATUS_CONFIG[status]
 
     return (
@@ -125,10 +126,7 @@ export function TournamentHero({
 
                     {/* 텍스트 태그 */}
                     {tags.map((tag) => (
-                        <div
-                            key={tag}
-                            className="rounded-full border border-[#1e3a5f] bg-[#041524]/60 px-3 py-1 text-xs text-[#6aadcc]"
-                        >
+                        <div key={tag} className="rounded-full border border-[#1e3a5f] bg-[#041524]/60 px-3 py-1 text-xs text-[#6aadcc]">
                             {tag}
                         </div>
                     ))}
@@ -142,9 +140,7 @@ export function TournamentHero({
                                 <span
                                     className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${statusConfig.dot}`}
                                 />
-                                <span
-                                    className={`relative inline-flex h-2 w-2 rounded-full ${statusConfig.dot}`}
-                                />
+                                <span className={`relative inline-flex h-2 w-2 rounded-full ${statusConfig.dot}`} />
                             </span>
                         )}
                         {statusConfig.label}
@@ -153,15 +149,8 @@ export function TournamentHero({
 
                 {/* 대회명 + OW 아이콘 */}
                 <div className="mt-1 flex items-end gap-3 md:gap-4">
-                    <img
-                        src={overwatchSrc}
-                        alt=""
-                        aria-hidden="true"
-                        className="h-9 w-9 drop-shadow-lg md:h-12 md:w-12"
-                    />
-                    <h1 className="font-koverwatch text-3xl leading-[0.95] font-black text-white drop-shadow-lg md:text-5xl">
-                        {name}
-                    </h1>
+                    <img src={overwatchSrc} alt="" aria-hidden="true" className="h-9 w-9 drop-shadow-lg md:h-12 md:w-12" />
+                    <h1 className="font-koverwatch text-3xl leading-[0.95] font-black text-white drop-shadow-lg md:text-5xl">{name}</h1>
                 </div>
 
                 {/* 기간 */}
@@ -170,9 +159,7 @@ export function TournamentHero({
                         <Calendar className="h-4 w-4 text-[#0596e8]" />
                         <span>
                             {startedAt !== null ? formatDate(startedAt) : '?'}
-                            {endedAt !== null
-                                ? ` ~ ${formatDate(endedAt)}`
-                                : ''}
+                            {endedAt !== null ? ` ~ ${formatDate(endedAt)}` : ''}
                         </span>
                     </div>
                 )}
@@ -184,11 +171,7 @@ export function TournamentHero({
                 {hostName !== null && (
                     <div className="mt-3 flex items-center gap-3">
                         {hostAvatarUrl !== null && (
-                            <img
-                                src={hostAvatarUrl}
-                                alt={hostName}
-                                className="h-9 w-9 rounded-full ring-2 ring-[#1e3a5f]"
-                            />
+                            <img src={hostAvatarUrl} alt={hostName} className="h-9 w-9 rounded-full ring-2 ring-[#1e3a5f]" />
                         )}
                         <div className="flex items-center gap-2">
                             {hostChannelUrl !== null ? (
@@ -201,22 +184,11 @@ export function TournamentHero({
                                     {hostName}
                                 </a>
                             ) : (
-                                <span className="text-base font-semibold text-white">
-                                    {hostName}
-                                </span>
+                                <span className="text-base font-semibold text-white">{hostName}</span>
                             )}
                             {hostIsPartner && (
-                                <span
-                                    className="inline-flex items-center"
-                                    aria-label="파트너 스트리머"
-                                    title="파트너 스트리머"
-                                >
-                                    <img
-                                        src={partnerMark}
-                                        alt="파트너"
-                                        className="h-3.5 w-3.5"
-                                        loading="lazy"
-                                    />
+                                <span className="inline-flex items-center" aria-label="파트너 스트리머" title="파트너 스트리머">
+                                    <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5" loading="lazy" />
                                 </span>
                             )}
                         </div>

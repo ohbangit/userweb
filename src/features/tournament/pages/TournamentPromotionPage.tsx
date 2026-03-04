@@ -5,21 +5,8 @@ import { ChevronUp } from 'lucide-react'
 import { Header } from '../../../app/components/Header'
 import { useTournamentPromotion, useTournamentTeams } from '../hooks'
 import { useTournamentDetail } from '../hooks/useTournamentDetail'
-import {
-    DraftPanelView,
-    PlayerListPanelView,
-    TeamsPanelView,
-    SchedulePanelView,
-    FinalResultPanelView,
-    TournamentHero,
-} from '../components'
-import type {
-    DraftContent,
-    OverwatchRole,
-    ScheduleContent,
-    FinalResultContent,
-    PublicPromotionPanel,
-} from '../types'
+import { DraftPanelView, PlayerListPanelView, TeamsPanelView, SchedulePanelView, FinalResultPanelView, TournamentHero } from '../components'
+import type { DraftContent, OverwatchRole, ScheduleContent, FinalResultContent, PublicPromotionPanel } from '../types'
 
 const DEFAULT_PANEL_TITLE: Record<string, string> = {
     DRAFT: '드래프트',
@@ -27,6 +14,26 @@ const DEFAULT_PANEL_TITLE: Record<string, string> = {
     PLAYER_LIST: '참가자',
     SCHEDULE: '일정 & 결과',
     FINAL_RESULT: '최종 결과',
+}
+
+type TournamentStatus = 'before' | 'ongoing' | 'ended'
+
+function getTournamentStatusBySchedule(startedAt: string | null, endedAt: string | null): TournamentStatus {
+    const now = new Date()
+
+    if (endedAt !== null) {
+        const endedDate = new Date(endedAt)
+        endedDate.setHours(23, 59, 59, 999)
+        if (endedDate < now) return 'ended'
+    }
+
+    if (startedAt !== null) {
+        const startedDate = new Date(startedAt)
+        startedDate.setHours(0, 0, 0, 0)
+        if (startedDate <= now) return 'ongoing'
+    }
+
+    return 'before'
 }
 
 interface PanelRendererProps {
@@ -44,9 +51,7 @@ interface PanelRendererProps {
 function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
     const { data: teamsData } = useTournamentTeams(
         slug,
-        panel.type === 'PLAYER_LIST' ||
-            panel.type === 'SCHEDULE' ||
-            panel.type === 'FINAL_RESULT',
+        panel.type === 'PLAYER_LIST' || panel.type === 'SCHEDULE' || panel.type === 'FINAL_RESULT',
     )
     const teams = teamsData?.teams ?? []
     const panelTitle = panel.title_override ?? DEFAULT_PANEL_TITLE[panel.type]
@@ -66,13 +71,7 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
     }
 
     if (panel.type === 'PLAYER_LIST') {
-        return (
-            <PlayerListPanelView
-                title={panelTitle}
-                teams={teams}
-                participants={draftParticipants}
-            />
-        )
+        return <PlayerListPanelView title={panelTitle} teams={teams} participants={draftParticipants} />
     }
 
     if (panel.type === 'TEAMS') {
@@ -86,19 +85,11 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
                   ...g,
                   matches: g.matches.map((m) => ({
                       ...m,
-                      mvpPlayerIds: Array.isArray(m.mvpPlayerIds)
-                          ? m.mvpPlayerIds
-                          : [],
+                      mvpPlayerIds: Array.isArray(m.mvpPlayerIds) ? m.mvpPlayerIds : [],
                   })),
               }))
             : []
-        return (
-            <SchedulePanelView
-                title={panelTitle}
-                content={{ groups: safeGroups }}
-                teams={teams}
-            />
-        )
+        return <SchedulePanelView title={panelTitle} content={{ groups: safeGroups }} teams={teams} />
     }
 
     if (panel.type === 'FINAL_RESULT') {
@@ -108,10 +99,7 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
                 title={panelTitle}
                 content={{
                     standings: content.standings ?? [],
-                    mvpPlayerId:
-                        typeof content.mvpPlayerId === 'number'
-                            ? content.mvpPlayerId
-                            : null,
+                    mvpPlayerId: typeof content.mvpPlayerId === 'number' ? content.mvpPlayerId : null,
                 }}
                 teams={teams}
             />
@@ -137,17 +125,12 @@ export default function TournamentPromotionPage() {
     }, [])
 
     const { data: detail } = useTournamentDetail(resolvedSlug)
-    const {
-        data: promotionData,
-        isLoading,
-        isError,
-    } = useTournamentPromotion(resolvedSlug)
+    const { data: promotionData, isLoading, isError } = useTournamentPromotion(resolvedSlug)
 
     const name = detail?.name ?? resolvedSlug
     const bannerUrl = detail?.bannerUrl ?? null
     const startedAt = detail?.startedAt ?? null
     const endedAt = detail?.endedAt ?? null
-    const isActive = detail?.isActive ?? false
     const tags = detail?.tags ?? []
     const isChzzkSupport = detail?.isChzzkSupport ?? false
     const hostName = detail?.hostName ?? null
@@ -157,12 +140,9 @@ export default function TournamentPromotionPage() {
     const links = detail?.links ?? []
     const seoTitle = `${name} | 오뱅잇`
     const seoDescription = `${name} 대회의 일정, 참가자, 팀 정보, 최종 결과를 한눈에 확인하세요.`
-    const seoUrl =
-        typeof window !== 'undefined' ? window.location.href : undefined
-    const canonicalUrl =
-        typeof window !== 'undefined'
-            ? `${window.location.origin}${window.location.pathname}`
-            : undefined
+    const seoUrl = typeof window !== 'undefined' ? window.location.href : undefined
+    const canonicalUrl = typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}` : undefined
+    const tournamentStatus = getTournamentStatusBySchedule(startedAt, endedAt)
     const eventSchema = {
         '@context': 'https://schema.org',
         '@type': 'SportsEvent',
@@ -170,9 +150,12 @@ export default function TournamentPromotionPage() {
         description: seoDescription,
         startDate: startedAt ?? undefined,
         endDate: endedAt ?? undefined,
-        eventStatus: isActive
-            ? 'https://schema.org/EventScheduled'
-            : 'https://schema.org/EventCompleted',
+        eventStatus:
+            tournamentStatus === 'ended'
+                ? 'https://schema.org/EventCompleted'
+                : tournamentStatus === 'ongoing'
+                  ? 'https://schema.org/EventInProgress'
+                  : 'https://schema.org/EventScheduled',
         eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
         image: bannerUrl !== null ? [bannerUrl] : undefined,
         url: seoUrl,
@@ -198,9 +181,7 @@ export default function TournamentPromotionPage() {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-[#020d18]">
                 <span className="text-5xl">📭</span>
-                <p className="text-sm text-[#6aadcc]">
-                    프로모션 정보를 불러올 수 없습니다.
-                </p>
+                <p className="text-sm text-[#6aadcc]">프로모션 정보를 불러올 수 없습니다.</p>
             </div>
         )
     }
@@ -214,19 +195,14 @@ export default function TournamentPromotionPage() {
         label: panel.title_override ?? DEFAULT_PANEL_TITLE[panel.type],
     }))
 
-    const draftPanel = promotionData.panels.find(
-        (panel) => panel.type === 'DRAFT',
-    )
+    const draftPanel = promotionData.panels.find((panel) => panel.type === 'DRAFT')
     const rawDraftParticipants =
         draftPanel !== undefined &&
         typeof draftPanel.content === 'object' &&
         draftPanel.content !== null &&
         'participants' in draftPanel.content &&
-        Array.isArray(
-            (draftPanel.content as Record<string, unknown>).participants,
-        )
-            ? ((draftPanel.content as Record<string, unknown>)
-                  .participants as unknown[])
+        Array.isArray((draftPanel.content as Record<string, unknown>).participants)
+            ? ((draftPanel.content as Record<string, unknown>).participants as unknown[])
             : []
     const draftParticipants = rawDraftParticipants
         .reduce<
@@ -241,28 +217,16 @@ export default function TournamentPromotionPage() {
         >((acc, item, index) => {
             if (typeof item !== 'object' || item === null) return acc
             const participant = item as Record<string, unknown>
-            if (
-                typeof participant.id !== 'string' ||
-                typeof participant.name !== 'string'
-            )
-                return acc
+            if (typeof participant.id !== 'string' || typeof participant.name !== 'string') return acc
             acc.push({
                 id: participant.id,
                 name: participant.name,
-                position: (['TNK', 'DPS', 'SPT'] as const).includes(
-                    participant.position as OverwatchRole,
-                )
+                position: (['TNK', 'DPS', 'SPT'] as const).includes(participant.position as OverwatchRole)
                     ? (participant.position as OverwatchRole)
                     : null,
-                avatarUrl:
-                    typeof participant.avatarUrl === 'string'
-                        ? participant.avatarUrl
-                        : null,
+                avatarUrl: typeof participant.avatarUrl === 'string' ? participant.avatarUrl : null,
                 isPartner: participant.isPartner === true,
-                order:
-                    typeof participant.order === 'number'
-                        ? participant.order
-                        : index,
+                order: typeof participant.order === 'number' ? participant.order : index,
             })
             return acc
         }, [])
@@ -281,36 +245,21 @@ export default function TournamentPromotionPage() {
             <Helmet>
                 <title>{seoTitle}</title>
                 <meta name="description" content={seoDescription} />
-                <meta
-                    name="keywords"
-                    content={`${name}, 오버워치, 대회, 이스포츠, 오뱅잇`}
-                />
-                <meta
-                    name="robots"
-                    content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
-                />
-                <meta
-                    name="googlebot"
-                    content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
-                />
-                {canonicalUrl !== undefined && (
-                    <link rel="canonical" href={canonicalUrl} />
-                )}
+                <meta name="keywords" content={`${name}, 오버워치, 대회, 이스포츠, 오뱅잇`} />
+                <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+                <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+                {canonicalUrl !== undefined && <link rel="canonical" href={canonicalUrl} />}
                 <meta property="og:type" content="website" />
                 <meta property="og:locale" content="ko_KR" />
                 <meta property="og:title" content={seoTitle} />
                 <meta property="og:description" content={seoDescription} />
-                {seoUrl !== undefined && (
-                    <meta property="og:url" content={seoUrl} />
-                )}
+                {seoUrl !== undefined && <meta property="og:url" content={seoUrl} />}
                 <meta property="og:image" content={bannerUrl ?? ''} />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={seoTitle} />
                 <meta name="twitter:description" content={seoDescription} />
                 <meta name="twitter:image" content={bannerUrl ?? ''} />
-                <script type="application/ld+json">
-                    {JSON.stringify(eventSchema)}
-                </script>
+                <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
             </Helmet>
 
             <div className="font-koverwatch italic">
@@ -319,7 +268,6 @@ export default function TournamentPromotionPage() {
                     bannerUrl={bannerUrl}
                     startedAt={startedAt}
                     endedAt={endedAt}
-                    isActive={isActive}
                     tags={tags}
                     isChzzkSupport={isChzzkSupport}
                     hostName={hostName}
@@ -334,36 +282,21 @@ export default function TournamentPromotionPage() {
                         {visiblePanels.length === 0 ? (
                             <div className="flex flex-col items-center justify-center gap-3 py-20">
                                 <span className="text-5xl">🔜</span>
-                                <p className="text-sm text-[#6aadcc]">
-                                    준비 중입니다.
-                                </p>
+                                <p className="text-sm text-[#6aadcc]">준비 중입니다.</p>
                             </div>
                         ) : (
                             visiblePanels.map((panel) => (
-                                <section
-                                    key={panel.id}
-                                    id={`panel-${panel.id}`}
-                                    className="scroll-mt-24"
-                                >
-                                    <PanelRenderer
-                                        panel={panel}
-                                        slug={resolvedSlug}
-                                        draftParticipants={draftParticipants}
-                                    />
+                                <section key={panel.id} id={`panel-${panel.id}`} className="scroll-mt-24">
+                                    <PanelRenderer panel={panel} slug={resolvedSlug} draftParticipants={draftParticipants} />
                                 </section>
                             ))
                         )}
                     </div>
 
                     {panelNavItems.length > 0 && (
-                        <nav
-                            aria-label="콘텐츠 목록"
-                            className="fixed right-4 top-24 z-10 hidden w-32 min-[1440px]:block"
-                        >
+                        <nav aria-label="콘텐츠 목록" className="fixed right-4 top-24 z-10 hidden w-32 min-[1440px]:block">
                             <div className="p-1">
-                                <p className="mb-2 text-[10px] font-black tracking-[0.2em] text-[#0596e8]/80">
-                                    CONTENTS
-                                </p>
+                                <p className="mb-2 text-[10px] font-black tracking-[0.2em] text-[#0596e8]/80">CONTENTS</p>
                                 <ul className="space-y-1.5">
                                     {panelNavItems.map((item) => (
                                         <li key={item.id}>
