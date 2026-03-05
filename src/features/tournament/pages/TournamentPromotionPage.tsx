@@ -7,6 +7,7 @@ import { useTournamentPromotion, useTournamentTeams } from '../hooks'
 import { useTournamentDetail } from '../hooks/useTournamentDetail'
 import { DraftPanelView, PlayerListPanelView, TeamsPanelView, SchedulePanelView, FinalResultPanelView, TournamentHero } from '../components'
 import type { DraftContent, OverwatchRole, ScheduleContent, FinalResultContent, PublicPromotionPanel } from '../types'
+import { trackEvent } from '../../../utils/analytics'
 
 const DEFAULT_PANEL_TITLE: Record<string, string> = {
     DRAFT: '드래프트',
@@ -316,8 +317,8 @@ export default function TournamentPromotionPage() {
                     broadcasterIsPartner={broadcasterIsPartner}
                     commentators={commentators}
                     links={links}
+                    slug={resolvedSlug}
                 />
-
                 {/* 부가 설명 */}
 
                 <div className="px-4 py-8">
@@ -353,6 +354,13 @@ export default function TournamentPromotionPage() {
                                         <li key={item.id}>
                                             <a
                                                 href={`#${item.id}`}
+                                                onClick={() => {
+                                                    trackEvent('tournament_panel_nav_click', {
+                                                        slug: resolvedSlug,
+                                                        panel_label: item.label,
+                                                        panel_id: item.id,
+                                                    })
+                                                }}
                                                 className="block rounded-md px-2 py-1.5 text-sm text-[#6aadcc]/60 transition hover:text-[#e8f4fd]"
                                             >
                                                 {item.label}

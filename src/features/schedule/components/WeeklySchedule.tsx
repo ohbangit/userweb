@@ -7,6 +7,7 @@ import { Zap } from 'lucide-react'
 import { WeeklyDateTabs } from './WeeklyDateTabs'
 import { WeeklyBroadcastRow } from './WeeklyBroadcastRow'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
+import { trackEvent } from '../../../utils/analytics'
 
 interface WeeklyScheduleProps {
     broadcasts: Broadcast[]
@@ -149,7 +150,14 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
                                             <WeeklyBroadcastRow
                                                 key={broadcast.id}
                                                 broadcast={broadcast}
-                                                onClick={() => setSelectedBroadcast(broadcast)}
+                                                onClick={() => {
+                                                    trackEvent('broadcast_click', {
+                                                        broadcast_id: broadcast.id,
+                                                        broadcast_name: broadcast.streamerName,
+                                                        view_mode: 'weekly',
+                                                    })
+                                                    setSelectedBroadcast(broadcast)
+                                                }}
                                             />
                                         ))}
                                     </div>

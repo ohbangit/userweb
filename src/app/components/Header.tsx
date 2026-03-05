@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Sun, Moon, ChevronDown, ChevronRight, Trophy, Menu, X } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
 import { useTournamentList } from '../../features/tournament/hooks/useTournamentList'
+import { trackEvent } from '../../utils/analytics'
 import logoDarkSrc from '../../assets/logo_dark.png'
 
 export function Header() {
@@ -147,6 +148,11 @@ export function Header() {
                                                         role="menuitem"
                                                         className="flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left text-sm text-text transition-colors hover:bg-border/10"
                                                         onClick={() => {
+                                                            trackEvent('tournament_enter', {
+                                                                slug: tournament.slug,
+                                                                tournament_name: tournament.name,
+                                                                source: 'desktop_dropdown',
+                                                            })
                                                             navigate(
                                                                 `/tournament/${tournament.slug}`,
                                                             )
@@ -271,6 +277,11 @@ export function Header() {
                                                             : 'text-text hover:bg-border/10'
                                                     }`}
                                                     onClick={() => {
+                                                        trackEvent('tournament_enter', {
+                                                            slug: tournament.slug,
+                                                            tournament_name: tournament.name,
+                                                            source: 'mobile_menu',
+                                                        })
                                                         navigate(
                                                             `/tournament/${tournament.slug}`,
                                                         )

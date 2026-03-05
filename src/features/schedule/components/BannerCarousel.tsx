@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import type { PublicBanner } from '../hooks/usePublicBanners'
+import { trackEvent } from '../../../utils/analytics'
 
 const TYPE_BADGE: Record<string, string> = {
     tournament: 'bg-amber-500/90 text-white',
@@ -161,14 +162,19 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
 
     if (total === 0) return null
 
-    function handleBannerClick(linkUrl: string | null): void {
-        if (linkUrl === null || linkUrl.length === 0) return
-        if (linkUrl.startsWith('http://') || linkUrl.startsWith('https://')) {
-            window.open(linkUrl, '_blank', 'noopener,noreferrer')
-            return
-        }
-        navigate(linkUrl)
+    function handleBannerClick(banner: PublicBanner): void {
+    if (banner.linkUrl === null || banner.linkUrl.length === 0) return
+    trackEvent('banner_click', {
+        banner_title: banner.title,
+        banner_type: banner.type,
+        destination_url: banner.linkUrl,
+    })
+    if (banner.linkUrl.startsWith('http://') || banner.linkUrl.startsWith('https://')) {
+        window.open(banner.linkUrl, '_blank', 'noopener,noreferrer')
+        return
     }
+    navigate(banner.linkUrl)
+}
 
     function handleImageLoad(id: number, image: HTMLImageElement): void {
         const isLarge = image.naturalWidth >= 960 || image.naturalHeight >= 540
@@ -205,7 +211,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                         >
                             <button
                                 type="button"
-                                onClick={() => handleBannerClick(banner.linkUrl)}
+                                onClick={() => handleBannerClick(banner)}
                                 className="group relative h-full w-full cursor-pointer text-left"
                             >
                                 <img

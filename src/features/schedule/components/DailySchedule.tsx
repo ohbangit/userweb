@@ -5,6 +5,7 @@ import type { Broadcast } from '../types/schedule'
 import { isSameDay } from '../utils/date'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
 import { DailyBroadcastItem } from './DailyBroadcastItem'
+import { trackEvent } from '../../../utils/analytics'
 
 interface DailyScheduleProps {
     broadcasts: Broadcast[]
@@ -54,7 +55,14 @@ export function DailySchedule({ broadcasts, currentDate }: DailyScheduleProps) {
                     <DailyBroadcastItem
                         key={broadcast.id}
                         broadcast={broadcast}
-                        onClick={() => setSelectedBroadcast(broadcast)}
+                        onClick={() => {
+                            trackEvent('broadcast_click', {
+                                broadcast_id: broadcast.id,
+                                broadcast_name: broadcast.streamerName,
+                                view_mode: 'daily',
+                            })
+                            setSelectedBroadcast(broadcast)
+                        }}
                     />
                 ))}
             </div>

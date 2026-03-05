@@ -2,6 +2,7 @@ import { Calendar, ExternalLink, Radio, Mic2, Crown } from 'lucide-react'
 import overwatchSrc from '../../../assets/overwatch.png'
 import partnerMark from '../../../assets/mark.png'
 
+import { trackEvent } from '../../../utils/analytics'
 
 interface TournamentLink {
     label: string
@@ -35,6 +36,7 @@ interface TournamentHeroProps {
     // 해설진 (선택, 1명 이상)
     commentators?: CommentatorItem[]
     links: TournamentLink[]
+    slug: string
 }
 
 type TournamentStatus = 'before' | 'ongoing' | 'ended'
@@ -137,6 +139,7 @@ export function TournamentHero({
     broadcasterIsPartner = false,
     commentators = [],
     links,
+    slug,
 }: TournamentHeroProps) {
     const hasBanner = bannerUrl !== null && bannerUrl.length > 0
     const status = getTournamentStatus(startedAt, endedAt)
@@ -293,6 +296,13 @@ export function TournamentHero({
                                 href={link.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={() => {
+                                    trackEvent('tournament_link_click', {
+                                        slug,
+                                        link_label: link.label,
+                                        link_url: link.url,
+                                    })
+                                }}
                                 className="flex items-center gap-1.5 rounded-full border border-[#1e3a5f] bg-[#041524]/80 px-3 py-1 text-xs text-[#6aadcc] transition-colors hover:border-[#0596e8] hover:text-white"
                             >
                                 <ExternalLink className="h-3 w-3" />
