@@ -1,7 +1,7 @@
 import { Calendar, ExternalLink, Radio, Mic2, Crown } from 'lucide-react'
 import overwatchSrc from '../../../assets/overwatch.png'
 import partnerMark from '../../../assets/mark.png'
-import chzzkIcon from '../../../assets/chzzk_icon.png'
+
 
 interface TournamentLink {
     label: string
@@ -106,7 +106,7 @@ function PersonRow({
                     <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5" loading="lazy" />
                 </span>
             )}
-            {channelUrl !== null && <img src={chzzkIcon} alt="치지직" className="h-3.5 w-3.5 opacity-60" loading="lazy" />}
+
         </div>
     )
 
