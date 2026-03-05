@@ -414,7 +414,7 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                     <div className="flex flex-wrap gap-1.5">
                                         {allAffiliations.map((a) => {
                                             const selected = selectedAffiliationIds.includes(a.id)
-                                            const color = getAffiliationColor(a.id)
+                                            const color = getAffiliationColor(a)
                                             return (
                                                 <button
                                                     key={a.id}
@@ -486,7 +486,7 @@ function StreamerDetailModal({ streamer, onClose }: StreamerDetailModalProps) {
                                 <div className="flex min-h-[22px] flex-wrap gap-1">
                                     {streamer.affiliations.length > 0
                                         ? streamer.affiliations.map((a) => {
-                                              const color = getAffiliationColor(a.id)
+                                              const color = getAffiliationColor(a)
                                               return (
                                                   <span
                                                       key={a.id}
@@ -657,7 +657,7 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                         {streamer.affiliations.length > 0 && (
                             <div className="mt-1 flex flex-wrap gap-1">
                                 {streamer.affiliations.slice(0, 3).map((a) => {
-                                    const color = getAffiliationColor(a.id)
+                                    const color = getAffiliationColor(a)
                                     return (
                                         <span
                                             key={a.id}

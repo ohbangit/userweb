@@ -7,7 +7,7 @@ interface AffiliationBadgeProps {
 }
 
 export function AffiliationBadge({ affiliation, size = 'sm' }: AffiliationBadgeProps) {
-    const color = getAffiliationColor(affiliation.id)
+    const color = getAffiliationColor(affiliation)
     return (
         <span
             className={[

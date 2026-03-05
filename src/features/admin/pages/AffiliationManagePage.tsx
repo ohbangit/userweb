@@ -3,18 +3,101 @@ import { ApiError } from '../../../lib/apiClient'
 import { useAdminToast, useAffiliations, useCreateAffiliation, useUpdateAffiliation, useDeleteAffiliation } from '../hooks'
 import type { AffiliationItem } from '../types'
 import { getAffiliationColor } from '../types'
+import { AFFILIATION_COLOR_PALETTE } from '../../../types/affiliation'
 
 function getErrorMessage(error: unknown): string | null {
     if (!(error instanceof Error)) return null
     return error instanceof ApiError ? error.message : '오류가 발생했습니다.'
 }
 
+// ─── 색상 프리셋 팔레트 ────────────────────────────────────────────────────────
+
+interface ColorPresetProps {
+    selectedColor: string | null
+    onChange: (color: string | null) => void
+    previewName?: string
+}
+
+function ColorPreset({ selectedColor, onChange, previewName }: ColorPresetProps) {
+    const effectiveColor = selectedColor != null ? selectedColor : AFFILIATION_COLOR_PALETTE[0]
+
+    return (
+        <div className="space-y-2">
+            <div className="flex items-center justify-between">
+                <label className="text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">색상</label>
+                {previewName != null && previewName.trim().length > 0 && (
+                    <span
+                        className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                        style={{
+                            backgroundColor: `${effectiveColor}20`,
+                            color: effectiveColor,
+                            outline: `1px solid ${effectiveColor}40`,
+                        }}
+                    >
+                        {previewName}
+                    </span>
+                )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+                {/* 색상 없음 (자동) */}
+                <button
+                    type="button"
+                    title="자동 (ID 기반)"
+                    onClick={() => onChange(null)}
+                    className="cursor-pointer relative h-6 w-6 rounded-full border-2 border-dashed border-gray-300 bg-gray-100 transition hover:border-gray-400 dark:border-[#3a3a44] dark:bg-[#26262e]"
+                >
+                    {selectedColor === null && (
+                        <span className="absolute inset-0 flex items-center justify-center">
+                            <svg className="h-3 w-3 text-gray-500" viewBox="0 0 12 12" fill="none">
+                                <path
+                                    d="M2 6h8M6 2l4 4-4 4"
+                                    stroke="currentColor"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </span>
+                    )}
+                </button>
+                {/* 팔레트 */}
+                {AFFILIATION_COLOR_PALETTE.map((color) => (
+                    <button
+                        key={color}
+                        type="button"
+                        title={color}
+                        onClick={() => onChange(color)}
+                        className="cursor-pointer relative h-6 w-6 rounded-full transition hover:scale-110 hover:shadow-md"
+                        style={{ backgroundColor: color }}
+                    >
+                        {selectedColor === color && (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                                <svg className="h-3.5 w-3.5 text-white drop-shadow" viewBox="0 0 12 12" fill="none">
+                                    <path
+                                        d="M2 6l3 3 5-5"
+                                        stroke="currentColor"
+                                        strokeWidth="1.8"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </span>
+                        )}
+                    </button>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+// ─── AffiliationTag ────────────────────────────────────────────────────────────
+
 interface AffiliationTagProps {
     affiliation: AffiliationItem
 }
 
 function AffiliationTag({ affiliation }: AffiliationTagProps) {
-    const color = getAffiliationColor(affiliation.id)
+    const color = getAffiliationColor(affiliation)
     return (
         <span
             className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
@@ -28,6 +111,8 @@ function AffiliationTag({ affiliation }: AffiliationTagProps) {
         </span>
     )
 }
+
+// ─── DeleteConfirmModal ────────────────────────────────────────────────────────
 
 interface DeleteConfirmModalProps {
     affiliation: AffiliationItem
@@ -77,15 +162,18 @@ function DeleteConfirmModal({ affiliation, onConfirm, onCancel, isPending }: Del
     )
 }
 
+// ─── EditModal ─────────────────────────────────────────────────────────────────
+
 interface EditModalProps {
     affiliation: AffiliationItem
-    onConfirm: (name: string) => void
+    onConfirm: (name: string, color: string | null) => void
     onCancel: () => void
     isPending: boolean
 }
 
 function EditModal({ affiliation, onConfirm, onCancel, isPending }: EditModalProps) {
     const [name, setName] = useState(affiliation.name)
+    const [color, setColor] = useState<string | null>(affiliation.color ?? null)
     const { addToast } = useAdminToast()
 
     function handleSubmit(e: React.FormEvent): void {
@@ -95,7 +183,7 @@ function EditModal({ affiliation, onConfirm, onCancel, isPending }: EditModalPro
             addToast({ message: '소속 이름을 입력해주세요.', variant: 'error' })
             return
         }
-        onConfirm(trimmed)
+        onConfirm(trimmed, color)
     }
 
     return (
@@ -107,9 +195,9 @@ function EditModal({ affiliation, onConfirm, onCancel, isPending }: EditModalPro
         >
             <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-[#1a1a23]">
                 <form onSubmit={handleSubmit}>
-                    <div className="px-6 py-5">
+                    <div className="space-y-4 px-6 py-5">
                         <h3 className="text-base font-bold text-gray-900 dark:text-[#efeff1]">소속 수정</h3>
-                        <div className="mt-4">
+                        <div>
                             <label className="text-[11px] font-medium text-gray-500 dark:text-[#adadb8]">
                                 이름 <span className="text-red-400">*</span>
                             </label>
@@ -122,6 +210,11 @@ function EditModal({ affiliation, onConfirm, onCancel, isPending }: EditModalPro
                                 className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1] dark:placeholder-[#848494]"
                             />
                         </div>
+                        <ColorPreset
+                            selectedColor={color}
+                            onChange={setColor}
+                            previewName={name.trim().length > 0 ? name.trim() : affiliation.name}
+                        />
                     </div>
                     <div className="flex gap-2 border-t border-gray-200 px-6 py-4 dark:border-[#3a3a44]">
                         <button
@@ -146,12 +239,15 @@ function EditModal({ affiliation, onConfirm, onCancel, isPending }: EditModalPro
     )
 }
 
+// ─── AddAffiliationForm ────────────────────────────────────────────────────────
+
 interface AddAffiliationFormProps {
     onSuccess: () => void
 }
 
 function AddAffiliationForm({ onSuccess }: AddAffiliationFormProps) {
     const [name, setName] = useState('')
+    const [color, setColor] = useState<string | null>(null)
     const { addToast } = useAdminToast()
     const createMutation = useCreateAffiliation()
 
@@ -163,9 +259,10 @@ function AddAffiliationForm({ onSuccess }: AddAffiliationFormProps) {
             return
         }
         try {
-            await createMutation.mutateAsync({ name: trimmed })
+            await createMutation.mutateAsync({ name: trimmed, color })
             addToast({ message: '소속이 추가되었습니다.', variant: 'success' })
             setName('')
+            setColor(null)
             onSuccess()
         } catch (error) {
             const message = getErrorMessage(error)
@@ -197,9 +294,12 @@ function AddAffiliationForm({ onSuccess }: AddAffiliationFormProps) {
                     {createMutation.isPending ? '추가 중...' : '추가'}
                 </button>
             </div>
+            <ColorPreset selectedColor={color} onChange={setColor} previewName={name.trim().length > 0 ? name.trim() : undefined} />
         </form>
     )
 }
+
+// ─── AffiliationManagePage ─────────────────────────────────────────────────────
 
 export default function AffiliationManagePage() {
     const { data, isLoading, isError } = useAffiliations()
@@ -231,12 +331,12 @@ export default function AffiliationManagePage() {
         }
     }
 
-    async function handleUpdate(name: string): Promise<void> {
+    async function handleUpdate(name: string, color: string | null): Promise<void> {
         if (editingAffiliation === null) return
         try {
             await updateMutation.mutateAsync({
                 id: editingAffiliation.id,
-                body: { name },
+                body: { name, color },
             })
             addToast({
                 message: `'${name}' 소속이 수정되었습니다.`,
@@ -336,8 +436,8 @@ export default function AffiliationManagePage() {
             {editingAffiliation !== null && (
                 <EditModal
                     affiliation={editingAffiliation}
-                    onConfirm={(name) => {
-                        void handleUpdate(name)
+                    onConfirm={(name, color) => {
+                        void handleUpdate(name, color)
                     }}
                     onCancel={() => setEditingAffiliation(null)}
                     isPending={updateMutation.isPending}
