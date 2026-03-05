@@ -43,6 +43,15 @@ export interface DraftContent {
     participants: DraftParticipant[]
 }
 
+// 해설진 타입
+export interface Commentator {
+    name: string
+    avatarUrl: string | null
+    channelUrl: string | null
+    isPartner: boolean
+    streamerId: number | null
+}
+
 // SCHEDULE 패널 content 타입
 export type MatchStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED'
 
@@ -125,6 +134,17 @@ export interface TournamentDetail {
     hostChannelUrl: string | null
     hostIsPartner: boolean
     links: { label: string; url: string }[]
+    // 부가 설명
+    description?: string | null
+    showDescription?: boolean
+    // 중계자 (주최자와 별도로 중계하는 경우)
+    broadcasterName?: string | null
+    broadcasterAvatarUrl?: string | null
+    broadcasterChannelUrl?: string | null
+    broadcasterIsPartner?: boolean
+    broadcasterStreamerId?: number | null
+    // 해설진
+    commentators?: Commentator[]
 }
 
 export interface TournamentListResponse {

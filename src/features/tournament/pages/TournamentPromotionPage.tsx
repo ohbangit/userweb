@@ -159,6 +159,15 @@ export default function TournamentPromotionPage() {
     const hostChannelUrl = detail?.hostChannelUrl ?? null
     const hostIsPartner = detail?.hostIsPartner ?? false
     const links = detail?.links ?? []
+    // 새 필드
+    const description = detail?.description ?? null
+    const showDescription = detail?.showDescription ?? false
+    const broadcasterName = detail?.broadcasterName ?? null
+    const broadcasterAvatarUrl = detail?.broadcasterAvatarUrl ?? null
+    const broadcasterChannelUrl = detail?.broadcasterChannelUrl ?? null
+    const broadcasterIsPartner = detail?.broadcasterIsPartner ?? false
+    const commentators = detail?.commentators ?? []
+
     const seoTitle = `${name} | 오뱅잇`
     const seoDescription = `${name} 대회의 일정, 참가자, 팀 정보, 최종 결과를 한눈에 확인하세요.`
     const seoUrl = typeof window !== 'undefined' ? window.location.href : undefined
@@ -256,9 +265,9 @@ export default function TournamentPromotionPage() {
             return acc
         }, [])
         .sort((a, b) => a.order - b.order)
-        .map(({ id, name, channelId, position, avatarUrl, isPartner, isCaptain }) => ({
+        .map(({ id, name: pName, channelId, position, avatarUrl, isPartner, isCaptain }) => ({
             id,
-            name,
+            name: pName,
             channelId,
             position,
             avatarUrl,
@@ -301,10 +310,25 @@ export default function TournamentPromotionPage() {
                     hostAvatarUrl={hostAvatarUrl}
                     hostChannelUrl={hostChannelUrl}
                     hostIsPartner={hostIsPartner}
+                    broadcasterName={broadcasterName}
+                    broadcasterAvatarUrl={broadcasterAvatarUrl}
+                    broadcasterChannelUrl={broadcasterChannelUrl}
+                    broadcasterIsPartner={broadcasterIsPartner}
+                    commentators={commentators}
                     links={links}
                 />
 
+                {/* 부가 설명 */}
+
                 <div className="px-4 py-8">
+                    {showDescription && description !== null && description.length > 0 && (
+                        <div className="mx-auto max-w-5xl pb-8">
+                            <p className="text-xl text-[#6aadcc] opacity-70 whitespace-pre-wrap break-words">
+                                {description}
+                            </p>
+                            <div className="mt-6 h-px bg-[#1e3a5f]/50" />
+                        </div>
+                    )}
                     <div className="mx-auto max-w-5xl space-y-4">
                         {visiblePanels.length === 0 ? (
                             <div className="flex flex-col items-center justify-center gap-3 py-20">
@@ -348,7 +372,7 @@ export default function TournamentPromotionPage() {
                             window.scrollTo({ top: 0, behavior: 'smooth' })
                         }}
                         aria-label="맨 위로 이동"
-                        className="fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-[#062035] text-[#6aadcc] ring-1 ring-[#1e3a5f] transition hover:bg-[#07304f] hover:text-[#e8f4fd]"
+                        className="fixed bottom-6 right-6 z-50 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-[#062035] text-[#6aadcc] ring-1 ring-[#1e3a5f] transition hover:bg-[#07304f] hover:text-[#e8f4fd]"
                     >
                         <ChevronUp className="h-5 w-5" />
                     </button>

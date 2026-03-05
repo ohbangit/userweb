@@ -27,6 +27,7 @@ import {
     useUpdateTournament,
 } from '../hooks'
 import type {
+    CommentatorItem,
     DraftContent,
     DraftParticipant,
     F1DriversContent,
@@ -95,10 +96,27 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
         hostIsPartner: false,
         hostStreamerId: null as number | null,
         links: [] as { label: string; url: string }[],
+        // 부가 설명
+        description: '',
+        showDescription: false,
+        // 중계자
+        broadcasterName: '',
+        broadcasterAvatarUrl: '',
+        broadcasterChannelUrl: '',
+        broadcasterIsPartner: false,
+        broadcasterStreamerId: null as number | null,
+        // 해설진
+        commentators: [] as CommentatorItem[],
     })
     const [tagInput, setTagInput] = useState('')
     const [hostSearchInput, setHostSearchInput] = useState('')
     const [hostSelectedId, setHostSelectedId] = useState<number | undefined>()
+    // 중계자 검색
+    const [broadcasterSearchInput, setBroadcasterSearchInput] = useState('')
+    const [broadcasterSelectedId, setBroadcasterSelectedId] = useState<number | undefined>()
+    // 해설진 추가 검색
+    const [commentatorSearchInput, setCommentatorSearchInput] = useState('')
+    const [commentatorSelectedId, setCommentatorSelectedId] = useState<number | undefined>()
     const [draggingTeamId, setDraggingTeamId] = useState<number | null>(null)
     const [hoveredTeamId, setHoveredTeamId] = useState<number | null>(null)
     const [draggingPanelId, setDraggingPanelId] = useState<number | null>(null)
@@ -140,10 +158,22 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                 hostIsPartner: false,
                 hostStreamerId: null,
                 links: [],
+                description: '',
+                showDescription: false,
+                broadcasterName: '',
+                broadcasterAvatarUrl: '',
+                broadcasterChannelUrl: '',
+                broadcasterIsPartner: false,
+                broadcasterStreamerId: null,
+                commentators: [],
             })
             setTagInput('')
             setHostSearchInput('')
             setHostSelectedId(undefined)
+            setBroadcasterSearchInput('')
+            setBroadcasterSelectedId(undefined)
+            setCommentatorSearchInput('')
+            setCommentatorSelectedId(undefined)
             return
         }
         setMetaForm({
@@ -159,10 +189,22 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
             hostIsPartner: selectedTournament.hostIsPartner ?? false,
             hostStreamerId: selectedTournament.hostStreamerId ?? null,
             links: selectedTournament.links ?? [],
+            description: selectedTournament.description ?? '',
+            showDescription: selectedTournament.showDescription ?? false,
+            broadcasterName: selectedTournament.broadcasterName ?? '',
+            broadcasterAvatarUrl: selectedTournament.broadcasterAvatarUrl ?? '',
+            broadcasterChannelUrl: selectedTournament.broadcasterChannelUrl ?? '',
+            broadcasterIsPartner: selectedTournament.broadcasterIsPartner ?? false,
+            broadcasterStreamerId: selectedTournament.broadcasterStreamerId ?? null,
+            commentators: selectedTournament.commentators ?? [],
         })
         setTagInput('')
         setHostSearchInput('')
         setHostSelectedId(undefined)
+        setBroadcasterSearchInput('')
+        setBroadcasterSelectedId(undefined)
+        setCommentatorSearchInput('')
+        setCommentatorSelectedId(undefined)
     }, [selectedTournament])
 
     useEffect(() => {
@@ -174,6 +216,12 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
     const reorderTeams = useReorderTournamentTeams(selectedTournamentId ?? 0)
     const { data: hostSuggestions, isFetching: isHostFetching } = useAdminStreamerSearch(
         hostSelectedId === undefined ? hostSearchInput : '',
+    )
+    const { data: broadcasterSuggestions, isFetching: isBroadcasterFetching } = useAdminStreamerSearch(
+        broadcasterSelectedId === undefined ? broadcasterSearchInput : '',
+    )
+    const { data: commentatorSuggestions, isFetching: isCommentatorFetching } = useAdminStreamerSearch(
+        commentatorSelectedId === undefined ? commentatorSearchInput : '',
     )
 
     const { data: promotionData, isLoading: isPromotionLoading } = usePromotionConfig(selectedTournamentId)
@@ -276,6 +324,14 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                     hostIsPartner: metaForm.hostIsPartner,
                     hostStreamerId: metaForm.hostStreamerId,
                     links: metaForm.links,
+                    description: metaForm.description.trim().length > 0 ? metaForm.description.trim() : null,
+                    showDescription: metaForm.showDescription,
+                    broadcasterName: metaForm.broadcasterName.trim().length > 0 ? metaForm.broadcasterName.trim() : null,
+                    broadcasterAvatarUrl: metaForm.broadcasterAvatarUrl.trim().length > 0 ? metaForm.broadcasterAvatarUrl.trim() : null,
+                    broadcasterChannelUrl: metaForm.broadcasterChannelUrl.trim().length > 0 ? metaForm.broadcasterChannelUrl.trim() : null,
+                    broadcasterIsPartner: metaForm.broadcasterIsPartner,
+                    broadcasterStreamerId: metaForm.broadcasterStreamerId,
+                    commentators: metaForm.commentators,
                 })
                 addToast({
                     message: '대회 메타가 저장되었습니다.',
@@ -920,6 +976,269 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                                         />
                                     </div>
                                 </div>
+{/* 부가 설명 섹션 */}
+<div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#2e2e38] dark:bg-[#20202a]">
+    <div className="mb-2 flex items-center justify-between">
+        <p className="text-xs font-semibold text-gray-500 dark:text-[#adadb8]">부가 설명</p>
+        <label className="flex cursor-pointer items-center gap-1.5">
+            <input
+                type="checkbox"
+                checked={metaForm.showDescription}
+                onChange={(e) =>
+                    setMetaForm((prev) => ({
+                        ...prev,
+                        showDescription: e.target.checked,
+                    }))
+                }
+                className="rounded"
+            />
+            <span className="text-xs text-gray-600 dark:text-[#efeff1]">표시</span>
+        </label>
+    </div>
+    <textarea
+        value={metaForm.description}
+        onChange={(e) =>
+            setMetaForm((prev) => ({
+                ...prev,
+                description: e.target.value,
+            }))
+        }
+        placeholder="대회 관련 부가 안내사항을 입력하세요 (선택)"
+        rows={3}
+        className="w-full resize-y rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+    />
+</div>
+{/* 중계자 섹션 */}
+<div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#2e2e38] dark:bg-[#20202a]">
+    <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">중계자 (없으면 주최자가 직접 중계)</p>
+    <div className="relative mb-2">
+        <div className="flex items-center gap-2">
+            <input
+                type="text"
+                value={broadcasterSelectedId !== undefined ? metaForm.broadcasterName : broadcasterSearchInput}
+                onChange={(e) => {
+                    setBroadcasterSearchInput(e.target.value)
+                    setBroadcasterSelectedId(undefined)
+                }}
+                readOnly={broadcasterSelectedId !== undefined}
+                placeholder="스트리머 검색"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+            />
+            {broadcasterSelectedId !== undefined && (
+                <button
+                    type="button"
+                    onClick={() => {
+                        setBroadcasterSelectedId(undefined)
+                        setBroadcasterSearchInput('')
+                        setMetaForm((prev) => ({
+                            ...prev,
+                            broadcasterStreamerId: null,
+                        }))
+                    }}
+                    className="shrink-0 rounded-lg border border-gray-200 px-2 py-2 text-xs text-gray-400 transition hover:border-red-300 hover:text-red-500 dark:border-[#3a3a44] dark:hover:border-red-900/60"
+                >
+                    ✕
+                </button>
+            )}
+        </div>
+        {broadcasterSelectedId === undefined && broadcasterSearchInput.trim().length > 0 && (
+            <div className="absolute z-50 mt-1 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-[#3a3a44] dark:bg-[#26262e]">
+                {isBroadcasterFetching && <p className="px-3 py-2 text-xs text-gray-500">검색 중...</p>}
+                {!isBroadcasterFetching && (broadcasterSuggestions?.length ?? 0) === 0 && (
+                    <p className="px-3 py-2 text-xs text-gray-500">결과 없음</p>
+                )}
+                {!isBroadcasterFetching &&
+                    broadcasterSuggestions?.map((s) => (
+                        <button
+                            key={s.id}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => {
+                                setBroadcasterSelectedId(s.id)
+                                setBroadcasterSearchInput(s.name)
+                                setMetaForm((prev) => ({
+                                    ...prev,
+                                    broadcasterName: s.name,
+                                    broadcasterAvatarUrl: s.channelImageUrl ?? '',
+                                    broadcasterChannelUrl:
+                                        s.channelId !== null ? `https://chzzk.naver.com/live/${s.channelId}` : '',
+                                    broadcasterIsPartner: s.isPartner,
+                                    broadcasterStreamerId: s.id,
+                                }))
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition hover:bg-gray-50 dark:hover:bg-[#3a3a44]"
+                        >
+                            {s.channelImageUrl !== null && (
+                                <img src={s.channelImageUrl} alt={s.name} className="h-5 w-5 rounded-full" />
+                            )}
+                            <span className="text-gray-800 dark:text-[#efeff1]">{s.name}</span>
+                            {s.isPartner && (
+                                <span className="ml-auto rounded-full bg-purple-50 px-1.5 py-0.5 text-[10px] text-purple-600 dark:bg-purple-900/20 dark:text-purple-400">
+                                    파트너
+                                </span>
+                            )}
+                        </button>
+                    ))}
+            </div>
+        )}
+    </div>
+    <div className="grid gap-2">
+        <label className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-600 dark:border-[#3a3a44] dark:text-[#efeff1]">
+            <input
+                type="checkbox"
+                checked={metaForm.broadcasterIsPartner}
+                onChange={(e) =>
+                    setMetaForm((prev) => ({
+                        ...prev,
+                        broadcasterIsPartner: e.target.checked,
+                    }))
+                }
+                className="rounded"
+            />
+            파트너 스트리머
+        </label>
+        <input
+            type="text"
+            value={metaForm.broadcasterName}
+            onChange={(e) =>
+                setMetaForm((prev) => ({
+                    ...prev,
+                    broadcasterName: e.target.value,
+                    broadcasterStreamerId: null,
+                }))
+            }
+            placeholder="중계자 이름"
+            className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+        />
+        <input
+            type="url"
+            value={metaForm.broadcasterChannelUrl}
+            onChange={(e) =>
+                setMetaForm((prev) => ({
+                    ...prev,
+                    broadcasterChannelUrl: e.target.value,
+                    broadcasterStreamerId: null,
+                }))
+            }
+            placeholder="채널 URL (선택)"
+            className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+        />
+        <input
+            type="url"
+            value={metaForm.broadcasterAvatarUrl}
+            onChange={(e) =>
+                setMetaForm((prev) => ({
+                    ...prev,
+                    broadcasterAvatarUrl: e.target.value,
+                    broadcasterStreamerId: null,
+                }))
+            }
+            placeholder="아바타 URL (선택)"
+            className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+        />
+    </div>
+</div>
+{/* 해설진 섹션 */}
+<div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#2e2e38] dark:bg-[#20202a]">
+    <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">해설진 (선택, 1명 이상)</p>
+    {/* 현재 해설진 목록 */}
+    {metaForm.commentators.length > 0 && (
+        <div className="mb-2 space-y-1.5">
+            {metaForm.commentators.map((c, i) => (
+                <div key={i} className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-[#3a3a44] dark:bg-[#1a1a23]">
+                    {c.avatarUrl !== null && c.avatarUrl.length > 0 && (
+                        <img src={c.avatarUrl} alt={c.name} className="h-5 w-5 rounded-full" />
+                    )}
+                    <span className="min-w-0 flex-1 truncate text-xs text-gray-700 dark:text-[#efeff1]">
+                        {c.name}
+                        {c.isPartner && (
+                            <span className="ml-1.5 text-[10px] text-purple-500">파트너</span>
+                        )}
+                    </span>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setMetaForm((prev) => ({
+                                ...prev,
+                                commentators: prev.commentators.filter((_, idx) => idx !== i),
+                            }))
+                        }
+                        className="shrink-0 text-gray-400 hover:text-red-500"
+                    >
+                        ×
+                    </button>
+                </div>
+            ))}
+        </div>
+    )}
+    {/* 해설진 추가 검색 */}
+    <div className="relative">
+        <div className="flex gap-1.5">
+            <input
+                type="text"
+                value={commentatorSelectedId !== undefined ? '' : commentatorSearchInput}
+                onChange={(e) => {
+                    setCommentatorSearchInput(e.target.value)
+                    setCommentatorSelectedId(undefined)
+                }}
+                placeholder="스트리머 검색 후 추가"
+                className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-xs dark:border-[#3a3a44] dark:bg-[#26262e] dark:text-[#efeff1]"
+            />
+        </div>
+        {commentatorSelectedId === undefined && commentatorSearchInput.trim().length > 0 && (
+            <div className="absolute z-50 mt-1 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-[#3a3a44] dark:bg-[#26262e]">
+                {isCommentatorFetching && <p className="px-3 py-2 text-xs text-gray-500">검색 중...</p>}
+                {!isCommentatorFetching && (commentatorSuggestions?.length ?? 0) === 0 && (
+                    <p className="px-3 py-2 text-xs text-gray-500">결과 없음</p>
+                )}
+                {!isCommentatorFetching &&
+                    commentatorSuggestions?.map((s) => (
+                        <button
+                            key={s.id}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => {
+                                const alreadyAdded = metaForm.commentators.some(
+                                    (c) => c.streamerId === s.id,
+                                )
+                                if (!alreadyAdded) {
+                                    setMetaForm((prev) => ({
+                                        ...prev,
+                                        commentators: [
+                                            ...prev.commentators,
+                                            {
+                                                name: s.name,
+                                                avatarUrl: s.channelImageUrl ?? null,
+                                                channelUrl:
+                                                    s.channelId !== null
+                                                        ? `https://chzzk.naver.com/live/${s.channelId}`
+                                                        : null,
+                                                isPartner: s.isPartner,
+                                                streamerId: s.id,
+                                            },
+                                        ],
+                                    }))
+                                }
+                                setCommentatorSearchInput('')
+                                setCommentatorSelectedId(undefined)
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition hover:bg-gray-50 dark:hover:bg-[#3a3a44]"
+                        >
+                            {s.channelImageUrl !== null && (
+                                <img src={s.channelImageUrl} alt={s.name} className="h-5 w-5 rounded-full" />
+                            )}
+                            <span className="text-gray-800 dark:text-[#efeff1]">{s.name}</span>
+                            {s.isPartner && (
+                                <span className="ml-auto rounded-full bg-purple-50 px-1.5 py-0.5 text-[10px] text-purple-600 dark:bg-purple-900/20 dark:text-purple-400">
+                                    파트너
+                                </span>
+                            )}
+                        </button>
+                    ))}
+            </div>
+        )}
+    </div>
+</div>
                                 {/* 추가 링크 섹션 */}
                                 <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#2e2e38] dark:bg-[#20202a]">
                                     <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-[#adadb8]">추가 링크</p>

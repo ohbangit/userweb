@@ -57,6 +57,7 @@ export type {
     InsertCategoriesResponse,
 } from './category'
 export type {
+    CommentatorItem,
     CreateTournamentRequest,
     CreateTournamentTeamRequest,
     SlotType,

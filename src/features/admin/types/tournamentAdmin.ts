@@ -1,3 +1,12 @@
+// 해설진 타입 (어드민 내부에서 사용)
+type CommentatorItem = {
+    name: string
+    avatarUrl: string | null
+    channelUrl: string | null
+    isPartner: boolean
+    streamerId: number | null
+}
+
 type SlotType = 'TNK' | 'DPS' | 'SPT' | 'HEAD_COACH' | 'COACH'
 
 type TournamentAdminMember = {
@@ -30,6 +39,14 @@ type TournamentItem = {
     hostIsPartner: boolean
     hostStreamerId: number | null
     links: { label: string; url: string }[]
+    description: string | null
+    showDescription: boolean
+    broadcasterName: string | null
+    broadcasterAvatarUrl: string | null
+    broadcasterChannelUrl: string | null
+    broadcasterIsPartner: boolean
+    broadcasterStreamerId: number | null
+    commentators: CommentatorItem[]
 }
 
 type TournamentListResponse = {
@@ -60,6 +77,14 @@ type UpdateTournamentRequest = {
     hostIsPartner?: boolean
     hostStreamerId?: number | null
     links?: { label: string; url: string }[]
+    description?: string | null
+    showDescription?: boolean
+    broadcasterName?: string | null
+    broadcasterAvatarUrl?: string | null
+    broadcasterChannelUrl?: string | null
+    broadcasterIsPartner?: boolean
+    broadcasterStreamerId?: number | null
+    commentators?: CommentatorItem[]
 }
 
 type TournamentAdminTeam = {
@@ -95,6 +120,7 @@ type UpsertTournamentMemberRequest = {
 }
 
 export type {
+    CommentatorItem,
     CreateTournamentRequest,
     CreateTournamentTeamRequest,
     SlotType,
