@@ -4,6 +4,7 @@ import { formatTime } from '../utils/date'
 import { resolveParticipants, sortParticipants } from '../utils/participant'
 import { ParticipantStack } from './ParticipantStack'
 import partnerMark from '../../../assets/mark.png'
+import { BroadcastTypeBadge } from './BroadcastTypeBadge'
 
 export interface DailyBroadcastItemProps {
     broadcast: Broadcast
@@ -62,6 +63,7 @@ function DailyBroadcastItemComponent({ broadcast, onClick }: DailyBroadcastItemP
                     </span>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
+                    <BroadcastTypeBadge broadcast={broadcast} />
                     {categoryName !== undefined && (
                         <span className="rounded-md border border-border/40 bg-category px-2 py-0.5 text-[10px] font-semibold text-text-muted">
                             {categoryName}

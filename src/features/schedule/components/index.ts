@@ -1,4 +1,5 @@
 export { BroadcastCard } from './BroadcastCard'
+export { BroadcastTypeBadge, getBroadcastTypeTone } from './BroadcastTypeBadge'
 export { BroadcastDetailModal } from './BroadcastDetailModal'
 export { DailySchedule } from './DailySchedule'
 export { DailyBroadcastItem } from './DailyBroadcastItem'

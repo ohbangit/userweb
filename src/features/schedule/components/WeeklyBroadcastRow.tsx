@@ -5,6 +5,7 @@ import { formatTime } from '../utils/date'
 import { resolveParticipants, sortParticipants } from '../utils/participant'
 import { ParticipantStack } from './ParticipantStack'
 import partnerMark from '../../../assets/mark.png'
+import { BroadcastTypeBadge, getBroadcastTypeTone } from './BroadcastTypeBadge'
 
 interface WeeklyBroadcastRowProps {
     broadcast: Broadcast
@@ -21,18 +22,13 @@ const TYPE_ROW_BG_CLASS: Record<RowTone, string> = {
     default: 'bg-[linear-gradient(270deg,rgba(148,163,184,0.07)_0%,rgba(148,163,184,0.01)_100%)]',
 }
 
-function normalizeTypeTone(broadcast: Broadcast): RowTone {
-    const type = (broadcast.broadcastType ?? '').trim().toLowerCase()
-    if (broadcast.isCollab || type === '합방' || type === 'collab') return 'collab'
-    if (type === '내전' || type === 'internal') return 'internal'
-    if (type === '대회' || type === 'tournament') return 'tournament'
-    if (type === '콘텐츠' || type === 'content') return 'content'
-    return 'default'
+function getRowTone(broadcast: Broadcast): RowTone {
+    return getBroadcastTypeTone(broadcast) ?? 'default'
 }
 
 function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowProps) {
     const startTime = formatTime(broadcast.startTime)
-    const typeTone = normalizeTypeTone(broadcast)
+    const typeTone = getRowTone(broadcast)
 
     const { sortedParticipants, representativeName, remaining, isRepresentativePartner } = useMemo(() => {
         const participants = resolveParticipants(
@@ -63,8 +59,8 @@ function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowP
             <span className="w-10 shrink-0 text-sm font-bold tabular-nums text-text-muted sm:w-11">{startTime}</span>
 
             <div className="flex min-w-0 flex-1 items-center gap-1.5">
-                {broadcast.isCollab && (
-                    <span className="shrink-0 rounded-md bg-collab/10 px-1.5 py-0.5 text-[10px] font-semibold text-collab">합방</span>
+                {getBroadcastTypeTone(broadcast) !== null && (
+                    <BroadcastTypeBadge broadcast={broadcast} />
                 )}
                 <span className="truncate text-sm font-semibold text-text">{broadcast.title}</span>
                 {broadcast.isChzzkSupport === true && <Zap className="h-3.5 w-3.5 shrink-0 fill-primary text-primary" />}

@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react'
 import type { Broadcast, Participant } from '../types/schedule'
 import { formatTime } from '../utils/date'
 import { sortParticipants, getParticipantLabel } from '../utils/participant'
+import { BroadcastTypeBadge } from './BroadcastTypeBadge'
 
 interface BroadcastCardProps {
     broadcast: Broadcast
@@ -88,8 +89,12 @@ function BroadcastCardComponent({
                         {participantLabel}
                     </span>
                 </div>
-                {(broadcast.isChzzkSupport === true || tags.length > 0) && (
+                {(broadcast.isCollab === true ||
+                    broadcast.broadcastType != null ||
+                    broadcast.isChzzkSupport === true ||
+                    tags.length > 0) && (
                     <div className="flex flex-wrap gap-0.5">
+                        <BroadcastTypeBadge broadcast={broadcast} />
                         {broadcast.isChzzkSupport === true && (
                             <span className="rounded-md border border-primary/60 px-1.5 py-0.5 text-[9px] font-medium text-primary">
                                 치지직 제작지원
