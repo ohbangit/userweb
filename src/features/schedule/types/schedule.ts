@@ -1,3 +1,5 @@
+import type { OverwatchMatchInfo } from './overwatch'
+
 import type { AffiliationItem } from '../../../types/affiliation'
 
 export interface Participant {
@@ -40,6 +42,7 @@ export interface Broadcast {
     thumbnailUrl?: string
     isVisible?: boolean
     isChzzkSupport?: boolean
+    overwatchMatch?: OverwatchMatchInfo | null
 }
 
 export type ViewMode = 'daily' | 'weekly' | 'monthly'

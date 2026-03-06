@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react'
 import { ChevronDown, Zap } from 'lucide-react'
+import controlSrc from '../../../assets/control.svg'
 import tnkSrc from '../../../assets/tnk.svg'
 import dpsSrc from '../../../assets/dps.svg'
 import sptSrc from '../../../assets/spt.svg'
-import type { ScheduleContent, ScheduleMatch, TournamentTeam } from '../types'
+import escortSrc from '../../../assets/escort.svg'
+import flashpointSrc from '../../../assets/flashpoint.svg'
+import hybridSrc from '../../../assets/hybrid.svg'
+import pushSrc from '../../../assets/push.webp'
+import type { OverwatchSetMap, ScheduleContent, ScheduleMatch, TournamentOverwatchMapType, TournamentTeam } from '../types'
 
 const ROLE_ORDER: Record<string, number> = {
     TNK: 0,
@@ -23,10 +28,68 @@ const ROLE_TONE: Record<string, string> = {
     SPT: 'bg-emerald-500/10 ring-emerald-400/40',
 }
 
+const MAP_TYPE_CLASS: Record<TournamentOverwatchMapType, string> = {
+    쟁탈: 'border-violet-400/30 bg-violet-500/15 text-violet-300',
+    혼합: 'border-orange-400/30 bg-orange-500/15 text-orange-300',
+    밀기: 'border-blue-400/30 bg-blue-500/15 text-blue-300',
+    호위: 'border-emerald-400/30 bg-emerald-500/15 text-emerald-300',
+    플레시포인트: 'border-fuchsia-400/30 bg-fuchsia-500/15 text-fuchsia-300',
+}
+
+const TEAM_WINNER_CONTAINER_CLASS = {
+    blue: 'border-blue-400/50 bg-blue-500/18',
+    red: 'border-rose-400/50 bg-rose-500/18',
+} as const
+
+const MAP_TYPE_ICON: Record<TournamentOverwatchMapType, string> = {
+    쟁탈: controlSrc,
+    혼합: hybridSrc,
+    밀기: pushSrc,
+    호위: escortSrc,
+    플레시포인트: flashpointSrc,
+}
+
+const MAP_FLAG_BY_NAME: Record<string, string> = {
+    남극반도: '🇦🇶',
+    네팔: '🇳🇵',
+    리장타워: '🇨🇳',
+    '리장 타워': '🇨🇳',
+    부산: '🇰🇷',
+    오아시스: '🇮🇶',
+    일리오스: '🇬🇷',
+    사모아: '🇼🇸',
+    눔바니: '🇳🇬',
+    미드타운: '🇺🇸',
+    블리자드월드: '🇺🇸',
+    '블리자드 월드': '🇺🇸',
+    아이헨발데: '🇩🇪',
+    할리우드: '🇺🇸',
+    파라이수: '🇧🇷',
+    '왕의 길': '🇬🇧',
+    '뉴 퀸 스트리트': '🇨🇦',
+    이스페란사: '🇵🇹',
+    루나사피: '🇲🇲',
+    콜로세오: '🇮🇹',
+    '66번 국도': '🇺🇸',
+    '66번국도': '🇺🇸',
+    '감시기지:지브롤터': '🇬🇮',
+    도라도: '🇲🇽',
+    리알토: '🇮🇹',
+    '서킷 로얄': '🇲🇨',
+    서킷로얄: '🇲🇨',
+    '삼발리 수도원': '🇳🇵',
+    쓰레기촌: '🇦🇺',
+    하바나: '🇨🇺',
+    '뉴 정크 시티': '🇦🇺',
+    수라바사: '🇮🇳',
+    아틀리스: '🇲🇦',
+}
+
 interface Props {
     title: string
     content: ScheduleContent
     teams: TournamentTeam[]
+    isOverwatch?: boolean
     defaultExpanded?: boolean
 }
 
@@ -52,9 +115,10 @@ function getOrderedPlayers(team: TournamentTeam | null) {
 interface MatchCardProps {
     match: ScheduleMatch
     teams: TournamentTeam[]
+    isOverwatch: boolean
 }
 
-function MatchCard({ match, teams }: MatchCardProps) {
+function MatchCard({ match, teams, isOverwatch }: MatchCardProps) {
     const isCompleted = match.status === 'COMPLETED'
     const scoreA = match.scoreA ?? 0
     const scoreB = match.scoreB ?? 0
@@ -67,9 +131,77 @@ function MatchCard({ match, teams }: MatchCardProps) {
     const teamB = getTeam(teams, match.teamBId)
     const teamAPlayers = getOrderedPlayers(teamA)
     const teamBPlayers = getOrderedPlayers(teamB)
+    const configuredSetMaps: OverwatchSetMap[] = isOverwatch
+        ? Array.isArray(match.setMaps) && match.setMaps.length > 0
+            ? match.setMaps.filter((setMap) => setMap.mapName !== null && setMap.mapName.trim().length > 0)
+            : match.mapType !== undefined && match.mapName !== undefined && match.mapName !== null && match.mapName.trim().length > 0
+              ? [
+                    {
+                        setNumber: 1,
+                        mapType: match.mapType ?? '쟁탈',
+                        mapName: match.mapName,
+                        scoreA: null,
+                        scoreB: null,
+                    },
+                ]
+              : []
+        : []
     return (
         <div className="relative overflow-hidden rounded-xl bg-[#062035] p-4 ring-1 ring-[#1e3a5f]/70">
             <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-[#0596e8]/70 to-transparent" />
+            {isOverwatch && configuredSetMaps.length > 0 && (
+                <div className="mb-3.5 flex flex-wrap items-center justify-center gap-2">
+                    {configuredSetMaps.map((setMap) =>
+                        (() => {
+                            const setScoreA = setMap.scoreA ?? 0
+                            const setScoreB = setMap.scoreB ?? 0
+                            const hasSetScore = setMap.scoreA !== null && setMap.scoreB !== null
+                            const isSetAWon = hasSetScore && setScoreA > setScoreB
+                            const isSetBWon = hasSetScore && setScoreB > setScoreA
+                            const winnerTone = isSetAWon
+                                ? TEAM_WINNER_CONTAINER_CLASS.blue
+                                : isSetBWon
+                                  ? TEAM_WINNER_CONTAINER_CLASS.red
+                                  : null
+                            return (
+                                <div
+                                    key={setMap.setNumber}
+                                    className={[
+                                        'inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1',
+                                        winnerTone !== null ? winnerTone : 'border-[#1e3a5f] bg-[#041524]',
+                                    ].join(' ')}
+                                >
+                                    <span
+                                        className={[
+                                            'inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-semibold',
+                                            MAP_TYPE_CLASS[setMap.mapType],
+                                        ].join(' ')}
+                                    >
+                                        <img
+                                            src={MAP_TYPE_ICON[setMap.mapType]}
+                                            alt=""
+                                            aria-hidden="true"
+                                            className="h-3.5 w-3.5 shrink-0"
+                                        />
+                                        <span className="hidden sm:inline">{setMap.mapType}</span>
+                                    </span>
+                                    <span className="text-sm font-semibold text-[#b9dfff]">
+                                        <span className="hidden sm:inline">{MAP_FLAG_BY_NAME[setMap.mapName ?? ''] ?? '🌐'} </span>
+                                        {setMap.mapName}
+                                    </span>
+                                    {hasSetScore && (
+                                        <span className="ml-1 inline-flex items-center gap-1 rounded-md border border-[#1e3a5f] bg-[#062035] px-1.5 py-0.5 text-xs font-bold">
+                                            <span className="rounded px-1 text-[#a7cfe6]">{setScoreA}</span>
+                                            <span className="text-[#6aadcc]">:</span>
+                                            <span className="rounded px-1 text-[#a7cfe6]">{setScoreB}</span>
+                                        </span>
+                                    )}
+                                </div>
+                            )
+                        })(),
+                    )}
+                </div>
+            )}
             <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3">
                 <div className="min-w-0 space-y-1 text-right">
                     <div className="mb-2 flex items-center justify-end gap-2.5">
@@ -223,7 +355,7 @@ function MatchCard({ match, teams }: MatchCardProps) {
     )
 }
 
-export function SchedulePanelView({ title, content, teams, defaultExpanded = false }: Props) {
+export function SchedulePanelView({ title, content, teams, isOverwatch = false, defaultExpanded = false }: Props) {
     const sortedGroups = [...content.groups].sort((a, b) => a.order - b.order)
     const [collapsed, setCollapsed] = useState(!defaultExpanded)
     const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({})
@@ -290,7 +422,7 @@ export function SchedulePanelView({ title, content, teams, defaultExpanded = fal
                                 {!isGroupCollapsed && (
                                     <div className="grid gap-2">
                                         {sortedMatches.map((match) => (
-                                            <MatchCard key={match.id} match={match} teams={teams} />
+                                            <MatchCard key={match.id} match={match} teams={teams} isOverwatch={isOverwatch} />
                                         ))}
                                     </div>
                                 )}

@@ -6,7 +6,14 @@ import { Header } from '../../../app/components/Header'
 import { useTournamentPromotion, useTournamentTeams } from '../hooks'
 import { useTournamentDetail } from '../hooks/useTournamentDetail'
 import { DraftPanelView, PlayerListPanelView, TeamsPanelView, SchedulePanelView, FinalResultPanelView, TournamentHero } from '../components'
-import type { DraftContent, OverwatchRole, ScheduleContent, FinalResultContent, PublicPromotionPanel } from '../types'
+import type {
+    DraftContent,
+    FinalResultContent,
+    OverwatchRole,
+    PublicPromotionPanel,
+    ScheduleContent,
+    TournamentOverwatchMapType,
+} from '../types'
 import { trackEvent } from '../../../utils/analytics'
 
 const DEFAULT_PANEL_TITLE: Record<string, string> = {
@@ -40,6 +47,7 @@ function getTournamentStatusBySchedule(startedAt: string | null, endedAt: string
 interface PanelRendererProps {
     panel: PublicPromotionPanel
     slug: string
+    isOverwatch: boolean
     draftParticipants: Array<{
         id: string
         name: string
@@ -55,7 +63,19 @@ function isDefaultExpanded(content: Record<string, unknown>): boolean {
     return content.defaultExpanded === true
 }
 
-function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
+function isOverwatchGame(game: string): boolean {
+    const normalized = game.trim().toUpperCase()
+    return normalized === 'OVERWATCH' || normalized === 'OW'
+}
+
+function toOverwatchMapType(value: unknown): TournamentOverwatchMapType | null {
+    if (value === '쟁탈' || value === '혼합' || value === '밀기' || value === '호위' || value === '플레시포인트') {
+        return value
+    }
+    return null
+}
+
+function PanelRenderer({ panel, slug, isOverwatch, draftParticipants }: PanelRendererProps) {
     const { data: teamsData } = useTournamentTeams(
         slug,
         panel.type === 'PLAYER_LIST' || panel.type === 'SCHEDULE' || panel.type === 'FINAL_RESULT',
@@ -100,6 +120,15 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
                   matches: g.matches.map((m) => ({
                       ...m,
                       mvpPlayerIds: Array.isArray(m.mvpPlayerIds) ? m.mvpPlayerIds : [],
+                      setMaps: Array.isArray(m.setMaps)
+                          ? m.setMaps.map((setMap, index) => ({
+                                setNumber: typeof setMap.setNumber === 'number' ? setMap.setNumber : index + 1,
+                                mapType: toOverwatchMapType(setMap.mapType) ?? '쟁탈',
+                                mapName: typeof setMap.mapName === 'string' ? setMap.mapName : null,
+                                scoreA: typeof setMap.scoreA === 'number' ? setMap.scoreA : null,
+                                scoreB: typeof setMap.scoreB === 'number' ? setMap.scoreB : null,
+                            }))
+                          : [],
                   })),
               }))
             : []
@@ -108,6 +137,7 @@ function PanelRenderer({ panel, slug, draftParticipants }: PanelRendererProps) {
                 title={panelTitle}
                 content={{ groups: safeGroups }}
                 teams={teams}
+                isOverwatch={isOverwatch}
                 defaultExpanded={isDefaultExpanded(panel.content)}
             />
         )
@@ -160,6 +190,7 @@ export default function TournamentPromotionPage() {
     const hostChannelUrl = detail?.hostChannelUrl ?? null
     const hostIsPartner = detail?.hostIsPartner ?? false
     const links = detail?.links ?? []
+    const isOverwatchTournament = detail !== undefined && isOverwatchGame(detail.game)
     // 새 필드
     const description = detail?.description ?? null
     const showDescription = detail?.showDescription ?? false
@@ -324,9 +355,7 @@ export default function TournamentPromotionPage() {
                 <div className="px-4 py-8">
                     {showDescription && description !== null && description.length > 0 && (
                         <div className="mx-auto max-w-5xl pb-8">
-                            <p className="text-xl text-[#6aadcc] opacity-70 whitespace-pre-wrap break-words">
-                                {description}
-                            </p>
+                            <p className="text-xl text-[#6aadcc] opacity-70 whitespace-pre-wrap break-words">{description}</p>
                             <div className="mt-6 h-px bg-[#1e3a5f]/50" />
                         </div>
                     )}
@@ -339,7 +368,12 @@ export default function TournamentPromotionPage() {
                         ) : (
                             visiblePanels.map((panel) => (
                                 <section key={panel.id} id={`panel-${panel.id}`} className="scroll-mt-24">
-                                    <PanelRenderer panel={panel} slug={resolvedSlug} draftParticipants={draftParticipants} />
+                                    <PanelRenderer
+                                        panel={panel}
+                                        slug={resolvedSlug}
+                                        isOverwatch={isOverwatchTournament}
+                                        draftParticipants={draftParticipants}
+                                    />
                                 </section>
                             ))
                         )}

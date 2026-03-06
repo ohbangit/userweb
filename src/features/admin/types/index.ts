@@ -78,6 +78,8 @@ export type {
     PromotionConfig,
     PromotionConfigRaw,
     DraftParticipant,
+    TournamentOverwatchMapType,
+    OverwatchSetMap,
     OverwatchRole,
     DraftContent,
     MatchStatus,
@@ -101,3 +103,5 @@ export type {
     F1StandingEntry,
     F1StandingsContent,
 } from './tournamentPromotion'
+
+export type { OverwatchSetInput, OverwatchMatchInput } from './overwatchMatch'

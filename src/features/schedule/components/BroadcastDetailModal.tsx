@@ -11,6 +11,7 @@ import youtubeIcon from '../../../assets/youtube.png'
 import cafeIcon from '../../../assets/cafe.png'
 import partnerMark from '../../../assets/mark.png'
 import { AffiliationBadge } from '../../../app/components/AffiliationBadge'
+import { MatchSetsPanel } from './overwatch'
 
 interface BroadcastDetailModalProps {
     broadcast: Broadcast | null
@@ -238,6 +239,15 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                             )}
                         </div>
 
+                        {displayBroadcast.overwatchMatch != null && (
+                            <div className="space-y-2">
+                                <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
+                                    <span>⚔</span>
+                                    <span>세트 구성</span>
+                                </h3>
+                                <MatchSetsPanel match={displayBroadcast.overwatchMatch} />
+                            </div>
+                        )}
                         <div className="space-y-2.5">
                             <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
                                 <Users className="h-3.5 w-3.5" />

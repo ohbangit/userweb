@@ -3,6 +3,7 @@ import type { Broadcast, Participant } from '../types/schedule'
 import { formatTime } from '../utils/date'
 import { sortParticipants, getParticipantLabel } from '../utils/participant'
 import { BroadcastTypeBadge } from './BroadcastTypeBadge'
+import { MapTypeBadge } from './overwatch'
 
 interface BroadcastCardProps {
     broadcast: Broadcast
@@ -12,24 +13,14 @@ interface BroadcastCardProps {
 
 function StatusDot({ broadcast }: { broadcast: Broadcast }) {
     if (broadcast.isCollab) {
-        return (
-            <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-collab" />
-        )
+        return <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-collab" />
     }
-    return (
-        <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary/40" />
-    )
+    return <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary/40" />
 }
 
-function BroadcastCardComponent({
-    broadcast,
-    variant = 'compact',
-    onClick,
-}: BroadcastCardProps) {
+function BroadcastCardComponent({ broadcast, variant = 'compact', onClick }: BroadcastCardProps) {
     const startTime = formatTime(broadcast.startTime)
-    const endTime = broadcast.endTime
-        ? formatTime(broadcast.endTime)
-        : undefined
+    const endTime = broadcast.endTime ? formatTime(broadcast.endTime) : undefined
     const { participantLabel, tags } = useMemo(() => {
         const p: Participant[] =
             broadcast.participants && broadcast.participants.length > 0
@@ -52,12 +43,8 @@ function BroadcastCardComponent({
         return (
             <div className="flex items-center gap-1.5 rounded-md px-1.5 py-1">
                 <StatusDot broadcast={broadcast} />
-                <span className="text-[10px] font-medium text-text-dim">
-                    {startTime}
-                </span>
-                <span className="min-w-0 truncate text-[10px] font-semibold text-text-muted">
-                    {broadcast.title}
-                </span>
+                <span className="text-[10px] font-medium text-text-dim">{startTime}</span>
+                <span className="min-w-0 truncate text-[10px] font-semibold text-text-muted">{broadcast.title}</span>
             </div>
         )
     }
@@ -75,9 +62,7 @@ function BroadcastCardComponent({
             ].join(' ')}
         >
             <div className="flex min-w-0 flex-col gap-1">
-                <h3 className="truncate text-xs font-bold leading-snug text-text">
-                    {broadcast.title}
-                </h3>
+                <h3 className="truncate text-xs font-bold leading-snug text-text">{broadcast.title}</h3>
 
                 <span className="text-[10px] font-medium text-text-dim">
                     {startTime}
@@ -85,9 +70,7 @@ function BroadcastCardComponent({
                 </span>
 
                 <div className="flex items-center gap-1">
-                    <span className="text-[10px] font-semibold text-primary">
-                        {participantLabel}
-                    </span>
+                    <span className="text-[10px] font-semibold text-primary">{participantLabel}</span>
                 </div>
                 {(broadcast.isCollab === true ||
                     broadcast.broadcastType != null ||
@@ -110,6 +93,21 @@ function BroadcastCardComponent({
                         ))}
                     </div>
                 )}
+                {broadcast.overwatchMatch != null &&
+                    broadcast.overwatchMatch.sets.length > 0 &&
+                    (() => {
+                        const sets = broadcast.overwatchMatch.sets
+                        const visible = sets.slice(0, 5)
+                        const overflow = sets.length - visible.length
+                        return (
+                            <div className="flex flex-wrap items-center gap-0.5">
+                                {visible.map((set) => (
+                                    <MapTypeBadge key={set.setNumber} mapType={set.mapType} size="sm" />
+                                ))}
+                                {overflow > 0 && <span className="text-[9px] font-medium text-text-dim">+{overflow}</span>}
+                            </div>
+                        )
+                    })()}
             </div>
         </Wrapper>
     )

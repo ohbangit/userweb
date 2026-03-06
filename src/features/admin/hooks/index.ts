@@ -19,12 +19,7 @@ export {
     useDeleteStreamerExclusion,
 } from './useDiscovery'
 export { useCrawlBroadcasts, useInsertBroadcasts } from './useBroadcastCrawl'
-export {
-    useScheduleBroadcasts,
-    useCreateBroadcast,
-    useUpdateBroadcast,
-    useDeleteBroadcast,
-} from './useBroadcastSchedule'
+export { useScheduleBroadcasts, useCreateBroadcast, useUpdateBroadcast, useDeleteBroadcast } from './useBroadcastSchedule'
 
 export {
     useCategories,
@@ -49,19 +44,9 @@ export {
     useUpsertTournamentMember,
 } from './useTournamentAdmin'
 
-export {
-    usePromotionConfig,
-    useCreatePromotionConfig,
-    useUpdatePromotionPanels,
-    useReorderPromotionPanels,
-} from './usePromotionAdmin'
+export { usePromotionConfig, useCreatePromotionConfig, useUpdatePromotionPanels, useReorderPromotionPanels } from './usePromotionAdmin'
 
-export {
-    useBanners,
-    useCreateBanner,
-    useUpdateBanner,
-    useDeleteBanner,
-} from './useBanners'
+export { useBanners, useCreateBanner, useUpdateBanner, useDeleteBanner } from './useBanners'
 
 export {
     useAffiliations,
@@ -70,3 +55,5 @@ export {
     useDeleteAffiliation,
     useUpdateStreamerAffiliations,
 } from './useAffiliations'
+
+export { useOverwatchMatch, useUpsertOverwatchMatch, useDeleteOverwatchMatch } from './useOverwatchMatch'

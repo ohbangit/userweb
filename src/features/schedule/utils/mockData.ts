@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { Broadcast } from '../types/schedule'
+import type { Broadcast } from '../types/schedule'
 
 function getThisWeekDate(dayOffset: number, hour: number): string {
     const now = dayjs()
@@ -16,12 +16,7 @@ function getThisWeekDate(dayOffset: number, hour: number): string {
 }
 
 function getThisMonthDate(day: number, hour: number, minute = 0): string {
-    const date = dayjs()
-        .date(day)
-        .hour(hour)
-        .minute(minute)
-        .second(0)
-        .millisecond(0)
+    const date = dayjs().date(day).hour(hour).minute(minute).second(0).millisecond(0)
     return date.toISOString()
 }
 
@@ -62,8 +57,7 @@ type MockSeed = {
     collabPartners?: string[]
 }
 
-const buildParticipants = (names: string[]) =>
-    Array.from(new Set(names)).map((name) => ({ name }))
+const buildParticipants = (names: string[]) => Array.from(new Set(names)).map((name) => ({ name }))
 
 function toBroadcast(seed: MockSeed): Broadcast {
     return {
@@ -77,10 +71,7 @@ function toBroadcast(seed: MockSeed): Broadcast {
             thumbnailUrl: null,
         },
         tags: CATEGORY_TAGS_MAP[seed.mockCategory],
-        participants: buildParticipants([
-            seed.streamerName,
-            ...(seed.collabPartners ?? []),
-        ]),
+        participants: buildParticipants([seed.streamerName, ...(seed.collabPartners ?? [])]),
         startTime: seed.startTime,
         endTime: seed.endTime,
         isLive: seed.isLive,
@@ -356,15 +347,48 @@ const seeds: MockSeed[] = [
     },
 ]
 
-export const mockBroadcasts: Broadcast[] = seeds.map((seed) => {
-    const broadcast = toBroadcast(seed)
-    if (seed.id === '15' && broadcast.endTime) {
-        const now = dayjs()
-        const start = dayjs(broadcast.startTime)
-        const end = dayjs(broadcast.endTime)
-        broadcast.isLive =
-            (now.isAfter(start) || now.isSame(start)) &&
-            (now.isBefore(end) || now.isSame(end))
-    }
-    return broadcast
-})
+const overwatchBroadcast: Broadcast = {
+    id: 'ow-1',
+    title: '오버워치 팀전 5세트 대결 🎮',
+    streamerName: '김뱅온',
+    streamerNickname: '김뱅온',
+    category: { id: 10, name: 'Overwatch', thumbnailUrl: null },
+    tags: ['오버워치', '팀전', 'BO5'],
+    participants: [{ name: '김뱅온', isHost: true }, { name: '박수다' }, { name: '최겜장' }, { name: '이먹방' }, { name: '정음악' }],
+    startTime: getThisWeekDate(todayDayOffset, 19),
+    endTime: getThisWeekDate(todayDayOffset, 22),
+    isLive: false,
+    isCollab: true,
+    collabPartners: ['박수다', '최겜장', '이먹방', '정음악'],
+    overwatchMatch: {
+        format: 'bo5',
+        homeTeam: '팀 A',
+        awayTeam: '팀 B',
+        homeWins: 3,
+        awayWins: 2,
+        isCompleted: false,
+        sets: [
+            { setNumber: 1, mapType: '쟁탈', mapName: '리장 타워', result: 'home', isPlayed: true },
+            { setNumber: 2, mapType: '호위', mapName: '도라도', result: 'away', isPlayed: true },
+            { setNumber: 3, mapType: '혼합', mapName: '블리자드 월드', result: 'home', isPlayed: true },
+            { setNumber: 4, mapType: '쟁탈', mapName: '부산', result: 'away', isPlayed: true },
+            { setNumber: 5, mapType: '밀기', mapName: '콜로세오', result: null, isPlayed: true },
+            { setNumber: 6, mapType: '혼합', mapName: null, result: null, isPlayed: false },
+            { setNumber: 7, mapType: '쟁탈', mapName: null, result: null, isPlayed: false },
+        ],
+    },
+}
+
+export const mockBroadcasts: Broadcast[] = [
+    overwatchBroadcast,
+    ...seeds.map((seed) => {
+        const broadcast = toBroadcast(seed)
+        if (seed.id === '15' && broadcast.endTime) {
+            const now = dayjs()
+            const start = dayjs(broadcast.startTime)
+            const end = dayjs(broadcast.endTime)
+            broadcast.isLive = (now.isAfter(start) || now.isSame(start)) && (now.isBefore(end) || now.isSame(end))
+        }
+        return broadcast
+    }),
+]

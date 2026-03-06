@@ -10,6 +10,7 @@ import {
     useStreamers,
     useUpdateBroadcast,
 } from '../hooks'
+import { OverwatchMatchModal } from '../components/overwatch'
 import type { AdminBroadcastParticipantInput, AffiliationItem, CreateBroadcastRequest, UpdateBroadcastRequest } from '../types'
 import type { Broadcast, Participant } from '../../schedule/types'
 import type { ScheduleMonthlyResponse, ScheduleWeeklyResponse } from '../../schedule/types'
@@ -1112,13 +1113,15 @@ interface BroadcastCardProps {
     broadcast: Broadcast
     onEdit: (broadcast: Broadcast) => void
     onDelete: (broadcast: Broadcast) => void
+    onOverwatchEdit: (broadcast: Broadcast) => void
 }
 
-function BroadcastCard({ broadcast, onEdit, onDelete }: BroadcastCardProps) {
+function BroadcastCard({ broadcast, onEdit, onDelete, onOverwatchEdit }: BroadcastCardProps) {
     const hasRepresentativeStreamer = broadcast.streamerName.trim().length > 0
     const tags = broadcast.tags ?? []
     const typeGradientClass = readTypeGradientClass(broadcast.broadcastType)
     const isVisible = broadcast.isVisible ?? true
+    const isOverwatch = broadcast.category?.name.toLowerCase() === 'overwatch'
 
     return (
         <div
@@ -1160,7 +1163,7 @@ function BroadcastCard({ broadcast, onEdit, onDelete }: BroadcastCardProps) {
                         ))}
                     </div>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex flex-col items-end gap-1.5">
                     <span
                         className={[
                             'inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium',
@@ -1171,6 +1174,18 @@ function BroadcastCard({ broadcast, onEdit, onDelete }: BroadcastCardProps) {
                     >
                         {isVisible ? '노출' : '비노출'}
                     </span>
+                    {isOverwatch && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                onOverwatchEdit(broadcast)
+                            }}
+                            className="cursor-pointer rounded-md border border-violet-200 bg-violet-50 px-2 py-1 text-[11px] font-semibold text-violet-600 dark:border-violet-800/40 dark:bg-violet-900/20 dark:text-violet-400"
+                        >
+                            ⚔ 경기편집
+                        </button>
+                    )}
                     <button
                         type="button"
                         onClick={(e) => {
@@ -1207,6 +1222,7 @@ export default function BroadcastSchedulePage() {
     const [editingBroadcast, setEditingBroadcast] = useState<Broadcast | null>(null)
     const [deletingBroadcast, setDeletingBroadcast] = useState<Broadcast | null>(null)
     const [showCreateModal, setShowCreateModal] = useState(false)
+    const [overwatchBroadcast, setOverwatchBroadcast] = useState<Broadcast | null>(null)
     const { data, isLoading, refetch } = useScheduleBroadcasts({
         view,
         date: toDateString(baseDate),
@@ -1318,6 +1334,7 @@ export default function BroadcastSchedulePage() {
                                         broadcast={broadcast}
                                         onEdit={setEditingBroadcast}
                                         onDelete={setDeletingBroadcast}
+                                        onOverwatchEdit={setOverwatchBroadcast}
                                     />
                                 ))}
                             </div>
@@ -1358,6 +1375,9 @@ export default function BroadcastSchedulePage() {
                         void refetch()
                     }}
                 />
+            )}
+            {overwatchBroadcast !== null && (
+                <OverwatchMatchModal broadcast={overwatchBroadcast} onClose={() => setOverwatchBroadcast(null)} />
             )}
         </div>
     )

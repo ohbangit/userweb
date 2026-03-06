@@ -54,6 +54,15 @@ export interface Commentator {
 
 // SCHEDULE 패널 content 타입
 export type MatchStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED'
+export type TournamentOverwatchMapType = '쟁탈' | '혼합' | '밀기' | '호위' | '플레시포인트'
+
+export interface OverwatchSetMap {
+    setNumber: number
+    mapType: TournamentOverwatchMapType
+    mapName: string | null
+    scoreA: number | null
+    scoreB: number | null
+}
 
 export interface ScheduleMatch {
     id: string
@@ -63,6 +72,9 @@ export interface ScheduleMatch {
     status: MatchStatus
     scoreA: number | null
     scoreB: number | null
+    mapType?: TournamentOverwatchMapType | null
+    mapName?: string | null
+    setMaps?: OverwatchSetMap[]
     order: number
 }
 

@@ -16,9 +16,6 @@ export {
     isSameMonth,
 } from './date'
 
-export {
-    getInitial,
-    sortParticipants,
-    resolveParticipants,
-    getParticipantLabel,
-} from './participant'
+export { getInitial, sortParticipants, resolveParticipants, getParticipantLabel } from './participant'
+
+export { OVERWATCH_MAP_TYPE_CONFIG } from './overwatchMaps'

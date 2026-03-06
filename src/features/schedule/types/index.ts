@@ -6,3 +6,4 @@ export type {
     ScheduleWeeklyResponse,
     ScheduleMonthlyResponse,
 } from './api'
+export type { OverwatchMapType, SetResult, OverwatchSet, MatchFormat, OverwatchMatchInfo } from './overwatch'
