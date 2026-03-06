@@ -150,7 +150,7 @@ function MatchCard({ match, teams, isOverwatch }: MatchCardProps) {
         <div className="relative overflow-hidden rounded-xl bg-[#062035] p-4 ring-1 ring-[#1e3a5f]/70">
             <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-[#0596e8]/70 to-transparent" />
             {isOverwatch && configuredSetMaps.length > 0 && (
-                <div className="mb-3.5 flex flex-wrap items-center justify-center gap-2">
+                <div className="mb-3.5 flex flex-wrap items-center justify-center gap-2 px-0.5">
                     {configuredSetMaps.map((setMap) =>
                         (() => {
                             const setScoreA = setMap.scoreA ?? 0
@@ -167,13 +167,13 @@ function MatchCard({ match, teams, isOverwatch }: MatchCardProps) {
                                 <div
                                     key={setMap.setNumber}
                                     className={[
-                                        'inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1',
+                                        'inline-flex max-w-full min-w-0 flex-wrap items-center gap-1.5 rounded-lg border px-2.5 py-1',
                                         winnerTone !== null ? winnerTone : 'border-[#1e3a5f] bg-[#041524]',
                                     ].join(' ')}
                                 >
                                     <span
                                         className={[
-                                            'inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-semibold',
+                                            'inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-semibold',
                                             MAP_TYPE_CLASS[setMap.mapType],
                                         ].join(' ')}
                                     >
@@ -185,12 +185,12 @@ function MatchCard({ match, teams, isOverwatch }: MatchCardProps) {
                                         />
                                         <span className="hidden sm:inline">{setMap.mapType}</span>
                                     </span>
-                                    <span className="text-sm font-semibold text-[#b9dfff]">
+                                    <span className="min-w-0 max-w-[9.5rem] truncate pr-2 text-sm font-semibold text-[#b9dfff] sm:max-w-none">
                                         <span className="hidden sm:inline">{MAP_FLAG_BY_NAME[setMap.mapName ?? ''] ?? '🌐'} </span>
                                         {setMap.mapName}
                                     </span>
                                     {hasSetScore && (
-                                        <span className="ml-1 inline-flex items-center gap-1 rounded-md border border-[#1e3a5f] bg-[#062035] px-1.5 py-0.5 text-xs font-bold">
+                                        <span className="ml-1 inline-flex shrink-0 items-center gap-1 rounded-md border border-[#1e3a5f] bg-[#062035] px-1.5 py-0.5 text-xs font-bold">
                                             <span className="rounded px-1 text-[#a7cfe6]">{setScoreA}</span>
                                             <span className="text-[#6aadcc]">:</span>
                                             <span className="rounded px-1 text-[#a7cfe6]">{setScoreB}</span>
