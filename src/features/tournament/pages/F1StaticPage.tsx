@@ -10,7 +10,7 @@ import { F1_DAY_RESULTS } from '../data/f1DayResult'
 import { useTournamentPlayers } from '../hooks'
 import { useTournamentDetailV2 } from '../hooks/useTournamentDetail'
 import type { F1DriverRole, F1DriversContent, PublicTournamentPlayersResponse } from '../types'
-import f125LogoSrc from '../../../assets/f1_25_logo.png'
+import f125LogoSrc from '../../../assets/F1_25_logo.png'
 
 const F1_SLUG = 'chzzk-racing4th'
 
@@ -197,9 +197,7 @@ export default function F1StaticPage() {
 
                         {showDescription && description && (
                             <section className="scroll-mt-24">
-                                <p className="whitespace-pre-wrap text-base text-[#6aadcc]/80">
-                                    {description}
-                                </p>
+                                <p className="whitespace-pre-wrap text-base text-[#6aadcc]/80">{description}</p>
                             </section>
                         )}
 
