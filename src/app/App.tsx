@@ -8,19 +8,14 @@ import { SpeedInsights } from '@vercel/speed-insights/react'
 import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics'
 
 const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
-const TournamentPromotionPage = lazy(
-    () => import('../features/tournament/pages/TournamentPromotionPage'),
-)
+const TournamentPromotionPage = lazy(() => import('../features/tournament/pages/TournamentPromotionPage'))
 
 function App() {
     useGoogleAnalytics()
     return (
         <>
             <SeoHead />
-            <Analytics
-                mode={import.meta.env.PROD ? 'production' : 'development'}
-                debug={import.meta.env.DEV}
-            />
+            <Analytics mode={import.meta.env.PROD ? 'production' : 'development'} debug={import.meta.env.DEV} />
             <SpeedInsights />
             <Routes>
                 <Route

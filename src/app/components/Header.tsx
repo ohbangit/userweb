@@ -47,10 +47,7 @@ export function Header() {
         if (!mobileMenuOpen) return
 
         function handleMouseDown(e: MouseEvent) {
-            if (
-                headerRef.current !== null &&
-                !headerRef.current.contains(e.target as Node)
-            ) {
+            if (headerRef.current !== null && !headerRef.current.contains(e.target as Node)) {
                 setMobileMenuOpen(false)
             }
         }
@@ -63,10 +60,7 @@ export function Header() {
     // 외부 클릭 시 드롭다운 닫기
     useEffect(() => {
         function handleMouseDown(e: MouseEvent) {
-            if (
-                dropdownRef.current !== null &&
-                !dropdownRef.current.contains(e.target as Node)
-            ) {
+            if (dropdownRef.current !== null && !dropdownRef.current.contains(e.target as Node)) {
                 setDropdownOpen(false)
             }
         }
@@ -77,20 +71,28 @@ export function Header() {
     }, [])
 
     const tournaments = tournamentData?.tournaments ?? []
+    const tournamentMenuItems = [
+        ...tournaments.map((tournament) => ({
+            id: tournament.id,
+            slug: tournament.slug,
+            name: tournament.name,
+        })),
+    ]
+
+    if (!tournamentMenuItems.some((item) => item.slug === 'chzzk-racing4th')) {
+        tournamentMenuItems.push({
+            id: -9991,
+            slug: 'chzzk-racing4th',
+            name: 'F1 25 레이싱 대회',
+        })
+    }
 
     return (
-        <header
-            ref={headerRef}
-            className="sticky top-0 z-50 border-b border-border/30 bg-bg backdrop-blur-xl"
-        >
+        <header ref={headerRef} className="sticky top-0 z-50 border-b border-border/30 bg-bg backdrop-blur-xl">
             <div className="mx-auto flex h-14 max-w-[1290px] items-center justify-between px-6 sm:px-8">
                 {/* 왼쪽: 로고 + 네비게이션 */}
                 <div className="flex items-center gap-4">
-                    <img
-                        src={logoDarkSrc}
-                        alt="오뱅잇"
-                        className="h-7 w-auto"
-                    />
+                    <img src={logoDarkSrc} alt="오뱅잇" className="h-7 w-auto" />
 
                     {/* 네비게이션 */}
                     <nav className="hidden md:flex items-center gap-1">
@@ -98,9 +100,7 @@ export function Header() {
                         <button
                             type="button"
                             className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                                isScheduleActive
-                                    ? 'bg-border/20 text-text'
-                                    : 'text-text-muted hover:bg-border/10 hover:text-text'
+                                isScheduleActive ? 'bg-border/20 text-text' : 'text-text-muted hover:bg-border/10 hover:text-text'
                             }`}
                             onClick={() => navigate('/')}
                         >
@@ -112,9 +112,7 @@ export function Header() {
                             <button
                                 type="button"
                                 className={`cursor-pointer flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                                    isTournamentActive
-                                        ? 'bg-border/20 text-text'
-                                        : 'text-text-muted hover:bg-border/10 hover:text-text'
+                                    isTournamentActive ? 'bg-border/20 text-text' : 'text-text-muted hover:bg-border/10 hover:text-text'
                                 }`}
                                 onClick={() => setDropdownOpen((prev) => !prev)}
                                 aria-expanded={dropdownOpen}
@@ -122,27 +120,22 @@ export function Header() {
                             >
                                 대회
                                 <ChevronDown
-                                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                                        dropdownOpen ? 'rotate-180' : ''
-                                    }`}
+                                    className={`h-3.5 w-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
                                 />
                             </button>
 
                             {/* 드롭다운 패널 */}
                             {dropdownOpen && (
                                 <div className="absolute left-0 top-full z-50 mt-1 w-auto min-w-55 overflow-hidden rounded-xl border border-border/40 bg-card shadow-xl">
-                                    {tournaments.length === 0 ? (
+                                    {tournamentMenuItems.length === 0 ? (
                                         <div className="flex items-center gap-2 px-4 py-3 text-sm text-text-muted">
                                             <Trophy className="h-4 w-4" />
                                             <span>등록된 대회가 없습니다</span>
                                         </div>
                                     ) : (
                                         <ul role="menu">
-                                            {tournaments.map((tournament) => (
-                                                <li
-                                                    key={tournament.id}
-                                                    role="none"
-                                                >
+                                            {tournamentMenuItems.map((tournament) => (
+                                                <li key={tournament.id} role="none">
                                                     <button
                                                         type="button"
                                                         role="menuitem"
@@ -153,18 +146,12 @@ export function Header() {
                                                                 tournament_name: tournament.name,
                                                                 source: 'desktop_dropdown',
                                                             })
-                                                            navigate(
-                                                                `/tournament/${tournament.slug}`,
-                                                            )
-                                                            setDropdownOpen(
-                                                                false,
-                                                            )
+                                                            navigate(`/tournament/${tournament.slug}`)
+                                                            setDropdownOpen(false)
                                                         }}
                                                     >
                                                         <Trophy className="h-3.5 w-3.5 shrink-0 text-text-muted" />
-                                                        <span>
-                                                            {tournament.name}
-                                                        </span>
+                                                        <span>{tournament.name}</span>
                                                     </button>
                                                 </li>
                                             ))}
@@ -182,17 +169,9 @@ export function Header() {
                     <button
                         onClick={toggleTheme}
                         className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border/40 bg-card text-text-muted transition-colors hover:border-border hover:text-text"
-                        aria-label={
-                            theme === 'dark'
-                                ? '라이트 모드로 전환'
-                                : '다크 모드로 전환'
-                        }
+                        aria-label={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
                     >
-                        {theme === 'dark' ? (
-                            <Sun className="h-4 w-4" />
-                        ) : (
-                            <Moon className="h-4 w-4" />
-                        )}
+                        {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                     </button>
 
                     {/* 모바일 메뉴 버튼 */}
@@ -204,11 +183,7 @@ export function Header() {
                         aria-controls="mobile-nav-menu"
                         aria-label="모바일 메뉴"
                     >
-                        {mobileMenuOpen ? (
-                            <X className="h-5 w-5" />
-                        ) : (
-                            <Menu className="h-5 w-5" />
-                        )}
+                        {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                     </button>
                 </div>
             </div>
@@ -235,9 +210,7 @@ export function Header() {
                         <button
                             type="button"
                             className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-left text-base font-medium transition-colors ${
-                                isScheduleActive
-                                    ? 'bg-primary/10 text-primary'
-                                    : 'text-text hover:bg-border/10'
+                                isScheduleActive ? 'bg-primary/10 text-primary' : 'text-text hover:bg-border/10'
                             }`}
                             onClick={() => {
                                 navigate('/')
@@ -253,28 +226,22 @@ export function Header() {
 
                         {/* 대회 섹션 */}
                         <div>
-                            <div className="px-4 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
-                                대회
-                            </div>
-                            {tournaments.length === 0 ? (
+                            <div className="px-4 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-widest text-text-muted">대회</div>
+                            {tournamentMenuItems.length === 0 ? (
                                 <div className="flex items-center gap-2 px-4 py-3 text-sm text-text-muted">
                                     <Trophy className="h-4 w-4" />
                                     <span>등록된 대회가 없습니다</span>
                                 </div>
                             ) : (
                                 <ul className="flex flex-col">
-                                    {tournaments.map((tournament) => {
-                                        const isActive =
-                                            location.pathname ===
-                                            `/tournament/${tournament.slug}`
+                                    {tournamentMenuItems.map((tournament) => {
+                                        const isActive = location.pathname === `/tournament/${tournament.slug}`
                                         return (
                                             <li key={tournament.id}>
                                                 <button
                                                     type="button"
                                                     className={`flex w-full cursor-pointer items-center gap-2 rounded-lg px-4 py-3 text-left text-base transition-colors ${
-                                                        isActive
-                                                            ? 'bg-primary/10 text-primary'
-                                                            : 'text-text hover:bg-border/10'
+                                                        isActive ? 'bg-primary/10 text-primary' : 'text-text hover:bg-border/10'
                                                     }`}
                                                     onClick={() => {
                                                         trackEvent('tournament_enter', {
@@ -282,16 +249,12 @@ export function Header() {
                                                             tournament_name: tournament.name,
                                                             source: 'mobile_menu',
                                                         })
-                                                        navigate(
-                                                            `/tournament/${tournament.slug}`,
-                                                        )
+                                                        navigate(`/tournament/${tournament.slug}`)
                                                         setMobileMenuOpen(false)
                                                     }}
                                                 >
                                                     <Trophy className="h-4 w-4 shrink-0 text-text-muted" />
-                                                    <span className="flex-1">
-                                                        {tournament.name}
-                                                    </span>
+                                                    <span className="flex-1">{tournament.name}</span>
                                                     <ChevronRight className="h-4 w-4 text-text-muted" />
                                                 </button>
                                             </li>

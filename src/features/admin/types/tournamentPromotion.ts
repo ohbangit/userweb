@@ -8,6 +8,9 @@ export type PromotionPanelType =
     | 'F1_RACE_SCHEDULE'
     | 'F1_RACE_RESULT'
     | 'F1_STANDINGS'
+    | 'F1_QUALIFYING'
+    | 'F1_CIRCUIT'
+    | 'F1_TEAM_DRAFT'
 export type PromotionConfigStatus = 'draft' | 'published'
 
 export interface PromotionPanel {
@@ -153,6 +156,9 @@ export interface PromotionConfigRaw {
 }
 
 // ── F1_DRIVERS 패널 content 타입 ──────────────────────────
+export type F1DriverRole = 'FIRST' | 'SECOND'
+export type F1SecondGroup = 'A' | 'B'
+
 export interface F1Driver {
     id: string
     streamerId: number | null
@@ -161,7 +167,14 @@ export interface F1Driver {
     avatarUrl: string | null
     channelUrl: string | null
     isPartner: boolean
+    driverRole: F1DriverRole
+    tier: string | null
+    ranking: number | null
+    participationCount: number
+    winCount: number
     carNumber: number | null
+    secondGroup?: F1SecondGroup | null
+    qualifyingEliminated?: boolean
     order: number
 }
 
@@ -221,4 +234,67 @@ export interface F1StandingEntry {
 
 export interface F1StandingsContent {
     standings: F1StandingEntry[]
+}
+
+// ── F1_QUALIFYING 패널 content 타입 ────────────────────────
+export interface F1QualifyingDriver {
+    driverId: string
+    name: string
+    avatarUrl: string | null
+    isPartner: boolean
+    position: number | null
+    lapTime: string | null
+    qualified: boolean
+}
+
+export interface F1QualifyingContent {
+    description: string
+    firstDriverResults: F1QualifyingDriver[]
+    secondDriverResults: F1QualifyingDriver[]
+}
+
+// ── F1_CIRCUIT 패널 content 타입 ────────────────────────
+export interface F1CircuitContent {
+    circuits: F1CircuitItem[]
+}
+
+export interface F1CircuitItem {
+    id: string
+    circuitName: string
+    description: string
+    country: string | null
+    layoutImageUrl: string | null
+    length: string | null
+    corners: number | null
+    lapRecord: string | null
+    order: number
+}
+
+// ── F1_TEAM_DRAFT 패널 content 타입 ───────────────────────
+export interface F1DraftTeamDriver {
+    driverId: string
+    name: string
+    avatarUrl: string | null
+    isPartner: boolean
+    driverRole: F1DriverRole
+}
+
+export interface F1DraftTeamOperator {
+    driverId: string
+    name: string
+    avatarUrl: string | null
+    isPartner: boolean
+}
+
+export interface F1DraftTeam {
+    id: string
+    teamName: string
+    firstDriver: F1DraftTeamDriver
+    secondDriver: F1DraftTeamDriver
+    operator: F1DraftTeamOperator | null
+    order: number
+}
+
+export interface F1TeamDraftContent {
+    teams: F1DraftTeam[]
 }

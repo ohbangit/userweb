@@ -29,6 +29,9 @@
         'Inter', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
         Roboto, sans-serif;
     --font-koverwatch: 'Koverwatch', sans-serif;
+    --font-f1: 'Barlow Condensed', 'Koverwatch', sans-serif;
+    --font-family-koverwatch: var(--font-koverwatch);
+    --font-family-f1: var(--font-f1);
 }
 
 /* Light mode (default) — 치지직 화이트 테마 */
@@ -93,4 +96,11 @@ body {
     .scrollbar-hide::-webkit-scrollbar {
         display: none;
     }
+}
+
+.bg-f1-fixed {
+    background-image: url('./assets/f1_bg.webp');
+    background-size: cover;
+    background-position: center top;
+    background-color: #020d18;
 }

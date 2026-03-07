@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 56" fill="none">
+  <!-- rear wing strut -->
+  <rect x="94" y="8" width="3.5" height="20" rx="1.5" fill="#E10600"/>
+  <!-- rear wing blade -->
+  <rect x="85" y="6" width="21" height="5" rx="2" fill="#E10600"/>
+
+  <!-- main body -->
+  <path d="M10 30 L26 18 L84 18 L100 26 L100 36 L10 36 Z" fill="#E10600"/>
+
+  <!-- cockpit / halo -->
+  <path d="M46 18 L55 10 L75 10 L84 18 Z" fill="#B00000"/>
+
+  <!-- sidepod undercut -->
+  <path d="M54 36 L90 36 L94 42 L50 42 Z" fill="#C00000"/>
+
+  <!-- nose cone -->
+  <path d="M2 32 L10 28 L10 34 Z" fill="#E10600"/>
+
+  <!-- front wing -->
+  <path d="M0 36 L14 31 L16 36 L6 39 Z" fill="#1a1a1a"/>
+
+  <!-- rear wheel -->
+  <circle cx="78" cy="44" r="12" fill="#1a1a1a"/>
+  <circle cx="78" cy="44" r="5.5" fill="#2e2e2e"/>
+
+  <!-- front wheel -->
+  <circle cx="26" cy="43" r="10" fill="#1a1a1a"/>
+  <circle cx="26" cy="43" r="4.5" fill="#2e2e2e"/>
+</svg>

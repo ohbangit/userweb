@@ -7,6 +7,8 @@ import {
     F1RaceResultPanelEditor,
     F1RaceSchedulePanelEditor,
     F1StandingsPanelEditor,
+    F1QualifyingPanelEditor,
+    F1TeamDraftPanelEditor,
     FinalResultPanelEditor,
     ParticipantEditor,
     SchedulePanelEditor,
@@ -22,7 +24,9 @@ import {
     usePromotionConfig,
     useReorderPromotionPanels,
     useReorderTournamentTeams,
+    useTournamentPlayers,
     useTournamentTeams,
+    useUpdateTournamentPlayersV2,
     useUpdatePromotionPanels,
     useUpdateTournament,
 } from '../hooks'
@@ -30,13 +34,17 @@ import type {
     CommentatorItem,
     DraftContent,
     DraftParticipant,
+    F1DriverRole,
     F1DriversContent,
     F1RaceResultContent,
     F1RaceScheduleContent,
     F1StandingsContent,
+    F1QualifyingContent,
+    F1TeamDraftContent,
     FinalResultContent,
     PromotionPanelType,
     ScheduleContent,
+    TournamentAdminPlayersResponse,
 } from '../types'
 import { getErrorMessage } from '../utils'
 
@@ -66,6 +74,9 @@ const PANEL_LABELS: Record<PromotionPanelType, string> = {
     F1_RACE_SCHEDULE: '레이스 일정',
     F1_RACE_RESULT: '레이스 결과',
     F1_STANDINGS: '챔피언십 순위',
+    F1_QUALIFYING: '예선 결과',
+    F1_CIRCUIT: '서킷 정보',
+    F1_TEAM_DRAFT: '팀 드래프트',
 }
 
 const PANEL_ICONS: Record<PromotionPanelType, string> = {
@@ -78,6 +89,49 @@ const PANEL_ICONS: Record<PromotionPanelType, string> = {
     F1_RACE_SCHEDULE: '🏁',
     F1_RACE_RESULT: '📊',
     F1_STANDINGS: '🥇',
+    F1_QUALIFYING: '⏱️',
+    F1_CIRCUIT: '🗺️',
+    F1_TEAM_DRAFT: '📝',
+}
+
+function toNumberOrNull(value: unknown): number | null {
+    return typeof value === 'number' ? value : null
+}
+
+function toStringOrNull(value: unknown): string | null {
+    return typeof value === 'string' ? value : null
+}
+
+function toF1DriversContentFromAdminPlayers(response: TournamentAdminPlayersResponse): F1DriversContent {
+    const participants = [...response.players]
+        .sort((a, b) => a.order - b.order)
+        .map((player) => {
+            const info = typeof player.info === 'object' && player.info !== null ? (player.info as Record<string, unknown>) : {}
+
+            const driverRole: F1DriverRole = info.driverRole === 'SECOND' ? 'SECOND' : 'FIRST'
+            const name = typeof info.name === 'string' && info.name.length > 0 ? info.name : player.nickname
+
+            return {
+                id: String(player.id),
+                streamerId: player.streamerId,
+                name,
+                nickname: player.nickname,
+                avatarUrl: player.avatarUrl,
+                channelUrl: player.channelUrl,
+                isPartner: player.isPartner,
+                driverRole,
+                tier: toStringOrNull(info.tier),
+                ranking: toNumberOrNull(info.ranking),
+                participationCount: toNumberOrNull(info.participationCount) ?? 0,
+                winCount: toNumberOrNull(info.winCount) ?? 0,
+                carNumber: toNumberOrNull(info.carNumber),
+                secondGroup: player.secondGroup ?? (info.secondGroup === 'A' || info.secondGroup === 'B' ? info.secondGroup : null),
+                qualifyingEliminated: player.qualifyingEliminated ?? info.qualifyingEliminated === true,
+                order: player.order,
+            }
+        })
+
+    return { participants }
 }
 
 export default function TournamentManagePage({ mode = 'overwatch' }: TournamentManagePageProps) {
@@ -219,6 +273,7 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
     }, [selectedSlug])
 
     const { data, isLoading, isError, error } = useTournamentTeams(selectedTournamentId)
+    const { data: playersData } = useTournamentPlayers(selectedTournamentId, mode === 'racing')
     const reorderTeams = useReorderTournamentTeams(selectedTournamentId ?? 0)
     const { data: hostSuggestions, isFetching: isHostFetching } = useAdminStreamerSearch(
         hostSelectedId === undefined ? hostSearchInput : '',
@@ -233,6 +288,7 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
     const { data: promotionData, isLoading: isPromotionLoading } = usePromotionConfig(selectedTournamentId)
     const createPromotionConfig = useCreatePromotionConfig(selectedTournamentId ?? 0)
     const updatePromotionPanels = useUpdatePromotionPanels(selectedTournamentId ?? 0)
+    const updateTournamentPlayersV2 = useUpdateTournamentPlayersV2(selectedTournamentId ?? 0)
     const reorderPromotionPanels = useReorderPromotionPanels(selectedTournamentId ?? 0)
     const updateTournament = useUpdateTournament(selectedTournamentId)
     const deleteTournament = useDeleteTournament()
@@ -250,6 +306,11 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
         () => (promotionData === undefined ? [] : [...promotionData.panels].sort((a, b) => a.order_index - b.order_index)),
         [promotionData],
     )
+
+    const f1DriversContentFromAdminApi = useMemo(() => {
+        if (playersData === undefined) return null
+        return toF1DriversContentFromAdminPlayers(playersData)
+    }, [playersData])
 
     const visiblePanels = useMemo(() => sortedPanels.filter((panel) => panel.enabled && !panel.hidden), [sortedPanels])
 
@@ -457,7 +518,9 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                 | F1DriversContent
                 | F1RaceScheduleContent
                 | F1RaceResultContent
-                | F1StandingsContent,
+                | F1StandingsContent
+                | F1QualifyingContent
+                | F1TeamDraftContent,
         ) => {
             setSavingPanelId(panelId)
             try {
@@ -538,7 +601,7 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                     </button>
                 )}
                 {promotionData !== undefined && (
-                    <div className="flex gap-2 overflow-x-auto pb-1">
+                    <div className="flex flex-wrap gap-2 pb-1">
                         {sortedPanels.map((panel) => (
                             <div
                                 key={`picker-${panel.id}`}
@@ -559,7 +622,7 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                                     void handleDropPanel(panel.id)
                                 }}
                                 className={[
-                                    'w-44 shrink-0 rounded-xl border px-3 py-2 transition',
+                                    'w-full rounded-xl border px-3 py-2 transition sm:w-44 sm:shrink-0',
                                     'cursor-grab active:cursor-grabbing',
                                     draggingPanelId === panel.id ? 'opacity-50' : '',
                                     hoveredPanelId === panel.id && draggingPanelId !== null && draggingPanelId !== panel.id
@@ -1558,8 +1621,53 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                                     )}
                                     {panel.type === 'F1_DRIVERS' && (
                                         <F1DriversPanelEditor
-                                            content={panel.content}
-                                            onSave={(c: F1DriversContent) => handleSavePanelContent(panel.id, c)}
+                                            content={(f1DriversContentFromAdminApi ?? panel.content) as unknown as Record<string, unknown>}
+                                            onSave={async (c: F1DriversContent) => {
+                                                setSavingPanelId(panel.id)
+                                                try {
+                                                    await updateTournamentPlayersV2.mutateAsync({
+                                                        players: c.participants
+                                                            .map((participant, index) => {
+                                                                const nickname = participant.nickname?.trim().length
+                                                                    ? participant.nickname.trim()
+                                                                    : participant.name.trim()
+                                                                return {
+                                                                    nickname,
+                                                                    isPartner: participant.isPartner,
+                                                                    order:
+                                                                        typeof participant.order === 'number' ? participant.order : index,
+                                                                    avatarUrl: participant.avatarUrl?.trim() ?? null,
+                                                                    channelUrl: participant.channelUrl?.trim() ?? null,
+                                                                    streamerId: participant.streamerId ?? null,
+                                                                    secondGroup: participant.secondGroup ?? null,
+                                                                    qualifyingEliminated: participant.qualifyingEliminated === true,
+                                                                    info: {
+                                                                        name: participant.name,
+                                                                        driverRole: participant.driverRole,
+                                                                        tier: participant.tier,
+                                                                        ranking: participant.ranking,
+                                                                        participationCount: participant.participationCount,
+                                                                        winCount: participant.winCount,
+                                                                        carNumber: participant.carNumber,
+                                                                    },
+                                                                }
+                                                            })
+                                                            .sort((a, b) => a.order - b.order),
+                                                    })
+                                                    addToast({
+                                                        message: '드라이버 목록이 저장되었습니다.',
+                                                        variant: 'success',
+                                                    })
+                                                } catch (error) {
+                                                    addToast({
+                                                        message: getErrorMessage(error),
+                                                        variant: 'error',
+                                                    })
+                                                    throw error
+                                                } finally {
+                                                    setSavingPanelId(null)
+                                                }
+                                            }}
                                             isSaving={savingPanelId === panel.id}
                                         />
                                     )}
@@ -1581,6 +1689,22 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
                                         <F1StandingsPanelEditor
                                             content={panel.content}
                                             onSave={(c: F1StandingsContent) => handleSavePanelContent(panel.id, c)}
+                                            isSaving={savingPanelId === panel.id}
+                                            raceResultContent={promotionData?.panels.find((p) => p.type === 'F1_RACE_RESULT')?.content}
+                                        />
+                                    )}
+                                    {panel.type === 'F1_QUALIFYING' && (
+                                        <F1QualifyingPanelEditor
+                                            content={panel.content}
+                                            onSave={(c: F1QualifyingContent) => handleSavePanelContent(panel.id, c)}
+                                            isSaving={savingPanelId === panel.id}
+                                        />
+                                    )}
+                                    {/* F1_CIRCUIT: 서킷 정보는 코드 상수로 관리 — 어드민 에디터 미사용 */}
+                                    {panel.type === 'F1_TEAM_DRAFT' && (
+                                        <F1TeamDraftPanelEditor
+                                            content={panel.content}
+                                            onSave={(c: F1TeamDraftContent) => handleSavePanelContent(panel.id, c)}
                                             isSaving={savingPanelId === panel.id}
                                         />
                                     )}

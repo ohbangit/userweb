@@ -99,6 +99,39 @@ type TournamentAdminTeamsResponse = {
     teams: TournamentAdminTeam[]
 }
 
+type TournamentAdminPlayerItem = {
+    id: number
+    nickname: string
+    isPartner: boolean
+    order: number
+    avatarUrl: string | null
+    channelUrl: string | null
+    streamerId: number | null
+    secondGroup: 'A' | 'B' | null
+    qualifyingEliminated: boolean
+    info: Record<string, unknown>
+}
+
+type TournamentAdminPlayersResponse = {
+    players: TournamentAdminPlayerItem[]
+}
+
+type UpdateTournamentPlayersV2PlayerItem = {
+    nickname: string
+    isPartner: boolean
+    order: number
+    avatarUrl?: string | null
+    channelUrl?: string | null
+    streamerId?: number | null
+    secondGroup?: 'A' | 'B' | null
+    qualifyingEliminated?: boolean
+    info?: Record<string, unknown>
+}
+
+type UpdateTournamentPlayersV2Request = {
+    players: UpdateTournamentPlayersV2PlayerItem[]
+}
+
 type CreateTournamentTeamRequest = {
     name: string
     logoUrl?: string
@@ -125,10 +158,14 @@ export type {
     CreateTournamentTeamRequest,
     SlotType,
     TournamentAdminMember,
+    TournamentAdminPlayerItem,
+    TournamentAdminPlayersResponse,
     TournamentAdminTeam,
     TournamentAdminTeamsResponse,
     TournamentItem,
     TournamentListResponse,
+    UpdateTournamentPlayersV2PlayerItem,
+    UpdateTournamentPlayersV2Request,
     UpdateTournamentRequest,
     UpdateTournamentTeamRequest,
     UpsertTournamentMemberRequest,
