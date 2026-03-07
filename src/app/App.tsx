@@ -9,6 +9,7 @@ import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics'
 
 const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
 const TournamentPromotionPage = lazy(() => import('../features/tournament/pages/TournamentPromotionPage'))
+const F1StaticPage = lazy(() => import('../features/tournament/pages/F1StaticPage'))
 
 function App() {
     useGoogleAnalytics()
@@ -31,6 +32,14 @@ function App() {
                     element={
                         <Suspense fallback={null}>
                             <AdminRoutes />
+                        </Suspense>
+                    }
+                />
+                <Route
+                    path="/tournament/chzzk-racing4th"
+                    element={
+                        <Suspense fallback={null}>
+                            <F1StaticPage />
                         </Suspense>
                     }
                 />
