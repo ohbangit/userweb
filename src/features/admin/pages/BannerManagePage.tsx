@@ -16,7 +16,7 @@ import type { TournamentItem } from '../types'
 // 상수 / 유틸
 // ────────────────────────────────────────────────────────────
 
-const BANNER_TYPES = ['tournament', 'collab', 'content', '내전'] as const
+const BANNER_TYPES = ['tournament', 'collab', 'content', '내전', '출시', '인기'] as const
 type BannerType = (typeof BANNER_TYPES)[number]
 
 const TYPE_LABEL: Record<string, string> = {

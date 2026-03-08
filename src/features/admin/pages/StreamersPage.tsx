@@ -715,6 +715,21 @@ function StreamerRow({ streamer, onClick, onDeleted }: StreamerRowProps) {
                         </>
                     ) : (
                         <>
+                            {streamer.channelId && (
+                                <a
+                                    href={`https://chzzk.naver.com/${streamer.channelId}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    title="채널로 이동"
+                                    aria-label={`${streamer.nickname} 채널로 이동`}
+                                    className="cursor-pointer rounded-md border border-gray-300 p-1.5 text-gray-500 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 dark:border-[#3a3a44] dark:text-[#adadb8] dark:hover:border-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400"
+                                >
+                                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                </a>
+                            )}
                             <button
                                 type="button"
                                 disabled={

@@ -14,6 +14,14 @@ const ROLE_IMG: Record<OverwatchRole, string> = {
     SPT: sptSrc,
 }
 
+const POSITION_ORDER: (OverwatchRole | null)[] = ['TNK', 'DPS', 'SPT', null]
+
+const ROLE_LABEL: Record<OverwatchRole, string> = {
+    TNK: '탱커',
+    DPS: '딜러',
+    SPT: '서포터',
+}
+
 const SLOT_LABEL: Record<string, string> = {
     TNK: '탱커',
     DPS: '딜러',
@@ -104,77 +112,104 @@ export function PlayerListPanelView({ title, teams, participants = [], defaultEx
             {!collapsed && (
                 <div className="mt-4">
                     {hasDraftParticipants ? (
-                        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-4">
-                            {participants.map((p) => (
+                        <div className="space-y-6">
+                            {POSITION_ORDER.map((role) => {
+                                const members = participants.filter((p) => p.position === role)
+                                if (members.length === 0) return null
+                                return (
+                                    <div key={role ?? 'unassigned'}>
+                                        {/* 포지션 그룹 헤더 */}
+                                        <div className="mb-3 flex items-center gap-2">
+                                            {role !== null ? (
+                                                <img src={ROLE_IMG[role]} alt={role} className="h-5 w-5" />
+                                            ) : null}
+                                            <span className="text-sm font-bold tracking-wide text-[#6aadcc]">
+                                                {role !== null ? ROLE_LABEL[role] : '미지정'}
+                                            </span>
+                                            <span className="text-xs text-[#6aadcc]/50">{members.length}명</span>
+                                            <div className="h-px flex-1 bg-[#1e3a5f]/60" />
+                                        </div>
+                                        {/* 포지션 내 참가자 그리드 */}
+                                        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-4">
+                                            {members.map((p) => (
                                 <div key={p.id} className="relative w-full min-w-0 rounded-xl bg-[#062035] px-3 py-3 sm:px-4">
-                                    {p.isCaptain && (
-                                        <span className="absolute left-1.5 top-1.5 z-10 inline-flex items-center justify-center rounded-md bg-[#041524]/80 p-1 ring-1 ring-amber-400/50">
-                                            <Crown className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                                        </span>
-                                    )}
-                                    <div className="flex items-stretch justify-between gap-2 sm:hidden">
-                                        <div className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-md bg-[#041524]/70 px-2 py-2 ring-1 ring-[#1e3a5f]">
-                                            <AvatarLink
-                                                href={getBroadcastUrl({ channelId: p.channelId })}
-                                                label={`${p.name} 방송국으로 이동`}
-                                            >
-                                                {p.avatarUrl !== null ? (
-                                                    <img
-                                                        src={p.avatarUrl}
-                                                        alt={p.name}
-                                                        className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e3a5f]"
-                                                    />
-                                                ) : (
-                                                    <div className="h-14 w-14 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
-                                                )}
-                                            </AvatarLink>
-                                            <div className="flex w-full min-w-0 items-center justify-center gap-1.5">
-                                                <span className="truncate pr-[2px] text-center text-[15px] font-semibold text-[#e8f4fd]">
-                                                    {p.name}
-                                                </span>
-                                                {p.isPartner && <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5 shrink-0" />}
-                                            </div>
-                                        </div>
-
-                                        {p.position !== null ? (
-                                            <div className="flex w-12 shrink-0 flex-col items-center justify-center gap-0.5 px-1 py-1">
-                                                <img src={ROLE_IMG[p.position]} alt={p.position} className="h-5 w-5" />
+                                                    {p.isCaptain && (
+                                                        <span className="absolute left-1.5 top-1.5 z-10 inline-flex items-center justify-center rounded-md bg-[#041524]/80 p-1 ring-1 ring-amber-400/50">
+                                                            <Crown className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                                                        </span>
+                                                    )}
+                                                    <div className="flex items-stretch justify-between gap-2 sm:hidden">
+                                                        <div className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-md bg-[#041524]/70 px-2 py-2 ring-1 ring-[#1e3a5f]">
+                                                            <AvatarLink
+                                                                href={getBroadcastUrl({ channelId: p.channelId })}
+                                                                label={`${p.name} 방송국으로 이동`}
+                                                            >
+                                                                {p.avatarUrl !== null ? (
+                                                                    <img
+                                                                        src={p.avatarUrl}
+                                                                        alt={p.name}
+                                                                        className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e3a5f]"
+                                                                    />
+                                                                ) : (
+                                                                    <div className="h-14 w-14 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
+                                                                )}
+                                                            </AvatarLink>
+                                                            <div className="flex w-full min-w-0 items-center justify-center gap-1.5">
+                                                                <span className="truncate pr-[2px] text-center text-[15px] font-semibold text-[#e8f4fd]">
+                                                                    {p.name}
+                                                                </span>
+                                                                {p.isPartner && (
+                                                                    <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5 shrink-0" />
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        {p.position !== null ? (
+                                                            <div className="flex w-12 shrink-0 flex-col items-center justify-center gap-0.5 px-1 py-1">
+                                                                <img src={ROLE_IMG[p.position]} alt={p.position} className="h-5 w-5" />
                                                 <span className="text-[10px] font-bold tracking-wide text-[#6aadcc]">{p.position}</span>
-                                            </div>
-                                        ) : (
-                                            <div className="w-12 shrink-0" />
-                                        )}
-                                    </div>
-
-                                    <div className="hidden w-full items-center justify-between gap-3 sm:flex">
-                                        <AvatarLink href={getBroadcastUrl({ channelId: p.channelId })} label={`${p.name} 방송국으로 이동`}>
-                                            {p.avatarUrl !== null ? (
-                                                <img
-                                                    src={p.avatarUrl}
-                                                    alt={p.name}
-                                                    className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-[#1e3a5f]"
-                                                />
-                                            ) : (
-                                                <div className="h-14 w-14 shrink-0 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
-                                            )}
-                                        </AvatarLink>
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-1.5">
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-12 shrink-0" />
+                                                        )}
+                                                    </div>
+                                                    <div className="hidden w-full items-center justify-between gap-3 sm:flex">
+                                                        <AvatarLink
+                                                            href={getBroadcastUrl({ channelId: p.channelId })}
+                                                            label={`${p.name} 방송국으로 이동`}
+                                                        >
+                                                            {p.avatarUrl !== null ? (
+                                                                <img
+                                                                    src={p.avatarUrl}
+                                                                    alt={p.name}
+                                                                    className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-[#1e3a5f]"
+                                                                />
+                                                            ) : (
+                                                                <div className="h-14 w-14 shrink-0 rounded-full bg-[#041524] ring-2 ring-[#1e3a5f]" />
+                                                            )}
+                                                        </AvatarLink>
+                                                        <div className="min-w-0 flex-1">
+                                                            <div className="flex items-center gap-1.5">
                                                 <span className="truncate pr-[2px] text-[17px] font-semibold text-[#e8f4fd]">{p.name}</span>
-                                                {p.isPartner && <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5 shrink-0" />}
-                                            </div>
-                                        </div>
-                                        {p.position !== null ? (
-                                            <div className="flex w-12 shrink-0 flex-col items-center gap-0.5">
-                                                <img src={ROLE_IMG[p.position]} alt={p.position} className="h-8 w-8" />
+                                                                {p.isPartner && (
+                                                                    <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5 shrink-0" />
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        {p.position !== null ? (
+                                                            <div className="flex w-12 shrink-0 flex-col items-center gap-0.5">
+                                                                <img src={ROLE_IMG[p.position]} alt={p.position} className="h-8 w-8" />
                                                 <span className="text-xs font-bold tracking-wide text-[#6aadcc]">{p.position}</span>
-                                            </div>
-                                        ) : (
-                                            <div className="w-8 shrink-0" />
-                                        )}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-8 shrink-0" />
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     ) : players.length === 0 ? (
                         <p className="text-base text-[#6aadcc]/60">등록된 참여자가 없습니다.</p>

@@ -1223,12 +1223,21 @@ export default function BroadcastSchedulePage() {
     const [deletingBroadcast, setDeletingBroadcast] = useState<Broadcast | null>(null)
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [overwatchBroadcast, setOverwatchBroadcast] = useState<Broadcast | null>(null)
+    const [showHiddenOnly, setShowHiddenOnly] = useState(false)
     const { data, isLoading, refetch } = useScheduleBroadcasts({
         view,
         date: toDateString(baseDate),
     })
     const dateGroups = collectBroadcasts(data)
-    const totalCount = dateGroups.reduce((acc, group) => acc + group.broadcasts.length, 0)
+    const filteredDateGroups = showHiddenOnly
+        ? dateGroups
+              .map((group) => ({
+                  ...group,
+                  broadcasts: group.broadcasts.filter((b) => !(b.isVisible ?? true)),
+              }))
+              .filter((group) => group.broadcasts.length > 0)
+        : dateGroups
+    const totalCount = filteredDateGroups.reduce((acc, group) => acc + group.broadcasts.length, 0)
 
     useEffect(() => {
         if (pendingScrollDate === null || isLoading) {
@@ -1273,7 +1282,7 @@ export default function BroadcastSchedulePage() {
                 </button>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
                 <div className="flex overflow-hidden rounded-xl border border-gray-300 dark:border-[#3a3a44]">
                     {(['weekly', 'monthly'] as const).map((mode) => (
                         <button
@@ -1313,12 +1322,27 @@ export default function BroadcastSchedulePage() {
                     </button>
                 </div>
             </div>
+                <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 dark:border-[#3a3a44]">
+                    <span className="text-xs font-medium text-gray-500 dark:text-[#adadb8]">미노출만 보기</span>
+                    <button
+                        type="button"
+                        onClick={() => setShowHiddenOnly((prev) => !prev)}
+                        className={[
+                            'cursor-pointer flex h-6 w-12 shrink-0 items-center rounded-full px-0.5 transition-colors',
+                            showHiddenOnly ? 'justify-end' : 'justify-start',
+                            showHiddenOnly ? 'bg-amber-500' : 'bg-gray-300 dark:bg-[#3a3a44]',
+                        ].join(' ')}
+                        aria-label="미노출 일정만 보기 토글"
+                    >
+                        <span className="h-5 w-5 rounded-full bg-white shadow" />
+                    </button>
+                </div>
 
             {isLoading && <div className="py-10 text-center text-sm text-gray-400">불러오는 중…</div>}
 
             {!isLoading && (
                 <div className="space-y-5">
-                    {dateGroups.map((group) => (
+                    {filteredDateGroups.map((group) => (
                         <section key={group.date} data-date={group.date} className="scroll-mt-4 space-y-2">
                             <div className="flex items-center gap-2">
                                 <span className="text-xs font-semibold text-gray-600 dark:text-[#adadb8]">
@@ -1342,7 +1366,7 @@ export default function BroadcastSchedulePage() {
                     ))}
                     {totalCount === 0 && (
                         <div className="rounded-2xl border border-dashed border-gray-300 py-10 text-center text-sm text-gray-400 dark:border-[#3a3a44] dark:text-[#848494]">
-                            해당 기간 방송이 없습니다.
+                            {showHiddenOnly ? '미노출 일정이 없습니다.' : '해당 기간 방송이 없습니다.'}
                         </div>
                     )}
                 </div>
