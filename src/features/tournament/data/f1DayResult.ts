@@ -116,3 +116,44 @@ export const F1_DAY_RESULTS: F1DayResultContent[] = [
         ],
     },
 ]
+
+export const F1_FINAL_RESULT: F1DayResultContent = {
+    label: 'Final',
+    qualifying: [
+        { driverId: 47, teamIndex: 4, position: 1, lapTime: '1:23.854' }, // 유영혁
+        { driverId: 41, teamIndex: 0, position: 2, lapTime: '1:24.088' }, // 형독
+        { driverId: 70, teamIndex: 9, position: 3, lapTime: '1:24.515' }, // 레밀레기
+        { driverId: 55, teamIndex: 7, position: 4, lapTime: '1:24.540' }, // 오단밍
+        { driverId: 43, teamIndex: 2, position: 5, lapTime: '1:24.550' }, // 박인수
+        { driverId: 45, teamIndex: 1, position: 6, lapTime: '1:24.700' }, // 제황
+        { driverId: 49, teamIndex: 3, position: 7, lapTime: '1:24.766' }, // 사모장
+        { driverId: 42, teamIndex: 7, position: 8, lapTime: '1:24.852' }, // 남궁혁
+        { driverId: 56, teamIndex: 2, position: 9, lapTime: '1:25.034' }, // 새싹감자
+        { driverId: 62, teamIndex: 4, position: 10, lapTime: '1:25.294' }, // 유리리
+        { driverId: 52, teamIndex: 8, position: 11, lapTime: '1:25.299' }, // 양메이
+        { driverId: 79, teamIndex: 1, position: 12, lapTime: '1:25.367' }, // 해오니
+        { driverId: 44, teamIndex: 5, position: 13, lapTime: '1:25.418' }, // 요나
+        { driverId: 60, teamIndex: 3, position: 14, lapTime: '1:25.876' }, // 미치르
+        { driverId: 46, teamIndex: 9, position: 15, lapTime: '1:25.895' }, // 강지형
+        { driverId: 78, teamIndex: 6, position: 16, lapTime: '1:26.005' }, // 푸후
+        { driverId: 67, teamIndex: 8, position: 17, lapTime: '1:26.171' }, // 남시우
+        { driverId: 61, teamIndex: 5, position: 18, lapTime: '1:26.186' }, // 히비
+        { driverId: 75, teamIndex: 0, position: 19, lapTime: '1:26.587' }, // 연곰
+        { driverId: 64, teamIndex: 6, position: 20, lapTime: '1:26.642' }, // 하쁘
+    ],
+    race1: [
+        // 파이널 Race 1 결과를 여기에 채워 넣어주세요.
+        // { driverId: 41, teamIndex: 0, position: 1, grid: 1, lapTime: 'xx:xx.xxx', dnf: false, fastestLap: false, points: 24 },
+    ],
+    race2: [
+        // 파이널 Race 2 결과를 여기에 채워 넣어주세요. (없으면 비워두세요)
+    ],
+    teamStandings: [
+        // 파이널 팀 성적을 여기에 채워 넣어주세요.
+        // { teamIndex: 0, rank: 1, totalPoints: 0, r1Points: 0, r2Points: 0 },
+    ],
+    driverStandings: [
+        // 파이널 드라이버 성적을 여기에 채워 넣어주세요.
+        // { driverId: 41, teamIndex: 0, points: 0 },
+    ],
+}

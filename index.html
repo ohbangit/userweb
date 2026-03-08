@@ -5,12 +5,7 @@
         <script>
             ;(function () {
                 var t = localStorage.getItem('ohbangit-theme')
-                if (
-                    t === 'dark' ||
-                    (!t &&
-                        window.matchMedia('(prefers-color-scheme:dark)')
-                            .matches)
-                ) {
+                if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme:dark)').matches)) {
                     document.documentElement.classList.add('dark')
                 }
             })()
@@ -24,14 +19,33 @@
             href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&display=swap"
         />
         <!-- Google Analytics 4 -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA_ID%"></script>
         <script>
-            window.dataLayer = window.dataLayer || []
-            function gtag() {
-                dataLayer.push(arguments)
-            }
-            gtag('js', new Date())
-            gtag('config', '%VITE_GA_ID%', { send_page_view: false })
+            ;(function () {
+                var gaId = '%VITE_GA_ID%'
+                var isProduction = '%MODE%' === 'production'
+                var isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+
+                if (!isProduction || isLocalhost) {
+                    return
+                }
+
+                if (!gaId || gaId === '%VITE_GA_ID%') {
+                    return
+                }
+
+                var script = document.createElement('script')
+                script.async = true
+                script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId
+                document.head.appendChild(script)
+
+                window.dataLayer = window.dataLayer || []
+                window.gtag = function () {
+                    window.dataLayer.push(arguments)
+                }
+
+                window.gtag('js', new Date())
+                window.gtag('config', gaId, { send_page_view: false })
+            })()
         </script>
 
         <meta charset="UTF-8" />
@@ -39,57 +53,21 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
         <!-- 파비콘 -->
-        <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/src/assets/favicon/apple-icon-180x180.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="192x192"
-            href="/src/assets/favicon/android-icon-192x192.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/src/assets/favicon/favicon-32x32.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/src/assets/favicon/favicon-16x16.png"
-        />
+        <link rel="apple-touch-icon" sizes="180x180" href="/src/assets/favicon/apple-icon-180x180.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/src/assets/favicon/android-icon-192x192.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/src/assets/favicon/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/src/assets/favicon/favicon-16x16.png" />
 
         <!-- 테마 컬러 (라이트/다크) -->
-        <meta
-            name="theme-color"
-            media="(prefers-color-scheme: light)"
-            content="#ffffff"
-        />
-        <meta
-            name="theme-color"
-            media="(prefers-color-scheme: dark)"
-            content="#0e0e10"
-        />
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e0e10" />
         <meta name="msapplication-TileColor" content="#00dc82" />
-        <meta
-            name="msapplication-TileImage"
-            content="/src/assets/favicon/ms-icon-144x144.png"
-        />
+        <meta name="msapplication-TileImage" content="/src/assets/favicon/ms-icon-144x144.png" />
 
         <!-- 기본 SEO (SPA JS 실행 전 크롤러 폴백) -->
         <title>오뱅잇 - 치지직 스트리밍 스케줄</title>
-        <meta
-            name="description"
-            content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."
-        />
-        <meta
-            name="keywords"
-            content="치지직,치지직 스케줄,치지직 방송일정,스트리밍 일정,오뱅잇,방송 스케줄"
-        />
+        <meta name="description" content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요." />
+        <meta name="keywords" content="치지직,치지직 스케줄,치지직 방송일정,스트리밍 일정,오뱅잇,방송 스케줄" />
         <meta name="robots" content="index, follow" />
         <meta name="application-name" content="오뱅잇" />
         <meta name="author" content="오뱅잇" />
@@ -107,16 +85,10 @@
             content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."
         />
         <meta property="og:url" content="https://ohbang-it.kr/" />
-        <meta
-            property="og:image"
-            content="https://ohbang-it.kr/api/og"
-        />
+        <meta property="og:image" content="https://ohbang-it.kr/api/og" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta
-            property="og:image:alt"
-            content="오뱅잇 - 치지직 스트리밍 스케줄"
-        />
+        <meta property="og:image:alt" content="오뱅잇 - 치지직 스트리밍 스케줄" />
 
         <!-- Twitter Card (정적 폴백) -->
         <meta name="twitter:card" content="summary_large_image" />
@@ -125,10 +97,7 @@
             name="twitter:description"
             content="치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요."
         />
-        <meta
-            name="twitter:image"
-            content="https://ohbang-it.kr/api/og"
-        />
+        <meta name="twitter:image" content="https://ohbang-it.kr/api/og" />
         <!-- OG_META_END -->
     </head>
     <body>

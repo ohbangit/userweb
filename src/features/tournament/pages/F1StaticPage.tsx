@@ -6,7 +6,7 @@ import { F1TeamDraftPanelView, TournamentHero, F1DayResultPanelView } from '../c
 import { F1StaticCircuitPanelView, F1StaticDriversPanelView } from './f1-static/components'
 import { F1_CIRCUIT_DATA } from '../data/f1Circuit'
 import { buildF1TeamDraftContentFromPlayers } from '../data/f1TeamDraft'
-import { F1_DAY_RESULTS } from '../data/f1DayResult'
+import { F1_DAY_RESULTS, F1_FINAL_RESULT } from '../data/f1DayResult'
 import { useTournamentPlayers } from '../hooks'
 import { useTournamentDetailV2 } from '../hooks/useTournamentDetail'
 import type { F1DriverRole, F1DriversContent, PublicTournamentPlayersResponse } from '../types'
@@ -19,6 +19,7 @@ const PANEL_NAV = [
     { id: 'drivers', label: '드라이버' },
     { id: 'team', label: '팀 구성' },
     { id: 'race-result', label: '레이스 결과' },
+    { id: 'final', label: '파이널' },
     // { id: 'standings', label: '챔피언십 순위' },
 ]
 
@@ -226,6 +227,14 @@ export default function F1StaticPage() {
                             ) : (
                                 <ComingSoonPanel title="레이스 결과" />
                             )}
+                        </section>
+
+                        <section id="panel-final" className="scroll-mt-24">
+                            <F1DayResultPanelView
+                                title="파이널"
+                                content={F1_FINAL_RESULT}
+                                drivers={driversContent.participants}
+                            />
                         </section>
 
                         {/*<section id="panel-standings" className="scroll-mt-24">*/}
