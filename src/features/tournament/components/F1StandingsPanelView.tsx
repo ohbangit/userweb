@@ -46,17 +46,17 @@ export function F1StandingsPanelView({ title, content, defaultExpanded = false }
                     ) : (
                         <div className="mt-4 overflow-hidden rounded-xl border border-[#1e3a5f]">
                             {/* 헤더 */}
-                            <div className="grid grid-cols-[3rem_1fr_5rem_3rem_3rem_3rem] items-center gap-2 bg-[#041524]/80 px-4 py-2 text-xs font-bold text-[#6aadcc]">
+                            <div className="grid grid-cols-[2.5rem_1fr_4rem] sm:grid-cols-[3rem_1fr_5rem_3rem_3rem_3rem] items-center gap-2 bg-[#041524]/80 px-4 py-2 text-xs font-bold text-[#6aadcc]">
                                 <span className="text-center">순위</span>
                                 <span>드라이버</span>
                                 <span className="text-center">포인트</span>
-                                <span className="text-center" title="우승">
+                                <span className="hidden sm:block text-center" title="우승">
                                     🏆
                                 </span>
-                                <span className="text-center" title="포디움">
+                                <span className="hidden sm:block text-center" title="포디움">
                                     🥉
                                 </span>
-                                <span className="text-center" title="패스티스트 랩">
+                                <span className="hidden sm:block text-center" title="패스티스트 랩">
                                     ⚡
                                 </span>
                             </div>
@@ -74,7 +74,7 @@ export function F1StandingsPanelView({ title, content, defaultExpanded = false }
                                             )}
                                             <div
                                                 className={[
-                                                    'grid grid-cols-[3rem_1fr_5rem_3rem_3rem_3rem] items-center gap-2 px-4 py-3 transition',
+                                                    'grid grid-cols-[2.5rem_1fr_4rem] sm:grid-cols-[3rem_1fr_5rem_3rem_3rem_3rem] items-center gap-2 px-4 py-3 transition',
                                                     isTop3 ? 'bg-[#0a0305]' : '',
                                                 ].join(' ')}
                                             >
@@ -133,13 +133,13 @@ export function F1StandingsPanelView({ title, content, defaultExpanded = false }
                                                 </span>
 
                                                 {/* 우승 횟수 */}
-                                                <span className="text-center text-sm font-semibold text-[#e8f4fd]">{entry.wins}</span>
+                                                <span className="hidden sm:block text-center text-sm font-semibold text-[#e8f4fd]">{entry.wins}</span>
 
                                                 {/* 포디움 횟수 */}
-                                                <span className="text-center text-sm font-semibold text-[#e8f4fd]">{entry.podiums}</span>
+                                                <span className="hidden sm:block text-center text-sm font-semibold text-[#e8f4fd]">{entry.podiums}</span>
 
                                                 {/* 패스티스트 랩 */}
-                                                <span className="flex justify-center">
+                                                <span className="hidden sm:flex justify-center">
                                                     {entry.fastestLaps > 0 && (
                                                         <span className="flex items-center gap-0.5">
                                                             <Zap className="h-3.5 w-3.5 text-[#a855f7]" />

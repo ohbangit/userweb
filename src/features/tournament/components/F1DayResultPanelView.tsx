@@ -214,7 +214,7 @@ function TeamStandingCard({ standing }: { standing: F1DayTeamStanding }) {
             <div className="absolute inset-0 bg-[#020d18]/65" />
 
             {/* 콘텐츠 */}
-            <div className="relative grid grid-cols-[2rem_1fr_4rem_5.5rem] items-center gap-3 px-4 py-3">
+            <div className="relative grid grid-cols-[2rem_1fr_3.5rem_auto] items-center gap-3 px-4 py-3">
                 {/* 등수 */}
                 <span
                     className={[
