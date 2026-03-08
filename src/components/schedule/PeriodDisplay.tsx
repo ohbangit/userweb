@@ -1,11 +1,5 @@
-import type { Dayjs } from 'dayjs'
-import type { ViewMode } from '../types'
-import { getWeekNumber, getWeekRange, formatFullDate } from '../utils'
-
-interface PeriodDisplayProps {
-    currentDate: Dayjs
-    viewMode: ViewMode
-}
+import { getWeekNumber, getWeekRange, formatFullDate } from '../../features/schedule/utils'
+import type { PeriodDisplayProps } from './types'
 
 export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {
     const month = currentDate.month() + 1

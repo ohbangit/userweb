@@ -1,11 +1,11 @@
+import { ChevronDown, ChevronRight, Menu, Moon, Sun, Trophy, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { Sun, Moon, ChevronDown, ChevronRight, Trophy, Menu, X } from 'lucide-react'
-import { useTheme } from '../../hooks/useTheme'
-import { useTournamentList } from '../../features/tournament/hooks/useTournamentList'
-import { trackEvent } from '../../utils/analytics'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import logoDarkSrc from '../../assets/logo_dark.png'
+import { useTournamentList } from '../../features/tournament/hooks/useTournamentList'
+import { useTheme } from '../../hooks/useTheme'
+import { trackEvent } from '../../utils/analytics'
 
 export function Header() {
     const { theme, toggleTheme } = useTheme()
@@ -28,7 +28,9 @@ export function Header() {
 
     // Escape 키로 모바일 메뉴 닫기
     useEffect(() => {
-        if (!mobileMenuOpen) return
+        if (!mobileMenuOpen) {
+            return
+        }
 
         function handleKeyDown(e: KeyboardEvent) {
             if (e.key === 'Escape') {
@@ -92,7 +94,9 @@ export function Header() {
             <div className="mx-auto flex h-14 max-w-[1290px] items-center justify-between px-6 sm:px-8">
                 {/* 왼쪽: 로고 + 네비게이션 */}
                 <div className="flex items-center gap-4">
-                    <img src={logoDarkSrc} alt="오뱅잇" className="h-7 w-auto" />
+                    <Link to="/">
+                        <img src={logoDarkSrc} alt="오뱅잇" className="h-7 w-auto" />
+                    </Link>
 
                     {/* 네비게이션 */}
                     <nav className="hidden md:flex items-center gap-1">
