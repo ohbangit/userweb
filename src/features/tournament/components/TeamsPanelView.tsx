@@ -133,7 +133,7 @@ export function TeamsPanelView({ title, teams, defaultExpanded = false }: Props)
                                                     <MemberCardLink
                                                         key={member.id}
                                                         href={getMemberBroadcastUrl(member)}
-                                                        className={`group relative flex flex-none basis-[calc(33.333%-4px)] flex-col items-center gap-1.5 overflow-hidden rounded-lg bg-[#041524] px-2 py-1.5 sm:basis-auto sm:flex-1 ${ROLE_THEME[member.slot as OverwatchRole].card}`}
+                                                        className={`group relative flex flex-none basis-[calc(33.333%-4px)] flex-col items-center gap-1.5 overflow-hidden rounded-lg bg-[#041524] px-2 py-1.5 sm:basis-[170px] ${ROLE_THEME[member.slot as OverwatchRole].card}`}
                                                     >
                                                         {member.isCaptain && (
                                                             <span className="absolute left-1 top-1 z-10 inline-flex items-center justify-center rounded-md bg-[#041524]/90 p-0.5 ring-1 ring-amber-400/50">
