@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { ChevronUp, Flag } from 'lucide-react'
+import { ChevronUp } from 'lucide-react'
 import { Header } from '../../../app/components/Header'
-import { F1TeamDraftPanelView, TournamentHero, F1DayResultPanelView } from '../components'
+import { AccordionSection, F1TeamDraftPanelView, TournamentHero, F1DayResultPanelView } from '../components'
 import { F1StaticCircuitPanelView, F1StaticDriversPanelView } from './f1-static/components'
 import { F1_CIRCUIT_DATA } from '../data/f1Circuit'
 import { buildF1TeamDraftContentFromPlayers } from '../data/f1TeamDraft'
@@ -22,21 +22,6 @@ const PANEL_NAV = [
     { id: 'final', label: '파이널' },
     // { id: 'standings', label: '챔피언십 순위' },
 ]
-
-function ComingSoonPanel({ title }: { title: string }) {
-    return (
-        <section className="mt-10 w-full">
-            <h2 className="font-f1 text-5xl font-black uppercase tracking-tight text-[#e8f4fd]">{title}</h2>
-            <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
-            <div className="mt-6 flex flex-col items-center justify-center gap-3 rounded-2xl border border-[#2e1a1a]/60 bg-[#120608]/30 py-16">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#E10600]/30 bg-[#E10600]/10">
-                    <Flag className="h-5 w-5 text-[#E10600]/60" />
-                </div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-[#6aadcc]/50">Coming Soon</p>
-            </div>
-        </section>
-    )
-}
 
 const SEO_DESC = 'F1 25 레이싱 대회의 드라이버, 예선 결과, 팀 구성, 레이스 일정 및 챔피언십 순위를 확인하세요.'
 const EMPTY_DRIVERS_CONTENT: F1DriversContent = { participants: [] }
@@ -201,41 +186,50 @@ export default function F1StaticPage() {
                             </section>
                         )}
 
-                        <section id="panel-circuit" className="scroll-mt-24">
-                            <F1StaticCircuitPanelView title="서킷 정보" content={F1_CIRCUIT_DATA} />
-                        </section>
+                        <AccordionSection id="panel-circuit" title="서킷 정보" defaultOpen={false}>
+                            <F1StaticCircuitPanelView content={F1_CIRCUIT_DATA} hideTitle={true} />
+                        </AccordionSection>
 
-                        <section id="panel-drivers" className="scroll-mt-24">
-                            <F1StaticDriversPanelView title="드라이버" content={driversContent} />
-                        </section>
+                        <AccordionSection id="panel-drivers" title="드라이버" defaultOpen={false}>
+                            <F1StaticDriversPanelView content={driversContent} hideTitle={true} />
+                        </AccordionSection>
 
-                        <section id="panel-team" className="scroll-mt-24">
-                            <F1TeamDraftPanelView title="팀 구성" content={teamDraftContent} />
-                        </section>
+                        <AccordionSection id="panel-team" title="팀 구성" defaultOpen={false}>
+                            <F1TeamDraftPanelView content={teamDraftContent} hideTitle={true} />
+                        </AccordionSection>
 
-                        <section id="panel-race-result" className="scroll-mt-24">
+                        <AccordionSection id="panel-race-result" title="레이스 결과" defaultOpen={false}>
                             {F1_DAY_RESULTS.length > 0 ? (
-                                F1_DAY_RESULTS.map((dayResult) => (
-                                    <F1DayResultPanelView
-                                        key={dayResult.label}
-                                        title={`레이스 결과 — ${dayResult.label}`}
-                                        content={dayResult}
-                                        drivers={driversContent.participants}
-                                    />
-                                ))
+                                <div className="space-y-8">
+                                    {F1_DAY_RESULTS.map((dayResult) => (
+                                        <div key={dayResult.label} className="rounded-2xl border border-[#1e3a5f]/40 bg-[#031221]/60 p-4">
+                                            <h3 className="font-f1 text-2xl font-black uppercase tracking-tight text-[#e8f4fd]">
+                                                {dayResult.label}
+                                            </h3>
+                                            <div className="mt-3 h-px w-full bg-gradient-to-r from-[#E10600]/40 via-[#7a0300]/20 to-transparent" />
+                                            <F1DayResultPanelView
+                                                content={dayResult}
+                                                drivers={driversContent.participants}
+                                                hideTitle={true}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
                             ) : (
-                                <ComingSoonPanel title="레이스 결과" />
+                                <div className="mt-4 rounded-2xl border border-[#2e1a1a]/60 bg-[#120608]/30 py-12 text-center text-sm font-semibold uppercase tracking-widest text-[#6aadcc]/50">
+                                    Coming Soon
+                                </div>
                             )}
-                        </section>
+                        </AccordionSection>
 
-                        <section id="panel-final" className="scroll-mt-24">
+                        <AccordionSection id="panel-final" title="파이널" defaultOpen={true}>
                             <F1DayResultPanelView
-                                title="파이널"
                                 content={F1_FINAL_RESULT}
                                 drivers={driversContent.participants}
                                 showRace2={false}
+                                hideTitle={true}
                             />
-                        </section>
+                        </AccordionSection>
 
                         {/*<section id="panel-standings" className="scroll-mt-24">*/}
                         {/*    <ComingSoonPanel title="챔피언십 순위" />*/}

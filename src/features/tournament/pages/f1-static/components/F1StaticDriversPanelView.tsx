@@ -3,8 +3,9 @@ import { Star, Trophy, Users } from 'lucide-react'
 import type { F1DriversContent, F1Driver } from '../../../types'
 
 interface Props {
-    title: string
+    title?: string
     content: F1DriversContent
+    hideTitle?: boolean
 }
 
 const TIER_COLORS: Record<string, string> = {
@@ -47,22 +48,29 @@ function parseTierStars(tier: string | null): { count: number; hasPlus: boolean 
     }
 }
 
-export function F1StaticDriversPanelView({ title, content }: Props) {
+export function F1StaticDriversPanelView({ title, content, hideTitle = false }: Props) {
     const allDrivers = [...content.participants].sort((a, b) => a.order - b.order)
     const firstDrivers = allDrivers.filter((d) => d.driverRole === 'FIRST')
     const secondADrivers = allDrivers.filter((d) => d.driverRole === 'SECOND' && d.secondGroup === 'A')
     const secondBDrivers = allDrivers.filter((d) => d.driverRole === 'SECOND' && d.secondGroup === 'B')
 
+    const body = (
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+            <DriverColumn label="FIRST" color="#E10600" drivers={firstDrivers} />
+            <DriverColumn label="SECOND A" color="#6aadcc" drivers={secondADrivers} />
+            <DriverColumn label="SECOND B" color="#4fb8f0" drivers={secondBDrivers} />
+        </div>
+    )
+
+    if (hideTitle) {
+        return <div className="w-full">{body}</div>
+    }
+
     return (
         <section className="mt-10 w-full">
             <h2 className="font-f1 text-5xl font-black uppercase tracking-tight text-[#e8f4fd]">{title}</h2>
             <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
-
-            <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
-                <DriverColumn label="FIRST" color="#E10600" drivers={firstDrivers} />
-                <DriverColumn label="SECOND A" color="#6aadcc" drivers={secondADrivers} />
-                <DriverColumn label="SECOND B" color="#4fb8f0" drivers={secondBDrivers} />
-            </div>
+            {body}
         </section>
     )
 }

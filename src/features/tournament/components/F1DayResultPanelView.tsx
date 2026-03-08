@@ -3,10 +3,11 @@ import { getF1TeamThemes } from '../data/f1TeamDraft'
 import type { F1DayQualifyingEntry, F1DayRaceEntry, F1DayDriverStanding, F1DayTeamStanding, F1DayResultContent, F1Driver } from '../types'
 
 interface Props {
-    title: string
+    title?: string
     content: F1DayResultContent
     drivers: F1Driver[]
     showRace2?: boolean
+    hideTitle?: boolean
 }
 
 // ── 유틸 ──────────────────────────────────────────────────────────────────
@@ -18,7 +19,6 @@ function getRankColor(rank: number | null, dnf: boolean): string {
     if (rank === 3) return 'text-amber-600'
     return 'text-[#e8f4fd]'
 }
-
 
 // ── 공용 서브컴포넌트 ─────────────────────────────────────────────────────
 
@@ -215,13 +215,17 @@ function TeamStandingCard({ standing }: { standing: F1DayTeamStanding }) {
             <div className="absolute inset-0 bg-[#020d18]/65" />
 
             {/* 콘텐츠 */}
-            <div className={['relative grid items-center gap-3 px-4 py-3', standing.r1Points != null || standing.r2Points != null ? 'grid-cols-[2rem_1fr_3.5rem_auto]' : 'grid-cols-[2rem_1fr_3.5rem]'].join(' ')}>
+            <div
+                className={[
+                    'relative grid items-center gap-3 px-4 py-3',
+                    standing.r1Points != null || standing.r2Points != null
+                        ? 'grid-cols-[2rem_1fr_3.5rem_auto]'
+                        : 'grid-cols-[2rem_1fr_3.5rem]',
+                ].join(' ')}
+            >
                 {/* 등수 */}
                 <span
-                    className={[
-                        'text-xl font-black tabular-nums text-center',
-                        isFirst ? 'text-[#F5C842]' : 'text-[#e8f4fd]/50',
-                    ].join(' ')}
+                    className={['text-xl font-black tabular-nums text-center', isFirst ? 'text-[#F5C842]' : 'text-[#e8f4fd]/50'].join(' ')}
                 >
                     {standing.rank}
                 </span>
@@ -246,12 +250,7 @@ function TeamStandingCard({ standing }: { standing: F1DayTeamStanding }) {
                 {/* 총 포인트 */}
                 <div className="text-center">
                     <span className="block text-[10px] font-bold uppercase tracking-widest text-[#6aadcc]/60">PTS</span>
-                    <span
-                        className={[
-                            'text-xl font-black tabular-nums',
-                            isFirst ? 'text-[#F5C842]' : 'text-[#e8f4fd]',
-                        ].join(' ')}
-                    >
+                    <span className={['text-xl font-black tabular-nums', isFirst ? 'text-[#F5C842]' : 'text-[#e8f4fd]'].join(' ')}>
                         {standing.totalPoints}
                     </span>
                 </div>
@@ -384,7 +383,7 @@ function DriverStandingsTable({ standings, driversById }: DriverStandingsTablePr
 
 // ── 메인 컴포넌트 ─────────────────────────────────────────────────────────
 
-export function F1DayResultPanelView({ title, content, drivers, showRace2 = true }: Props) {
+export function F1DayResultPanelView({ title, content, drivers, showRace2 = true, hideTitle = false }: Props) {
     // F1Driver.id = String(TournamentPlayerPublic.id) 이므로 string 키로 저장
     const driversById = new Map(drivers.map((d) => [d.id, d]))
 
@@ -392,64 +391,65 @@ export function F1DayResultPanelView({ title, content, drivers, showRace2 = true
 
     const hasAnyData = content.qualifying.length > 0 || content.race1.length > 0 || (showRace2 && content.race2.length > 0)
 
-    return (
-        <section className="w-full mt-10">
-            {/* 섹션 제목 */}
-            <h2 className="font-f1 text-5xl font-black tracking-tight uppercase text-[#e8f4fd]">{title}</h2>
-            <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
-
-            {!hasAnyData ? (
-                <div className="mt-6 flex flex-col items-center justify-center gap-3 rounded-2xl border border-[#2e1a1a]/60 bg-[#120608]/30 py-16">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#E10600]/30 bg-[#E10600]/10">
-                        <span className="text-xl">🏁</span>
-                    </div>
-                    <p className="text-sm font-semibold uppercase tracking-widest text-[#6aadcc]/50">결과 준비 중입니다</p>
+    const body = !hasAnyData ? (
+        <div className="mt-6 flex flex-col items-center justify-center gap-3 rounded-2xl border border-[#2e1a1a]/60 bg-[#120608]/30 py-16">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#E10600]/30 bg-[#E10600]/10">
+                <span className="text-xl">🏁</span>
+            </div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#6aadcc]/50">결과 준비 중입니다</p>
+        </div>
+    ) : (
+        <>
+            <div className={['mt-8 grid grid-cols-1 gap-6', showRace2 ? 'md:grid-cols-3' : 'md:grid-cols-2'].join(' ')}>
+                <div>
+                    <SectionHeader label="Qualifying" />
+                    <QualifyingTable entries={content.qualifying} driversById={driversById} />
                 </div>
-            ) : (
-                <>
-                    {/* ── 1. 레이스 결과 3열 ── */}
-                    <div className={['mt-8 grid grid-cols-1 gap-6', showRace2 ? 'md:grid-cols-3' : 'md:grid-cols-2'].join(' ')}>
-                        <div>
-                            <SectionHeader label="Qualifying" />
-                            <QualifyingTable entries={content.qualifying} driversById={driversById} />
-                        </div>
-                        <div>
-                            <SectionHeader label="Round 1" />
-                            <RaceTable entries={content.race1} driversById={driversById} label="Round 1" />
-                        </div>
-                        {showRace2 && (
-                            <div>
-                                <SectionHeader label="Round 2" />
-                                <RaceTable entries={content.race2} driversById={driversById} label="Round 2" />
-                            </div>
-                        )}
+                <div>
+                    <SectionHeader label="Round 1" />
+                    <RaceTable entries={content.race1} driversById={driversById} label="Round 1" />
+                </div>
+                {showRace2 && (
+                    <div>
+                        <SectionHeader label="Round 2" />
+                        <RaceTable entries={content.race2} driversById={driversById} label="Round 2" />
                     </div>
+                )}
+            </div>
 
-                    {/* ── 2. 팀 성적 카드 ── */}
-                    {sortedTeamStandings.length > 0 && (
-                        <div className="mt-12">
-                            <h3 className="font-f1 text-2xl font-black uppercase tracking-tight text-[#e8f4fd]">{content.label} 팀 성적</h3>
-                            <div className="mt-4 h-px w-full bg-gradient-to-r from-[#E10600]/40 via-[#7a0300]/20 to-transparent" />
-                            <div className="mt-4 flex flex-col gap-2">
-                                {sortedTeamStandings.map((standing) => (
-                                    <TeamStandingCard key={standing.teamIndex} standing={standing} />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* ── 3. 개인 성적 테이블 ── */}
-                    {content.driverStandings.length > 0 && (
-                        <div className="mt-12">
-                            <h3 className="font-f1 text-2xl font-black uppercase tracking-tight text-[#e8f4fd]">드라이버 성적</h3>
-                            <div className="mt-4 h-px w-full bg-gradient-to-r from-[#E10600]/40 via-[#7a0300]/20 to-transparent" />
-                            <div className="mt-4">
-                                <DriverStandingsTable standings={content.driverStandings} driversById={driversById} />
-                            </div>
-                        </div>
-                    )}
-                </>
+            {sortedTeamStandings.length > 0 && (
+                <div className="mt-12">
+                    <h3 className="font-f1 text-2xl font-black uppercase tracking-tight text-[#e8f4fd]">{content.label} 팀 성적</h3>
+                    <div className="mt-4 h-px w-full bg-gradient-to-r from-[#E10600]/40 via-[#7a0300]/20 to-transparent" />
+                    <div className="mt-4 flex flex-col gap-2">
+                        {sortedTeamStandings.map((standing) => (
+                            <TeamStandingCard key={standing.teamIndex} standing={standing} />
+                        ))}
+                    </div>
+                </div>
             )}
+
+            {content.driverStandings.length > 0 && (
+                <div className="mt-12">
+                    <h3 className="font-f1 text-2xl font-black uppercase tracking-tight text-[#e8f4fd]">드라이버 성적</h3>
+                    <div className="mt-4 h-px w-full bg-gradient-to-r from-[#E10600]/40 via-[#7a0300]/20 to-transparent" />
+                    <div className="mt-4">
+                        <DriverStandingsTable standings={content.driverStandings} driversById={driversById} />
+                    </div>
+                </div>
+            )}
+        </>
+    )
+
+    if (hideTitle) {
+        return <div className="w-full">{body}</div>
+    }
+
+    return (
+        <section className="mt-10 w-full">
+            <h2 className="font-f1 text-5xl font-black uppercase tracking-tight text-[#e8f4fd]">{title}</h2>
+            <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
+            {body}
         </section>
     )
 }

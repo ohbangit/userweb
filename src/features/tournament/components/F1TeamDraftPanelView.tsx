@@ -3,18 +3,17 @@ import { getF1TeamThemes } from '../data/f1TeamDraft'
 import type { F1TeamDraftContent } from '../types'
 
 interface Props {
-    title: string
+    title?: string
     content: F1TeamDraftContent
+    hideTitle?: boolean
 }
 
-export function F1TeamDraftPanelView({ title, content }: Props) {
+export function F1TeamDraftPanelView({ title, content, hideTitle = false }: Props) {
     const themes = getF1TeamThemes()
     const sorted = [...content.teams].sort((a, b) => a.order - b.order)
 
-    return (
-        <section className="w-full mt-10">
-            <h2 className="font-f1 text-5xl font-black tracking-tight uppercase text-[#e8f4fd]">{title}</h2>
-            <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
+    const body = (
+        <>
             <div className="mt-4 rounded-xl border border-[#8a1b18]/30 bg-[#120607]/70 p-4">
                 <p className="text-sm font-medium leading-relaxed text-[#e6f1f8]/85">
                     * 드라이버 변경 안내:
@@ -41,7 +40,7 @@ export function F1TeamDraftPanelView({ title, content }: Props) {
             {sorted.length === 0 ? (
                 <p className="mt-4 text-base text-[#6aadcc]/60">구성된 팀이 없습니다.</p>
             ) : (
-                <div className="mt-6 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-4 justify-items-center">
+                <div className="mt-6 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] justify-items-center gap-4">
                     {sorted.map((team, index) => {
                         const theme = themes[index % themes.length]
                         return (
@@ -112,6 +111,18 @@ export function F1TeamDraftPanelView({ title, content }: Props) {
                     })}
                 </div>
             )}
+        </>
+    )
+
+    if (hideTitle) {
+        return <div className="w-full">{body}</div>
+    }
+
+    return (
+        <section className="w-full mt-10">
+            <h2 className="font-f1 text-5xl font-black tracking-tight uppercase text-[#e8f4fd]">{title}</h2>
+            <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
+            {body}
         </section>
     )
 }
