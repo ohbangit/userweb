@@ -175,8 +175,8 @@ function RaceTable({ entries, driversById, label }: RaceTableProps) {
                         <li key={entry.driverId} className={entry.dnf ? 'opacity-60' : ''}>
                             {index > 0 && <div className="h-px w-full bg-gradient-to-r from-transparent via-[#1e3a5f]/30 to-transparent" />}
                             <div className="grid grid-cols-[1.8rem_1fr_1.8rem_1.6rem_5rem] items-center gap-1 px-3 py-2">
-                                <RankBadge rank={entry.position} dnf={entry.dnf} />
-                                <DriverCell driver={driver} dnf={entry.dnf} />
+                                <RankBadge rank={entry.position} dnf={entry.dnf ?? false} />
+                                <DriverCell driver={driver} dnf={entry.dnf ?? false} />
                                 <div className="flex justify-center">
                                     <TeamIcon teamIndex={entry.teamIndex} />
                                 </div>
@@ -215,7 +215,7 @@ function TeamStandingCard({ standing }: { standing: F1DayTeamStanding }) {
             <div className="absolute inset-0 bg-[#020d18]/65" />
 
             {/* 콘텐츠 */}
-            <div className="relative grid grid-cols-[2rem_1fr_3.5rem_auto] items-center gap-3 px-4 py-3">
+            <div className={['relative grid items-center gap-3 px-4 py-3', standing.r1Points != null || standing.r2Points != null ? 'grid-cols-[2rem_1fr_3.5rem_auto]' : 'grid-cols-[2rem_1fr_3.5rem]'].join(' ')}>
                 {/* 등수 */}
                 <span
                     className={[
@@ -256,17 +256,23 @@ function TeamStandingCard({ standing }: { standing: F1DayTeamStanding }) {
                     </span>
                 </div>
 
-                {/* R1 / R2 포인트 */}
-                <div className="flex flex-col gap-1">
-                    <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#6aadcc]/50">R1</span>
-                        <span className="text-sm font-black tabular-nums text-[#e8f4fd]/80">{standing.r1Points}</span>
+                {/* R1 / R2 포인트 — 라운드가 있는 경우만 렌더링 */}
+                {(standing.r1Points != null || standing.r2Points != null) && (
+                    <div className="flex flex-col gap-1">
+                        {standing.r1Points != null && (
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#6aadcc]/50">R1</span>
+                                <span className="text-sm font-black tabular-nums text-[#e8f4fd]/80">{standing.r1Points}</span>
+                            </div>
+                        )}
+                        {standing.r2Points != null && (
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#6aadcc]/50">R2</span>
+                                <span className="text-sm font-black tabular-nums text-[#e8f4fd]/80">{standing.r2Points}</span>
+                            </div>
+                        )}
                     </div>
-                    <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#6aadcc]/50">R2</span>
-                        <span className="text-sm font-black tabular-nums text-[#e8f4fd]/80">{standing.r2Points}</span>
-                    </div>
-                </div>
+                )}
             </div>
         </div>
     )

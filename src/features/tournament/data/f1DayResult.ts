@@ -142,18 +142,62 @@ export const F1_FINAL_RESULT: F1DayResultContent = {
         { driverId: 64, teamIndex: 6, position: 20, lapTime: '1:26.642' }, // 하쁘
     ],
     race1: [
-        // 파이널 Race 1 결과를 여기에 채워 넣어주세요.
-        // { driverId: 41, teamIndex: 0, position: 1, grid: 1, lapTime: 'xx:xx.xxx', dnf: false, fastestLap: false, points: 24 },
+        { driverId: 41, teamIndex: 0, position: 1, grid: 2, lapTime: '43:45.527', dnf: false, fastestLap: false, points: 36 }, // 형독
+        { driverId: 47, teamIndex: 4, position: 2, grid: 1, lapTime: '43:49.061', dnf: false, fastestLap: false, points: 33 }, // 유영혁
+        { driverId: 42, teamIndex: 7, position: 3, grid: 8, lapTime: '43:54.953', dnf: false, fastestLap: false, points: 30 }, // 남궁혁
+        { driverId: 70, teamIndex: 9, position: 4, grid: 3, lapTime: '43:57.929', dnf: false, fastestLap: false, points: 27 }, // 레밀레기
+        { driverId: 49, teamIndex: 3, position: 5, grid: 7, lapTime: '44:13.812', dnf: false, fastestLap: false, points: 24 }, // 사모장
+        { driverId: 55, teamIndex: 7, position: 6, grid: 4, lapTime: '44:18.745', dnf: false, fastestLap: false, points: 22.5 }, // 오단밍
+        { driverId: 45, teamIndex: 1, position: 7, grid: 6, lapTime: '44:25.983', dnf: false, fastestLap: false, points: 21 }, // 제황
+        { driverId: 52, teamIndex: 8, position: 8, grid: 11, lapTime: '44:31.608', dnf: false, fastestLap: false, points: 19.5 }, // 양메이
+        { driverId: 79, teamIndex: 1, position: 9, grid: 12, lapTime: '44:37.742', dnf: false, fastestLap: false, points: 18 }, // 해오니
+        { driverId: 62, teamIndex: 4, position: 10, grid: 10, lapTime: '44:44.242', dnf: false, fastestLap: false, points: 16.5 }, // 유리리
+        { driverId: 46, teamIndex: 9, position: 11, grid: 15, lapTime: '44:58.720', dnf: false, fastestLap: false, points: 15 }, // 강지형
+        { driverId: 44, teamIndex: 5, position: 12, grid: 13, lapTime: '44:59.586', dnf: false, fastestLap: false, points: 13.5 }, // 요나
+        { driverId: 78, teamIndex: 6, position: 13, grid: 16, lapTime: '45:11.875', dnf: false, fastestLap: false, points: 12 }, // 푸후
+        { driverId: 75, teamIndex: 0, position: 14, grid: 19, lapTime: null, dnf: false, fastestLap: false, points: 10.5 }, // 연곰
+        { driverId: 56, teamIndex: 2, position: 15, grid: 9, lapTime: null, dnf: false, fastestLap: false, points: 9 }, // 새싹감자
+        { driverId: 61, teamIndex: 5, position: 16, grid: 20, lapTime: null, dnf: false, fastestLap: false, points: 7.5 }, // 히비
+        { driverId: 60, teamIndex: 3, position: 17, grid: 14, lapTime: null, dnf: false, fastestLap: false, points: 6 }, // 미치르
+        { driverId: 67, teamIndex: 8, position: 18, grid: 17, lapTime: null, dnf: false, fastestLap: false, points: 4.5 }, // 남시우
+        { driverId: 64, teamIndex: 6, position: 19, grid: 18, lapTime: null, dnf: false, fastestLap: false, points: 3 }, // 하쁘
+        { driverId: 43, teamIndex: 2, position: 20, grid: 5, lapTime: null, dnf: false, fastestLap: true, points: 1.5 }, // 박인수
     ],
     race2: [
         // 파이널 Race 2 결과를 여기에 채워 넣어주세요. (없으면 비워두세요)
     ],
     teamStandings: [
-        // 파이널 팀 성적을 여기에 채워 넣어주세요.
-        // { teamIndex: 0, rank: 1, totalPoints: 0, r1Points: 0, r2Points: 0 },
+        { teamIndex: 7, rank: 1, totalPoints: 113.5 }, // 윌리엄스
+        { teamIndex: 9, rank: 2, totalPoints: 113 }, // 하스
+        { teamIndex: 0, rank: 3, totalPoints: 110.5 }, // 레드불
+        { teamIndex: 4, rank: 4, totalPoints: 93.5 }, // RB
+        { teamIndex: 1, rank: 5, totalPoints: 84 }, // 맥라렌
+        { teamIndex: 5, rank: 6, totalPoints: 62 }, // 알핀
+        { teamIndex: 8, rank: 7, totalPoints: 59 }, // 자우버
+        { teamIndex: 2, rank: 8, totalPoints: 50.5 }, // 메르세데스
+        { teamIndex: 3, rank: 9, totalPoints: 47 }, // 페라리
+        { teamIndex: 6, rank: 10, totalPoints: 42 }, // 애스턴마틴
     ],
     driverStandings: [
-        // 파이널 드라이버 성적을 여기에 채워 넣어주세요.
-        // { driverId: 41, teamIndex: 0, points: 0 },
+        { driverId: 41, teamIndex: 0, points: 82 }, // 형독
+        { driverId: 70, teamIndex: 9, points: 77 }, // 레밀레기
+        { driverId: 42, teamIndex: 7, points: 68 }, // 남궁혁
+        { driverId: 47, teamIndex: 4, points: 67 }, // 유영혁
+        { driverId: 55, teamIndex: 7, points: 45.5 }, // 오단밍
+        { driverId: 52, teamIndex: 8, points: 45.5 }, // 양메이
+        { driverId: 79, teamIndex: 1, points: 45 }, // 해오니
+        { driverId: 45, teamIndex: 1, points: 39 }, // 제황
+        { driverId: 49, teamIndex: 3, points: 38 }, // 사모장
+        { driverId: 46, teamIndex: 9, points: 36 }, // 강지형
+        { driverId: 44, teamIndex: 5, points: 35.5 }, // 요나
+        { driverId: 75, teamIndex: 0, points: 28.5 }, // 연곰
+        { driverId: 62, teamIndex: 4, points: 26.5 }, // 유리리
+        { driverId: 61, teamIndex: 5, points: 26.5 }, // 히비
+        { driverId: 56, teamIndex: 2, points: 26 }, // 새싹감자
+        { driverId: 43, teamIndex: 2, points: 24.5 }, // 박인수
+        { driverId: 64, teamIndex: 6, points: 21 }, // 하쁘
+        { driverId: 78, teamIndex: 6, points: 21 }, // 푸후
+        { driverId: 67, teamIndex: 8, points: 13.5 }, // 남시우
+        { driverId: 60, teamIndex: 3, points: 9 }, // 미치르
     ],
 }

@@ -376,7 +376,7 @@ export interface F1DayRaceEntry {
     position: number | null
     grid: number | null     // 출발 그리드
     lapTime: string | null
-    dnf: boolean
+    dnf: boolean | null
     fastestLap: boolean
     points: number | null
 }
@@ -386,8 +386,8 @@ export interface F1DayTeamStanding {
     teamIndex: number       // TEAM_THEMES 배열 인덱스 (레드불=0 …)
     rank: number
     totalPoints: number
-    r1Points: number
-    r2Points: number
+    r1Points?: number
+    r2Points?: number
 }
 
 /** 개인 성적 항목 */
