@@ -6,6 +6,7 @@ interface Props {
     title: string
     content: F1DayResultContent
     drivers: F1Driver[]
+    showRace2?: boolean
 }
 
 // ── 유틸 ──────────────────────────────────────────────────────────────────
@@ -377,13 +378,13 @@ function DriverStandingsTable({ standings, driversById }: DriverStandingsTablePr
 
 // ── 메인 컴포넌트 ─────────────────────────────────────────────────────────
 
-export function F1DayResultPanelView({ title, content, drivers }: Props) {
+export function F1DayResultPanelView({ title, content, drivers, showRace2 = true }: Props) {
     // F1Driver.id = String(TournamentPlayerPublic.id) 이므로 string 키로 저장
     const driversById = new Map(drivers.map((d) => [d.id, d]))
 
     const sortedTeamStandings = [...content.teamStandings].sort((a, b) => a.rank - b.rank)
 
-    const hasAnyData = content.qualifying.length > 0 || content.race1.length > 0 || content.race2.length > 0
+    const hasAnyData = content.qualifying.length > 0 || content.race1.length > 0 || (showRace2 && content.race2.length > 0)
 
     return (
         <section className="w-full mt-10">
@@ -401,7 +402,7 @@ export function F1DayResultPanelView({ title, content, drivers }: Props) {
             ) : (
                 <>
                     {/* ── 1. 레이스 결과 3열 ── */}
-                    <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div className={['mt-8 grid grid-cols-1 gap-6', showRace2 ? 'md:grid-cols-3' : 'md:grid-cols-2'].join(' ')}>
                         <div>
                             <SectionHeader label="Qualifying" />
                             <QualifyingTable entries={content.qualifying} driversById={driversById} />
@@ -410,10 +411,12 @@ export function F1DayResultPanelView({ title, content, drivers }: Props) {
                             <SectionHeader label="Round 1" />
                             <RaceTable entries={content.race1} driversById={driversById} label="Round 1" />
                         </div>
-                        <div>
-                            <SectionHeader label="Round 2" />
-                            <RaceTable entries={content.race2} driversById={driversById} label="Round 2" />
-                        </div>
+                        {showRace2 && (
+                            <div>
+                                <SectionHeader label="Round 2" />
+                                <RaceTable entries={content.race2} driversById={driversById} label="Round 2" />
+                            </div>
+                        )}
                     </div>
 
                     {/* ── 2. 팀 성적 카드 ── */}

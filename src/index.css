@@ -97,10 +97,3 @@ body {
         display: none;
     }
 }
-
-.bg-f1-fixed {
-    background-image: url('./assets/f1_bg.webp');
-    background-size: cover;
-    background-position: center top;
-    background-color: #020d18;
-}

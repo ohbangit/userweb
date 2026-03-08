@@ -125,8 +125,7 @@ export default function F1StaticPage() {
     }, [])
 
     return (
-        <div className="relative min-h-screen font-f1">
-            <div className="bg-f1-fixed fixed inset-0 -z-10" aria-hidden="true" />
+        <div className="relative min-h-screen bg-[#020d18] font-f1">
             <Helmet>
                 <title>{seoTitle}</title>
                 <meta name="description" content={SEO_DESC} />
@@ -181,7 +180,7 @@ export default function F1StaticPage() {
                     </div>
                 </nav>
 
-                <div className="bg-black/60 px-4 pb-16 pt-10">
+                <div className="px-4 pb-16 pt-10">
                     <div className="mx-auto max-w-5xl space-y-4">
                         <section className="scroll-mt-24">
                             <div className="aspect-video w-full overflow-hidden rounded-2xl">
@@ -234,6 +233,7 @@ export default function F1StaticPage() {
                                 title="파이널"
                                 content={F1_FINAL_RESULT}
                                 drivers={driversContent.participants}
+                                showRace2={false}
                             />
                         </section>
 
