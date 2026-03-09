@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react'
+import { TOAST_DEFAULT_DURATION_MS } from '../../../constants/config'
 import {
     AdminToastContext,
     type AddToastInput,
@@ -31,7 +32,7 @@ export function AdminToastProvider({ children }: { children: ReactNode }) {
     }, [])
 
     const addToast = useCallback(
-        ({ message, variant = 'success', duration = 3000 }: AddToastInput) => {
+        ({ message, variant = 'success', duration = TOAST_DEFAULT_DURATION_MS }: AddToastInput) => {
             const id = resolveId()
             setToasts((prev) => [
                 ...prev,

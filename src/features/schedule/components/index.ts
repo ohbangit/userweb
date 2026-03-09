@@ -13,6 +13,6 @@ export { DayBroadcastListModal } from './DayBroadcastListModal'
 
 export { ScheduleSeoHead } from './ScheduleSeoHead'
 
-export { BannerCarousel } from './BannerCarousel'
+
 
 export { MapTypeBadge, MatchSetRow, MatchScoreHeader, MatchSetsPanel } from './overwatch'

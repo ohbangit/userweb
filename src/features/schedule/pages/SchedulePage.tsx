@@ -4,16 +4,16 @@ import { useEffect, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { useViewMode } from '../../../hooks/useViewMode'
-import { useSchedule, usePublicBanners } from '../hooks'
+import { useSchedule } from '../hooks'
 import { addDays, addMonths, isSameDay } from '../utils'
 import {
     DailySchedule,
     WeeklySchedule,
     MonthlySchedule,
     ScheduleSeoHead,
-    BannerCarousel,
-} from '../components'
+    } from '../components'
 import { DateControlPanel } from '../../../components/schedule'
+import { BannerCarousel, usePublicBanners } from '../../banner'
 
 export default function SchedulePage() {
     const [searchParams, setSearchParams] = useSearchParams()
