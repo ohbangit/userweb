@@ -22,14 +22,9 @@
         <script>
             ;(function () {
                 var gaId = '%VITE_GA_ID%'
-                var isProduction = '%MODE%' === 'production'
                 var isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
 
-                if (!isProduction || isLocalhost) {
-                    return
-                }
-
-                if (!gaId || gaId === '%VITE_GA_ID%') {
+                if (!gaId || gaId === '%VITE_GA_ID%' || isLocalhost) {
                     return
                 }
 
