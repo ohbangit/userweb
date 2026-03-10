@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { ChevronUp } from 'lucide-react'
-import { Header } from '../../../app/components/Header'
+import { Header } from '../../../components/layout'
 import { TournamentHero } from '../components/TournamentHero'
 import {
     F1DriversPanelView,
