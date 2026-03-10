@@ -1,7 +1,6 @@
 /**
  * GA4 커스텀 이벤트 유틸리티
  *
- * - 프로덕션 환경에서만 전송한다 (개발/스테이징 오염 방지)
  * - window.gtag 미존재 시 조용히 무시한다
  * - 이벤트 이름과 파라미터 타입을 명시적으로 관리한다
  */
@@ -40,7 +39,6 @@ type GaEventMap = {
 }
 
 export function trackEvent<K extends keyof GaEventMap>(name: K, params: GaEventMap[K]): void {
-    if (!import.meta.env.PROD) return
     if (typeof window.gtag !== 'function') return
     window.gtag('event', name, params as Record<string, unknown>)
 }
