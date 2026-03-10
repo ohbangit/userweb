@@ -687,11 +687,11 @@ export default function TournamentManagePage({ mode = 'overwatch' }: TournamentM
         sortedPanels,
     ])
 
-    const pageTitle = mode === 'racing' ? '레이싱' : '오버워치'
+    const pageTitle = mode === 'racing' ? '레이싱' : '(구)오버워치'
     const pageDescription =
         mode === 'racing'
             ? '레이싱 대회를 선택한 뒤 메타와 구성요소를 함께 관리합니다.'
-            : '대회를 선택한 뒤 메타와 구성요소를 함께 관리합니다.'
+            : '기존 오버워치 대회를 선택한 뒤 메타와 구성요소를 함께 관리합니다.'
     const createTournamentDefaultGame = mode === 'racing' ? 'racing' : 'overwatch'
 
     return (

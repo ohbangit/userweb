@@ -2,24 +2,20 @@ import { Menu, Moon, Sun, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import logoDarkSrc from '../../assets/logo_dark.png'
-import { useTournamentList } from '../../features/tournament/hooks/useTournamentList'
 import { useOutsideClick } from '../../hooks/useOutsideClick'
 import { useScrolled } from '../../hooks/useScrolled'
 import { useTheme } from '../../hooks/useTheme'
 import { cn } from '../../lib/cn'
 import { MobileMenu } from './MobileMenu'
-import { TournamentDropdown } from './TournamentDropdown'
-import type { TournamentMenuItem } from './types'
 
 /**
  * GNB (Global Navigation Bar)
- * 로고, 메인 네비게이션(방송일정/대회 드롭다운), 테마 토글, 모바일 메뉴 버튼을 포함합니다.
+ * 로고, 메인 네비게이션(방송일정/OW 라이벌 클래시/F1 레이싱), 테마 토글, 모바일 메뉴 버튼을 포함합니다.
  * 스크롤 시 border/shadow가 강화되어 콘텐츠 위 떠 있는 느낌을 줍니다.
  */
 export function Header() {
     const { theme, toggleTheme } = useTheme()
     const location = useLocation()
-    const { data: tournamentData } = useTournamentList()
     const scrolled = useScrolled()
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -44,22 +40,6 @@ export function Header() {
 
     // 헤더 외부 클릭 시 모바일 메뉴 닫기
     useOutsideClick(headerRef, () => setMobileMenuOpen(false), mobileMenuOpen)
-
-    const tournaments = tournamentData?.tournaments ?? []
-    const tournamentMenuItems: TournamentMenuItem[] = tournaments.map((tournament) => ({
-        id: tournament.id,
-        slug: tournament.slug,
-        name: tournament.name,
-    }))
-
-    // F1 레이싱 대회는 별도 정적 페이지로 존재 — API 미등록 시 수동 추가
-    if (!tournamentMenuItems.some((item) => item.slug === 'chzzk-racing4th')) {
-        tournamentMenuItems.push({
-            id: -9991,
-            slug: 'chzzk-racing4th',
-            name: 'F1 25 레이싱 대회',
-        })
-    }
 
     const navItemClass = ({ isActive }: { isActive: boolean }) =>
         cn(
@@ -87,9 +67,12 @@ export function Header() {
                         <NavLink to="/" end className={navItemClass}>
                             방송일정
                         </NavLink>
-
-                        {/* 대회 드롭다운 */}
-                        <TournamentDropdown items={tournamentMenuItems} isActive={location.pathname.startsWith('/tournament')} />
+                        <NavLink to="/tournament/overwatch-vs-talon" className={navItemClass}>
+                            (구)오버워치 RIVAL CLASH
+                        </NavLink>
+                        <NavLink to="/tournament/chzzk-racing4th" className={navItemClass}>
+                            2026 치레동 F1
+                        </NavLink>
                     </nav>
                 </div>
 
@@ -120,11 +103,7 @@ export function Header() {
             </div>
 
             {/* 모바일 메뉴 */}
-            <MobileMenu
-                isOpen={mobileMenuOpen}
-                onClose={() => setMobileMenuOpen(false)}
-                tournamentItems={tournamentMenuItems}
-            />
+            <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
         </header>
     )
 }

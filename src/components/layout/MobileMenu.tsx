@@ -1,19 +1,21 @@
-import { ChevronRight, Trophy } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { createPortal } from 'react-dom'
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { cn } from '../../lib/cn'
-import { trackEvent } from '../../utils/analytics'
 import type { MobileMenuProps } from './types'
 
 /**
  * 모바일 네비게이션 메뉴 패널
  * 햄버거 버튼 클릭 시 헤더 아래로 펼쳐지는 풀스크린 오버레이 메뉴입니다.
  */
-export function MobileMenu({ isOpen, onClose, tournamentItems }: MobileMenuProps) {
-    const navigate = useNavigate()
-    const location = useLocation()
-
+export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     if (!isOpen) return null
+
+    const mobileNavItemClass = ({ isActive }: { isActive: boolean }) =>
+        cn(
+            'flex w-full cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-left text-base font-medium transition-colors',
+            isActive ? 'bg-primary/10 text-primary' : 'text-text hover:bg-border/10',
+        )
 
     return (
         <>
@@ -32,17 +34,7 @@ export function MobileMenu({ isOpen, onClose, tournamentItems }: MobileMenuProps
             >
                 <div className="flex flex-col py-2">
                     {/* 방송일정 */}
-                    <NavLink
-                        to="/"
-                        end
-                        className={({ isActive }) =>
-                            cn(
-                                'flex w-full cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-left text-base font-medium transition-colors',
-                                isActive ? 'bg-primary/10 text-primary' : 'text-text hover:bg-border/10',
-                            )
-                        }
-                        onClick={onClose}
-                    >
+                    <NavLink to="/" end className={mobileNavItemClass} onClick={onClose}>
                         방송일정
                         <ChevronRight className="h-4 w-4 text-text-muted" />
                     </NavLink>
@@ -50,46 +42,16 @@ export function MobileMenu({ isOpen, onClose, tournamentItems }: MobileMenuProps
                     {/* 구분선 */}
                     <div className="mx-4 my-2 border-t border-border/30" />
 
-                    {/* 대회 섹션 */}
-                    <div>
-                        <div className="px-4 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-widest text-text-muted">대회</div>
-                        {tournamentItems.length === 0 ? (
-                            <div className="flex items-center gap-2 px-4 py-3 text-sm text-text-muted">
-                                <Trophy className="h-4 w-4" />
-                                <span>등록된 대회가 없습니다</span>
-                            </div>
-                        ) : (
-                            <ul className="flex flex-col">
-                                {tournamentItems.map((tournament) => {
-                                    const isActive = location.pathname === `/tournament/${tournament.slug}`
-                                    return (
-                                        <li key={tournament.id}>
-                                            <button
-                                                type="button"
-                                                className={cn(
-                                                    'flex w-full cursor-pointer items-center gap-2 rounded-lg px-4 py-3 text-left text-base transition-colors',
-                                                    isActive ? 'bg-primary/10 text-primary' : 'text-text hover:bg-border/10',
-                                                )}
-                                                onClick={() => {
-                                                    trackEvent('tournament_enter', {
-                                                        slug: tournament.slug,
-                                                        tournament_name: tournament.name,
-                                                        source: 'mobile_menu',
-                                                    })
-                                                    navigate(`/tournament/${tournament.slug}`)
-                                                    onClose()
-                                                }}
-                                            >
-                                                <Trophy className="h-4 w-4 shrink-0 text-text-muted" />
-                                                <span className="flex-1">{tournament.name}</span>
-                                                <ChevronRight className="h-4 w-4 text-text-muted" />
-                                            </button>
-                                        </li>
-                                    )
-                                })}
-                            </ul>
-                        )}
-                    </div>
+                    <NavLink to="/tournament/overwatch-vs-talon" className={mobileNavItemClass} onClick={onClose}>
+                        (구)오버워치 RIVAL CLASH
+                        <ChevronRight className="h-4 w-4 text-text-muted" />
+                    </NavLink>
+
+                    {/* F1 레이싱 */}
+                    <NavLink to="/tournament/chzzk-racing4th" className={mobileNavItemClass} onClick={onClose}>
+                        2026 치레동 F1
+                        <ChevronRight className="h-4 w-4 text-text-muted" />
+                    </NavLink>
                 </div>
             </div>
         </>
