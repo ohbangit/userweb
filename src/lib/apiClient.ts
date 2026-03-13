@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ''
 
 const ADMIN_API_KEY_STORAGE_KEY = 'ohbangit-admin-key'
 const ADMIN_API_KEY_EVENT = 'ohbangit-admin-key-change'
@@ -69,9 +69,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
         const errorBody = body as ApiErrorResponse | null
         throw new ApiError({
             code: errorBody?.error?.code ?? 'UNKNOWN_ERROR',
-            message:
-                errorBody?.error?.message ??
-                `HTTP ${response.status} 오류가 발생했습니다`,
+            message: errorBody?.error?.message ?? `HTTP ${response.status} 오류가 발생했습니다`,
             status: response.status,
             details: errorBody?.error?.details,
         })
@@ -86,10 +84,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
     return JSON.parse(rawBody) as T
 }
 
-export async function apiGet<T>(
-    path: string,
-    params?: Record<string, string>,
-): Promise<T> {
+export async function apiGet<T>(path: string, params?: Record<string, string>): Promise<T> {
     const url = new URL(`${BASE_URL}${path}`, window.location.origin)
     if (params) {
         Object.entries(params).forEach(([key, value]) => {
@@ -112,10 +107,7 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
     return handleResponse<T>(response)
 }
 
-export async function adminApiGet<T>(
-    path: string,
-    params?: Record<string, string>,
-): Promise<T> {
+export async function adminApiGet<T>(path: string, params?: Record<string, string>): Promise<T> {
     const url = new URL(`${BASE_URL}${path}`, window.location.origin)
     if (params) {
         Object.entries(params).forEach(([key, value]) => {
@@ -138,10 +130,7 @@ export async function adminApiPost<T>(path: string, body: unknown): Promise<T> {
     return handleResponse<T>(response)
 }
 
-export async function adminApiPatch<T>(
-    path: string,
-    body: unknown,
-): Promise<T> {
+export async function adminApiPatch<T>(path: string, body: unknown): Promise<T> {
     const response = await fetch(`${BASE_URL}${path}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', ...buildAdminHeaders() },
