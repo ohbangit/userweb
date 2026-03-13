@@ -1,0 +1,1 @@
+export { toOWTournamentViewModel } from './toOWTournamentViewModel'

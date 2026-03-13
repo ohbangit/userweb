@@ -4,18 +4,16 @@ import { useEffect, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { useViewMode } from '../../../hooks/useViewMode'
-import { useSchedule, usePublicBanners } from '../hooks'
+import { useSchedule } from '../hooks'
 import { addDays, addMonths, isSameDay } from '../utils'
 import {
     DailySchedule,
     WeeklySchedule,
     MonthlySchedule,
-    ViewToggle,
-    NavButton,
-    PeriodDisplay,
     ScheduleSeoHead,
-    BannerCarousel,
-} from '../components'
+    } from '../components'
+import { DateControlPanel } from '../../../components/schedule'
+import { BannerCarousel, usePublicBanners } from '../../banner'
 
 export default function SchedulePage() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -76,35 +74,15 @@ export default function SchedulePage() {
             />
             <div className="space-y-4 sm:space-y-6">
                 <BannerCarousel banners={bannersData?.banners ?? []} />
-                <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                        <NavButton direction="prev" onClick={handlePrev} />
-                        <PeriodDisplay
-                            currentDate={currentDate}
-                            viewMode={viewMode}
-                        />
-                        <NavButton direction="next" onClick={handleNext} />
-                    </div>
-
-                    <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-                        <button
-                            onClick={handleToday}
-                            disabled={isToday}
-                            className={[
-                                'inline-flex h-9 items-center rounded-lg border px-2.5 text-xs font-medium transition-colors sm:h-8 sm:px-3',
-                                isToday
-                                    ? 'cursor-default border-primary/40 bg-primary/10 text-primary'
-                                    : 'cursor-pointer border-border/40 bg-card text-text-muted hover:border-border hover:text-text',
-                            ].join(' ')}
-                        >
-                            오늘
-                        </button>
-                        <ViewToggle
-                            viewMode={viewMode}
-                            onChange={setViewMode}
-                        />
-                    </div>
-                </div>
+                <DateControlPanel
+                    currentDate={currentDate}
+                    viewMode={viewMode}
+                    isToday={isToday}
+                    onPrev={handlePrev}
+                    onNext={handleNext}
+                    onToday={handleToday}
+                    onViewModeChange={setViewMode}
+                />
 
                 {isPending ? (
                     <div className="flex flex-col items-center justify-center gap-3 py-20">

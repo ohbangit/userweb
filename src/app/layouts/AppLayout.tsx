@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Header } from '../components/Header'
+import { Header } from '../../components/layout'
 import { ContactPanel } from '../../features/contact/components'
 
 interface LayoutProps {

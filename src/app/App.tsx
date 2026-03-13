@@ -8,6 +8,7 @@ import { SpeedInsights } from '@vercel/speed-insights/react'
 import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics'
 
 const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
+const OverwatchTournamentPage = lazy(() => import('../features/tournament/pages/overwatch/OverwatchTournamentPage'))
 const TournamentPromotionPage = lazy(() => import('../features/tournament/pages/TournamentPromotionPage'))
 const F1StaticPage = lazy(() => import('../features/tournament/pages/F1StaticPage'))
 
@@ -32,6 +33,14 @@ function App() {
                     element={
                         <Suspense fallback={null}>
                             <AdminRoutes />
+                        </Suspense>
+                    }
+                />
+                <Route
+                    path="/tournament/overwatch-vs-talon"
+                    element={
+                        <Suspense fallback={null}>
+                            <OverwatchTournamentPage />
                         </Suspense>
                     }
                 />
