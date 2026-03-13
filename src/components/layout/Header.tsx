@@ -68,7 +68,7 @@ export function Header() {
                             방송일정
                         </NavLink>
                         <NavLink to="/tournament/overwatch-vs-talon" className={navItemClass}>
-                            (구)오버워치 RIVAL CLASH
+                            오버워치 RIVAL CLASH
                         </NavLink>
                         <NavLink to="/tournament/chzzk-racing4th" className={navItemClass}>
                             2026 치레동 F1

@@ -1,38 +1,32 @@
-import { CalendarDays, ExternalLink, Radio, Crown, Mic2, CircleDot } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import { Calendar, ExternalLink, CircleDot } from 'lucide-react'
 import overwatchSrc from '../../../../../assets/overwatch.png'
 import overwatchLogoSrc from '../../../../../assets/overwatch_logo.svg'
-import partnerMark from '../../../../../assets/mark.png'
-import type { OWMetaSectionViewModel, OWStaffPublicItem } from '../types'
+import type { OWMetaSectionViewModel } from '../types'
 
+/** OverwatchMetaSection props */
 interface OverwatchMetaSectionProps {
     meta: OWMetaSectionViewModel
 }
 
-function PartnerBadge() {
-    return (
-        <span className="inline-flex items-center" aria-label="파트너 스트리머" title="파트너 스트리머">
-            <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5" loading="lazy" />
-        </span>
-    )
-}
-
 type TournamentStatus = 'before' | 'ongoing' | 'ended'
 
+/**
+ * 대회 진행 상태를 계산합니다.
+ * @param startDate 시작일 (nullable)
+ * @param endDate 종료일 (nullable)
+ */
 function getTournamentStatus(startDate: string | null, endDate: string | null): TournamentStatus {
     const now = new Date()
 
     if (endDate) {
         const ended = new Date(endDate)
         ended.setHours(23, 59, 59, 999)
-
         if (ended < now) return 'ended'
     }
 
     if (startDate) {
         const started = new Date(startDate)
         started.setHours(0, 0, 0, 0)
-
         if (started <= now) return 'ongoing'
     }
 
@@ -42,181 +36,117 @@ function getTournamentStatus(startDate: string | null, endDate: string | null): 
 const STATUS_META: Record<TournamentStatus, { label: string; className: string; pulseClass?: string }> = {
     before: {
         label: '진행전',
-        className: 'border-[#31526f] bg-[#07192a]/80 text-[#9cc7e2]',
+        className: 'bg-white/[0.08] text-[#aab0b6]',
     },
     ongoing: {
         label: '진행중',
-        className: 'border-[#f99e1a]/45 bg-[#f99e1a]/12 text-[#ffd89c]',
+        className: 'bg-[#f99e1a]/15 text-[#f99e1a]',
         pulseClass: 'bg-[#f99e1a]',
     },
     ended: {
         label: '종료',
-        className: 'border-[#1e3a5f] bg-[#0596e8]/10 text-[#9fd4f5]',
+        className: 'bg-white/[0.06] text-[#6b7280]',
     },
 }
 
-function StaffItem({ item }: { item: OWStaffPublicItem }) {
-    const avatar = (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#0b2235] text-xs font-semibold text-[#d9ecf8] ring-2 ring-[#1e3a5f]">
-            {item.avatarUrl ? (
-                <img src={item.avatarUrl} alt={item.name} className="h-full w-full object-cover" loading="lazy" />
-            ) : (
-                <span>{item.name.slice(0, 1)}</span>
-            )}
-        </div>
-    )
-
-    const content = (
-        <div className="flex min-w-0 items-center gap-2">
-            {avatar}
-            <span className="truncate text-sm font-semibold text-white transition-colors group-hover:text-[#9fd4f5]">{item.name}</span>
-            {item.isPartner && <PartnerBadge />}
-        </div>
-    )
-
-    if (item.channelId) {
-        return (
-            <a
-                href={`https://chzzk.naver.com/${item.channelId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex min-w-0 cursor-pointer"
-                aria-label={`${item.name} 치지직 채널 열기`}
-            >
-                {content}
-            </a>
-        )
-    }
-
-    return <div className="inline-flex min-w-0">{content}</div>
-}
-
-function GroupBlock({ icon: Icon, label, items }: { icon: LucideIcon; label: string; items: OWStaffPublicItem[] }) {
-    if (items.length === 0) return null
-
-    return (
-        <section className="pt-4 first:border-t-0 first:pt-0">
-            <div className="flex flex-col gap-2.5 md:flex-row md:items-start md:gap-3">
-                <div className="flex shrink-0 items-center gap-1.5 text-[#59b3ff] md:w-28 md:pt-1">
-                    <Icon className="h-4 w-4 shrink-0 text-[#59b3ff]" strokeWidth={2.2} />
-                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8fcdf3]">{label}</span>
-                </div>
-                <div className="flex min-w-0 flex-1 flex-wrap gap-x-4 gap-y-2.5">
-                    {items.map((item) => (
-                        <StaffItem key={`${label}-${item.streamerId ?? item.name}`} item={item} />
-                    ))}
-                </div>
-            </div>
-        </section>
-    )
-}
-
+/**
+ * 오버워치 대회 히어로 섹션
+ * 배너(순수 시각) + 메타 인포 패널(카드) 의 2단 레이아웃
+ */
 export function OverwatchMetaSection({ meta }: OverwatchMetaSectionProps) {
     const status = getTournamentStatus(meta.startDate, meta.endDate)
     const statusMeta = STATUS_META[status]
     const hasBanner = !!meta.bannerUrl
 
     return (
-        <section className="relative overflow-hidden rounded-[36px] bg-[#03111d] shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
-            {hasBanner ? (
-                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${meta.bannerUrl})` }} />
-            ) : null}
+        <div>
+            {/* ─── BANNER : 순수 시각 영역, 텍스트 없음 ─── */}
             <div
-                className={[
-                    'absolute inset-0',
+                className="relative h-[100px] w-full overflow-hidden md:h-[140px]"
+                style={
                     hasBanner
-                        ? 'bg-gradient-to-b from-[#020d18]/30 via-[#020d18]/72 to-[#020d18]'
-                        : 'bg-[radial-gradient(circle_at_top,_rgba(249,158,26,0.16),_transparent_24%),linear-gradient(135deg,#04192b_0%,#03111d_45%,#020d18_100%)]',
-                ].join(' ')}
-            />
-            <div className="absolute -right-16 top-0 h-48 w-48 rounded-full bg-[#f99e1a]/12 blur-3xl" />
-            <div className="absolute -left-12 bottom-0 h-44 w-44 rounded-full bg-[#2e95d3]/12 blur-3xl" />
+                        ? {
+                              backgroundImage: `url(${meta.bannerUrl})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center top',
+                          }
+                        : undefined
+                }
+            >
+                {hasBanner && <div className="absolute inset-0 bg-gradient-to-b from-[#020d18]/60 via-[#020d18]/70 to-[#020d18]" />}
+            </div>
 
-            <div className="relative z-10 mx-auto w-full max-w-5xl px-4 pb-8 pt-2 md:pb-10">
-                {/*메타*/}
-                <div>
-                    <div className="mb-4 flex flex-wrap items-center gap-2">
-                        <span className="inline-flex items-center gap-2 rounded-full border border-[#f99e1a]/35 bg-[#f99e1a]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[#ffd08a]">
-                            <img src={overwatchSrc} alt="" aria-hidden="true" className="h-3.5 w-3.5" />
-                            Overwatch
-                        </span>
-                        {meta.isChzzkSupport ? (
-                            <span className="inline-flex items-center gap-2 rounded-full border border-[#00dc82]/35 bg-[#00dc82]/12 px-3 py-1 text-[11px] font-black uppercase tracking-[0.22em] text-[#7cf0b8]">
-                                <span className="h-2 w-2 rounded-full bg-[#00dc82]" />
-                                치지직 제작지원
-                            </span>
-                        ) : null}
-                        {meta.tags.map((tag) => (
-                            <span
-                                key={tag}
-                                className="rounded-full border border-[#294a64] bg-[#061a2a]/78 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#9fd4f5] backdrop-blur-sm"
-                            >
-                                {tag}
-                            </span>
-                        ))}
+            {/* ─── META PANEL : 배너 아래로 오버랩되는 인포 카드 ─── */}
+            <div className="relative z-10 mx-auto -mt-8 max-w-5xl px-4 not-italic md:-mt-12">
+                <div className="rounded-2xl border border-[#1e3a5f]/40 bg-gradient-to-b from-[#0c1e33]/50 to-[#060e1c]/60 p-5 backdrop-blur-md md:p-6">
+                    {/* 헤더: 로고 좌측 / 상태 배지 우측 */}
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-center gap-2.5">
+                            <img src={overwatchSrc} alt="" aria-hidden="true" className="h-8 w-8 md:h-10 md:w-10" />
+                            <img src={overwatchLogoSrc} alt="Overwatch" className="h-7 w-auto md:h-9" />
+                        </div>
                         <span
-                            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.22em] ${statusMeta.className}`}
+                            className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${statusMeta.className}`}
                         >
                             {statusMeta.pulseClass ? (
-                                <span className="relative flex h-2 w-2">
+                                <span className="relative flex h-1.5 w-1.5">
                                     <span
                                         className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${statusMeta.pulseClass}`}
                                     />
-                                    <span className={`relative inline-flex h-2 w-2 rounded-full ${statusMeta.pulseClass}`} />
+                                    <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${statusMeta.pulseClass}`} />
                                 </span>
                             ) : (
-                                <CircleDot className="h-3.5 w-3.5" />
+                                <CircleDot className="h-3 w-3" />
                             )}
                             {statusMeta.label}
                         </span>
                     </div>
 
-                    {/*로고*/}
-                    <div className="mt-1">
-                        <img src={overwatchLogoSrc} alt="Overwatch" className="h-12 w-auto drop-shadow-lg md:h-16" />
-                    </div>
-
-                    {/*타이틀*/}
-                    <h1 className="mt-3 font-koverwatch text-3xl font-black leading-[0.95] text-white drop-shadow-lg md:text-5xl xl:text-6xl">
+                    {/* 타이틀 */}
+                    <h1 className="mt-3 font-koverwatch text-3xl font-black italic leading-tight text-white md:text-4xl xl:text-5xl">
                         {meta.title}
                     </h1>
 
-                    {/*일정*/}
-                    <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-[#6aadcc]">
-                        {meta.dateLabel ? (
-                            <span className="inline-flex items-center gap-2">
-                                <CalendarDays className="h-4 w-4 text-[#f99e1a]" />
+                    {/* 날짜 + 태그 행 */}
+                    <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                        {meta.dateLabel && (
+                            <span className="flex items-center gap-1.5 text-xs text-[#aab0b6]">
+                                <Calendar className="h-3.5 w-3.5 shrink-0" />
                                 {meta.dateLabel}
                             </span>
-                        ) : null}
-                    </div>
-                </div>
-
-                <div className="mt-6 h-px w-full bg-gradient-to-r from-[#6fb7e6]/70 via-[#3978a6]/40 to-transparent" />
-
-                <div className="mt-4 space-y-4 md:space-y-3">
-                    <GroupBlock icon={Crown} label="주최" items={meta.groups.find((group) => group.id === 'hosts')?.items ?? []} />
-                    <GroupBlock icon={Radio} label="중계" items={meta.groups.find((group) => group.id === 'broadcasters')?.items ?? []} />
-                    <GroupBlock icon={Mic2} label="해설" items={meta.groups.find((group) => group.id === 'commentators')?.items ?? []} />
-                </div>
-
-                {meta.links.length > 0 ? (
-                    <div className="mt-5 flex flex-wrap gap-2.5">
-                        {meta.links.map((link) => (
-                            <a
-                                key={`${link.label}-${link.url}`}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#31526f] bg-[#071a2a]/82 px-2.5 py-1 text-xs font-semibold text-[#eaf6fd] backdrop-blur-sm transition hover:border-[#f99e1a] hover:bg-[#0b2235] hover:text-white"
-                            >
-                                <ExternalLink className="h-3.5 w-3.5 text-[#f99e1a]" />
-                                {link.label}
-                            </a>
+                        )}
+                        {meta.isChzzkSupport && (
+                            <span className="rounded bg-primary/20 px-2 py-0.5 text-xs font-semibold text-primary">치지직 제작지원</span>
+                        )}
+                        {meta.tags.map((tag) => (
+                            <span key={tag} className="rounded bg-white/[0.07] px-2 py-0.5 text-xs text-[#aab0b6]">
+                                {tag}
+                            </span>
                         ))}
                     </div>
-                ) : null}
+
+                    {/* 링크 */}
+                    {meta.links.length > 0 && (
+                        <>
+                            <div className="mt-5 h-px bg-white/[0.08]" />
+                            <div className="mt-4 flex flex-wrap gap-2">
+                                {meta.links.map((link) => (
+                                    <a
+                                        key={`${link.label}-${link.url}`}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1.5 text-xs font-medium text-[#d1d5db] transition hover:bg-white/[0.15] hover:text-white"
+                                    >
+                                        <ExternalLink className="h-3 w-3 text-[#f99e1a]" />
+                                        {link.label}
+                                    </a>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </div>
             </div>
-        </section>
+        </div>
     )
 }

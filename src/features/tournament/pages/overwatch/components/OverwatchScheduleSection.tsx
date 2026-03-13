@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import dayjs from 'dayjs'
-import { CalendarDays, Radio } from 'lucide-react'
+import { ChevronDown, Radio } from 'lucide-react'
 import { MatchSetsPanel } from '../../../../schedule/components/overwatch/MatchSetsPanel'
 import type { Broadcast } from '../../../../schedule/types/schedule'
 
@@ -22,22 +23,26 @@ function formatTimeLabel(value: string): string {
 
 function ScheduleSkeleton() {
     return (
-        <div className="mt-10 rounded-[32px] border border-[#16324a]/55 bg-[#03111d]/52 p-5 backdrop-blur-sm md:p-6">
-            <div className="h-5 w-40 animate-pulse rounded-full bg-[#14324b]" />
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
+        <section className="w-full">
+            <div className="h-7 w-16 animate-pulse rounded-lg bg-white/[0.06]" />
+            <div className="mt-5 flex flex-col gap-3">
                 {Array.from({ length: 2 }).map((_, index) => (
-                    <div key={index} className="rounded-[24px] border border-[#1f3d57] bg-[#061727]/80 p-4">
-                        <div className="h-4 w-28 animate-pulse rounded-full bg-[#14324b]" />
-                        <div className="mt-4 h-24 animate-pulse rounded-2xl bg-[#10283c]" />
+                    <div key={index} className="rounded-2xl bg-white/[0.04] p-4">
+                        <div className="h-5 w-20 animate-pulse rounded bg-white/[0.08]" />
+                        <div className="mt-3 h-28 animate-pulse rounded-2xl bg-white/[0.06]" />
                     </div>
                 ))}
             </div>
-        </div>
+        </section>
     )
 }
 
 function ScheduleError({ message }: { message: string }) {
-    return <div className="mt-10 rounded-[28px] border border-[#5d2d2d] bg-[#1b0e12]/90 p-5 text-sm text-[#ffe6e6]/88">{message}</div>
+    return (
+        <section className="w-full">
+            <div className="rounded-2xl bg-white/[0.04] p-5 text-sm text-[#9ca3af]">{message}</div>
+        </section>
+    )
 }
 
 function MatchCard({ item }: { item: Broadcast }) {
@@ -46,55 +51,67 @@ function MatchCard({ item }: { item: Broadcast }) {
     if (!match) return null
 
     return (
-        <article className="snap-start rounded-[24px] border border-[#1f3d57] bg-[#061727]/86 p-4 shadow-[0_18px_50px_rgba(0,0,0,0.18)] backdrop-blur-sm">
+        <article className="snap-start rounded-2xl bg-white/[0.06] p-4 transition-colors hover:bg-white/[0.08]">
             <div className="flex items-start justify-between gap-3">
                 <div>
-                    <div className="flex items-center gap-2 text-[#8ed0f2]">
-                        <Radio className="h-3.5 w-3.5" />
-                        <span className="text-[11px] font-black uppercase tracking-[0.22em]">{item.isLive ? 'Live Match' : 'Match'}</span>
+                    <div className="flex items-center gap-1.5">
+                        <Radio className="h-3 w-3 text-[#6b7280]" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#6b7280]">{item.isLive ? 'Live' : 'Match'}</span>
                     </div>
-                    <h3 className="mt-2 text-lg font-semibold text-[#f4fbff]">{item.title}</h3>
+                    <h3 className="mt-1.5 text-sm font-semibold text-[#eef0f3]">{item.title}</h3>
                 </div>
-                <span className="rounded-full border border-[#294a64] bg-[#061a2a]/72 px-2.5 py-1 text-[11px] font-semibold text-[#9fd4f5]">
+                <span className="shrink-0 rounded bg-white/[0.08] px-2 py-1 text-[11px] font-medium text-[#aab0b6]">
                     {formatTimeLabel(item.startTime)}
                 </span>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-[#17324a] bg-[#04111d]/88 p-3">
+            <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
                 <MatchSetsPanel match={match} />
             </div>
         </article>
     )
 }
-
 export function OverwatchScheduleSection({ days, isLoading, error }: OverwatchScheduleSectionProps) {
+    const [collapsed, setCollapsed] = useState(false)
+
     if (isLoading) return <ScheduleSkeleton />
     if (error) return <ScheduleError message={error.message} />
     if (days.length === 0) return null
 
     return (
-        <section className="mt-10 rounded-[32px] border border-[#16324a]/55 bg-[#03111d]/52 p-5 backdrop-blur-sm md:p-6">
-            <div className="flex items-center gap-2 text-[#dff4ff]">
-                <CalendarDays className="h-4 w-4 text-[#8ed0f2]" />
-                <h2 className="text-lg font-black uppercase tracking-[0.24em] text-[#8ed0f2]">Schedule</h2>
-            </div>
+        <section className="w-full">
+            {/* ci.me 스타일 섹션 헤더: 큼고 덕하게, 분리선 없음 */}
+            <button
+                type="button"
+                onClick={() => setCollapsed((prev) => !prev)}
+                aria-expanded={!collapsed}
+                className="group flex w-full cursor-pointer items-center justify-between text-left"
+            >
+                <h2 className="text-xl font-bold text-white">일정</h2>
+                <ChevronDown
+                    className={['h-5 w-5 text-[#6b7280] transition-transform duration-200 group-hover:text-[#9ca3af]', collapsed ? '-rotate-90' : ''].join(' ')}
+                />
+            </button>
 
-            <div className="mt-5 space-y-6">
-                {days.map((day) => (
-                    <section key={day.date}>
-                        <div className="flex items-center gap-2 text-[#f4fbff]">
-                            <h3 className="text-base font-black uppercase tracking-[0.18em] text-[#f4fbff]">{formatDateLabel(day.date)}</h3>
-                            <span className="h-px flex-1 bg-gradient-to-r from-[#6fb7e6]/45 to-transparent" />
+            {!collapsed && (
+                <div className="mt-5 flex flex-col gap-3">
+                    {days.map((day) => (
+                        <div key={day.date} className="rounded-2xl bg-white/[0.04] p-4">
+                            {/* 날짜: ci.me 스타일 태그 */}
+                            <div className="mb-3 flex items-center gap-2">
+                                <span className="rounded bg-white/[0.08] px-2 py-0.5 text-xs font-semibold text-[#d1d5db]">
+                                    {formatDateLabel(day.date)}
+                                </span>
+                            </div>
+                            <div className="grid snap-x snap-mandatory grid-flow-col auto-cols-[minmax(280px,86vw)] gap-3 overflow-x-auto pb-1 scrollbar-hide md:auto-cols-[minmax(320px,1fr)] md:gap-3">
+                                {day.items.map((item) => (
+                                    <MatchCard key={item.id} item={item} />
+                                ))}
+                            </div>
                         </div>
-
-                        <div className="mt-4 grid snap-x snap-mandatory grid-flow-col auto-cols-[minmax(280px,86vw)] gap-3 overflow-x-auto pb-2 scrollbar-hide md:auto-cols-[minmax(360px,1fr)] md:gap-4">
-                            {day.items.map((item) => (
-                                <MatchCard key={item.id} item={item} />
-                            ))}
-                        </div>
-                    </section>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </section>
     )
 }

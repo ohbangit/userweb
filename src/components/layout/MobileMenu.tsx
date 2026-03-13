@@ -43,7 +43,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     <div className="mx-4 my-2 border-t border-border/30" />
 
                     <NavLink to="/tournament/overwatch-vs-talon" className={mobileNavItemClass} onClick={onClose}>
-                        (구)오버워치 RIVAL CLASH
+                        오버워치 RIVAL CLASH
                         <ChevronRight className="h-4 w-4 text-text-muted" />
                     </NavLink>
 

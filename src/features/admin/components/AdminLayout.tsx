@@ -50,7 +50,7 @@ const NAV_SECTIONS: NavSection[] = [
     {
         title: '컨텐츠',
         items: [
-            { to: '/admin/tournaments', label: '(구)오버워치', icon: Gamepad2 },
+            { to: '/admin/tournaments', label: '오버워치', icon: Gamepad2 },
             { to: '/admin/racing', label: '레이싱', icon: Flag },
         ],
     },
