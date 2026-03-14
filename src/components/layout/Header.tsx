@@ -1,5 +1,5 @@
 import { ChevronDown, Menu, Moon, Sun, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import logoDarkSrc from '../../assets/logo_dark.png'
 import { useOutsideClick } from '../../hooks/useOutsideClick'
@@ -11,30 +11,7 @@ import type { MenuItem } from './types'
 import { useMenus } from './useMenus'
 
 const FALLBACK_ITEMS: readonly MenuItem[] = [
-    {
-        id: 1,
-        label: '방송일정',
-        path: '/',
-        icon: null,
-        isExternal: false,
-        children: [],
-    },
-    {
-        id: 2,
-        label: '오버워치 RIVAL CLASH',
-        path: '/tournament/overwatch-vs-talon',
-        icon: null,
-        isExternal: false,
-        children: [],
-    },
-    {
-        id: 3,
-        label: '2026 치레동 F1',
-        path: '/tournament/chzzk-racing4th',
-        icon: null,
-        isExternal: false,
-        children: [],
-    },
+    { id: 1, label: '방송일정', path: '/', icon: null, isExternal: false, children: [] },
 ]
 
 /**
@@ -46,13 +23,23 @@ export function Header() {
     const { theme, toggleTheme } = useTheme()
     const location = useLocation()
     const scrolled = useScrolled()
-    const { data: menuItems, isLoading, isError } = useMenus()
+    const { data: menuItems, isLoading } = useMenus()
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [openDesktopMenuId, setOpenDesktopMenuId] = useState<number | null>(null)
     const headerRef = useRef<HTMLElement>(null)
 
-    const navigationItems = isLoading || isError ? FALLBACK_ITEMS : (menuItems ?? FALLBACK_ITEMS)
+    const navigationItems = menuItems ?? (isLoading ? [] : FALLBACK_ITEMS)
+
+    const activeParentIds = useMemo(() => {
+        const ids = new Set<number>()
+        for (const item of navigationItems) {
+            if (item.children.some((child) => child.path === location.pathname)) {
+                ids.add(item.id)
+            }
+        }
+        return ids
+    }, [navigationItems, location.pathname])
 
     // 라우트 변경 시 모바일 메뉴 닫기
     useEffect(() => {
@@ -97,7 +84,7 @@ export function Header() {
                     </NavLink>
 
                     {/* 데스크톱 네비게이션 */}
-                    <nav className="hidden items-center gap-1 md:flex">
+                    <nav className="hidden items-center gap-1 lg:flex">
                         {navigationItems.map((item) => {
                             const hasChildren = item.children.length > 0
 
@@ -111,7 +98,8 @@ export function Header() {
                                     >
                                         <span
                                             className={cn(
-                                                'flex cursor-default items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-text-muted transition-colors',
+                                                'flex cursor-default items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+                                                activeParentIds.has(item.id) ? 'bg-border/20 text-text' : 'text-text-muted',
                                                 openDesktopMenuId === item.id && 'bg-border/10 text-text',
                                             )}
                                             aria-expanded={openDesktopMenuId === item.id}
@@ -123,7 +111,7 @@ export function Header() {
                                         </span>
 
                                         {openDesktopMenuId === item.id && (
-                                            <div className="absolute top-full z-50 mt-2 min-w-[200px] rounded-xl border border-border/30 bg-bg/95 p-1.5 shadow-lg backdrop-blur-xl">
+                                            <div className="absolute top-full z-50 mt-2 min-w-[200px] animate-fade-in rounded-xl border border-border/30 bg-bg/95 p-1.5 shadow-lg backdrop-blur-xl">
                                                 {item.children.map((child) =>
                                                     child.path ? (
                                                         <NavLink key={child.id} to={child.path} end={child.path === '/'} className={navItemClass}>
@@ -179,7 +167,7 @@ export function Header() {
                     {/* 모바일 메뉴 버튼 */}
                     <button
                         type="button"
-                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border/40 bg-card text-text-muted transition-colors hover:border-border hover:text-text md:hidden"
+                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border/40 bg-card text-text-muted transition-colors hover:border-border hover:text-text lg:hidden"
                         onClick={() => setMobileMenuOpen((prev) => !prev)}
                         aria-expanded={mobileMenuOpen}
                         aria-controls="mobile-nav-menu"

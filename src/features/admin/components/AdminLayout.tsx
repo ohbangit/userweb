@@ -15,10 +15,10 @@ import {
     PanelLeftOpen,
     LogOut,
     Home,
+    LayoutList,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useAdminAuth } from '../hooks'
-import { useTheme } from '../../../hooks/useTheme'
 import { AdminToastProvider } from './AdminToastProvider'
 import { cn } from '../../../lib/cn'
 
@@ -46,6 +46,7 @@ const NAV_SECTIONS: NavSection[] = [
             { to: '/admin/schedule', label: '일정 관리', icon: CalendarDays },
             { to: '/admin/categories', label: '카테고리 관리', icon: FolderOpen },
             { to: '/admin/banners', label: '배너 관리', icon: Image },
+            { to: '/admin/menus', label: '메뉴 관리', icon: LayoutList },
         ],
     },
     {
@@ -67,7 +68,6 @@ const NAV_SECTIONS: NavSection[] = [
 export function AdminLayout({ children }: AdminLayoutProps) {
     const { logout } = useAdminAuth()
     const navigate = useNavigate()
-    const { theme, toggleTheme } = useTheme()
     const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem('admin-sidebar-collapsed') === 'true')
     function handleToggleSidebar() {
         setSidebarCollapsed((prev) => {
@@ -83,7 +83,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
     return (
         <AdminToastProvider>
-            <div className="flex min-h-screen bg-gray-50 dark:bg-[#0e0e10]">
+            <div className="dark flex min-h-screen bg-[#0e0e10]">
                 <aside
                     className={cn(
                         'flex flex-col border-r border-gray-300 bg-white transition-all duration-200 dark:border-[#3a3a44] dark:bg-[#1a1a23]',
@@ -108,31 +108,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                 >
                                     <Home className="h-4 w-4" />
                                 </Link>
-                            )}
-                            {!sidebarCollapsed && (
-                                <button
-                                    onClick={toggleTheme}
-                                    title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
-                                    className="cursor-pointer rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]"
-                                >
-                                    {theme === 'dark' ? (
-                                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                                            <circle cx="12" cy="12" r="5" />
-                                            <path
-                                                strokeLinecap="round"
-                                                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
-                                            />
-                                        </svg>
-                                    ) : (
-                                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
-                                            />
-                                        </svg>
-                                    )}
-                                </button>
                             )}
                             <button
                                 onClick={handleToggleSidebar}

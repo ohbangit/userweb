@@ -8,7 +8,7 @@ export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {
     if (viewMode === 'daily') {
         return (
             <div className={containerClass}>
-                <h2 className="text-xs font-semibold text-text sm:text-lg">{formatFullDate(currentDate)}</h2>
+                <h2 className="whitespace-nowrap text-xs font-semibold text-text sm:text-lg">{formatFullDate(currentDate)}</h2>
             </div>
         )
     }

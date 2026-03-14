@@ -33,7 +33,7 @@ export function MobileMenu({ isOpen, onClose, items }: MobileMenuProps) {
                 id="mobile-nav-menu"
                 role="navigation"
                 aria-label="모바일 메뉴"
-                className="absolute left-0 right-0 top-full z-50 border-b border-border/30 bg-bg shadow-lg md:hidden animate-fade-in"
+                className="absolute left-0 right-0 top-full z-50 animate-fade-in border-b border-border/30 bg-bg shadow-lg lg:hidden"
             >
                 <div className="flex flex-col py-2">
                     {items.map((item) => {
@@ -55,7 +55,7 @@ export function MobileMenu({ isOpen, onClose, items }: MobileMenuProps) {
                                     </button>
 
                                     {isOpenParent && (
-                                        <div className="flex flex-col gap-1 pb-2 pl-4">
+                                        <div className="flex animate-fade-in flex-col gap-1 pb-2 pl-4">
                                             {item.children.map((child) =>
                                                 child.path ? (
                                                     <NavLink

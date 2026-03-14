@@ -63,3 +63,4 @@ export {
 
 export { useOverwatchMatch, useUpsertOverwatchMatch, useDeleteOverwatchMatch } from './useOverwatchMatch'
 export { useTournamentManage } from './useTournamentManage'
+export { useAdminMenus, useCreateMenu, useUpdateMenu, useDeleteMenu, useReorderMenus } from './useMenuManage'

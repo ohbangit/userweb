@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Header } from '../components/layout'
 import { SeoHead } from './components/SeoHead'
 import { ContactPanel } from '../features/contact/components'
@@ -15,14 +15,16 @@ const F1StaticPage = lazy(() => import('../features/tournament/pages/F1StaticPag
 
 function App() {
     useGoogleAnalytics()
+    const { pathname } = useLocation()
+    const isAdmin = pathname.startsWith('/admin')
+
     return (
         <div className="min-h-screen bg-bg">
             <SeoHead />
             <Analytics mode={import.meta.env.PROD ? 'production' : 'development'} debug={import.meta.env.DEV} />
             <SpeedInsights />
 
-            {/* GNB — 모든 공개 라우트에서 동일한 헤더 */}
-            <Header />
+            {!isAdmin && <Header />}
 
             <Routes>
                 <Route
