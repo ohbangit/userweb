@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { AppLayout } from './layouts/AppLayout'
+import { Header } from '../components/layout'
 import { SeoHead } from './components/SeoHead'
+import { ContactPanel } from '../features/contact/components'
 import SchedulePage from '../features/schedule/pages/SchedulePage'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
@@ -15,17 +16,22 @@ const F1StaticPage = lazy(() => import('../features/tournament/pages/F1StaticPag
 function App() {
     useGoogleAnalytics()
     return (
-        <>
+        <div className="min-h-screen bg-bg">
             <SeoHead />
             <Analytics mode={import.meta.env.PROD ? 'production' : 'development'} debug={import.meta.env.DEV} />
             <SpeedInsights />
+
+            {/* GNB — 모든 공개 라우트에서 동일한 헤더 */}
+            <Header />
+
             <Routes>
                 <Route
                     path="/"
                     element={
-                        <AppLayout>
+                        <main className="mx-auto max-w-[1290px] px-4 py-4 sm:px-6 sm:py-6">
                             <SchedulePage />
-                        </AppLayout>
+                            <ContactPanel />
+                        </main>
                     }
                 />
                 <Route
@@ -62,7 +68,7 @@ function App() {
                 />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-        </>
+        </div>
     )
 }
 

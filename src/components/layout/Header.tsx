@@ -1,4 +1,4 @@
-import { Menu, Moon, Sun, X } from 'lucide-react'
+import { ChevronDown, Menu, Moon, Sun, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import logoDarkSrc from '../../assets/logo_dark.png'
@@ -7,6 +7,35 @@ import { useScrolled } from '../../hooks/useScrolled'
 import { useTheme } from '../../hooks/useTheme'
 import { cn } from '../../lib/cn'
 import { MobileMenu } from './MobileMenu'
+import type { MenuItem } from './types'
+import { useMenus } from './useMenus'
+
+const FALLBACK_ITEMS: readonly MenuItem[] = [
+    {
+        id: 1,
+        label: '방송일정',
+        path: '/',
+        icon: null,
+        isExternal: false,
+        children: [],
+    },
+    {
+        id: 2,
+        label: '오버워치 RIVAL CLASH',
+        path: '/tournament/overwatch-vs-talon',
+        icon: null,
+        isExternal: false,
+        children: [],
+    },
+    {
+        id: 3,
+        label: '2026 치레동 F1',
+        path: '/tournament/chzzk-racing4th',
+        icon: null,
+        isExternal: false,
+        children: [],
+    },
+]
 
 /**
  * GNB (Global Navigation Bar)
@@ -17,13 +46,18 @@ export function Header() {
     const { theme, toggleTheme } = useTheme()
     const location = useLocation()
     const scrolled = useScrolled()
+    const { data: menuItems, isLoading, isError } = useMenus()
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [openDesktopMenuId, setOpenDesktopMenuId] = useState<number | null>(null)
     const headerRef = useRef<HTMLElement>(null)
+
+    const navigationItems = isLoading || isError ? FALLBACK_ITEMS : (menuItems ?? FALLBACK_ITEMS)
 
     // 라우트 변경 시 모바일 메뉴 닫기
     useEffect(() => {
         setMobileMenuOpen(false)
+        setOpenDesktopMenuId(null)
     }, [location.pathname])
 
     // Escape 키로 모바일 메뉴 닫기
@@ -64,15 +98,69 @@ export function Header() {
 
                     {/* 데스크톱 네비게이션 */}
                     <nav className="hidden items-center gap-1 md:flex">
-                        <NavLink to="/" end className={navItemClass}>
-                            방송일정
-                        </NavLink>
-                        <NavLink to="/tournament/overwatch-vs-talon" className={navItemClass}>
-                            오버워치 RIVAL CLASH
-                        </NavLink>
-                        <NavLink to="/tournament/chzzk-racing4th" className={navItemClass}>
-                            2026 치레동 F1
-                        </NavLink>
+                        {navigationItems.map((item) => {
+                            const hasChildren = item.children.length > 0
+
+                            if (hasChildren) {
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className="relative"
+                                        onMouseEnter={() => setOpenDesktopMenuId(item.id)}
+                                        onMouseLeave={() => setOpenDesktopMenuId((current) => (current === item.id ? null : current))}
+                                    >
+                                        <span
+                                            className={cn(
+                                                'flex cursor-default items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-text-muted transition-colors',
+                                                openDesktopMenuId === item.id && 'bg-border/10 text-text',
+                                            )}
+                                            aria-expanded={openDesktopMenuId === item.id}
+                                        >
+                                            {item.label}
+                                            <ChevronDown
+                                                className={cn('h-4 w-4 transition-transform', openDesktopMenuId === item.id && 'rotate-180')}
+                                            />
+                                        </span>
+
+                                        {openDesktopMenuId === item.id && (
+                                            <div className="absolute top-full z-50 mt-2 min-w-[200px] rounded-xl border border-border/30 bg-bg/95 p-1.5 shadow-lg backdrop-blur-xl">
+                                                {item.children.map((child) =>
+                                                    child.path ? (
+                                                        <NavLink key={child.id} to={child.path} end={child.path === '/'} className={navItemClass}>
+                                                            {child.label}
+                                                        </NavLink>
+                                                    ) : (
+                                                        <span
+                                                            key={child.id}
+                                                            className="flex cursor-default items-center rounded-lg px-3 py-1.5 text-sm font-medium text-text-muted"
+                                                        >
+                                                            {child.label}
+                                                        </span>
+                                                    ),
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )
+                            }
+
+                            if (item.path) {
+                                return (
+                                    <NavLink key={item.id} to={item.path} end={item.path === '/'} className={navItemClass}>
+                                        {item.label}
+                                    </NavLink>
+                                )
+                            }
+
+                            return (
+                                <span
+                                    key={item.id}
+                                    className="flex cursor-default items-center rounded-lg px-3 py-1.5 text-sm font-medium text-text-muted"
+                                >
+                                    {item.label}
+                                </span>
+                            )
+                        })}
                     </nav>
                 </div>
 
@@ -103,7 +191,7 @@ export function Header() {
             </div>
 
             {/* 모바일 메뉴 */}
-            <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+            <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} items={menuItems ?? FALLBACK_ITEMS} />
         </header>
     )
 }

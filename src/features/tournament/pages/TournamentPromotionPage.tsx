@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { ChevronUp } from 'lucide-react'
-import { Header } from '../../../components/layout'
 import { trackEvent } from '../../../utils/analytics'
 import { PanelRenderer } from '../components/PanelRenderer'
 import { TournamentHero } from '../components'
@@ -103,7 +102,6 @@ export default function TournamentPromotionPage() {
 
     return (
         <div className="min-h-screen bg-[#020d18]">
-            <Header />
             <Helmet>
                 <title>{seoTitle}</title>
                 <meta name="description" content={seoDescription} />
