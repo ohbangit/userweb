@@ -2,8 +2,10 @@ import dayjs from 'dayjs'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { cn } from '../../../lib/cn'
+import { DAY_NAMES_SHORT } from '../../../constants/date'
 
-const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
+const WEEKDAYS = DAY_NAMES_SHORT
 
 interface CalendarPickerProps {
     value: string | null
@@ -162,7 +164,7 @@ export function CalendarPicker({ value, onChange }: CalendarPickerProps) {
                                       if (!isCurrentMonth)
                                           setCursor(day.startOf('month'))
                                   }}
-                                  className={[
+                                  className={cn(
                                       'flex h-8 w-full items-center justify-center rounded-full text-xs transition',
                                       isSelected
                                           ? 'bg-blue-500 font-semibold text-white'
@@ -171,7 +173,7 @@ export function CalendarPicker({ value, onChange }: CalendarPickerProps) {
                                             : isCurrentMonth
                                               ? 'text-gray-700 hover:bg-gray-100 dark:text-[#efeff1] dark:hover:bg-[#2e2e38]'
                                               : 'text-gray-300 hover:bg-gray-50 dark:text-[#3a3a44] dark:hover:bg-[#26262e]',
-                                  ].join(' ')}
+                                  )}
                               >
                                   {day.date()}
                               </button>
@@ -238,10 +240,10 @@ export function CalendarPicker({ value, onChange }: CalendarPickerProps) {
                 </span>
                 <ChevronRight
                     size={14}
-                    className={[
+                    className={cn(
                         'shrink-0 text-gray-400 transition-transform dark:text-[#6b6b7a]',
                         open ? 'rotate-90' : '',
-                    ].join(' ')}
+                    )}
                 />
             </button>
             {popover}

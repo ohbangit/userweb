@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Crown } from 'lucide-react'
 import { useAdminStreamerSearch } from '../hooks'
 import type { DraftParticipant, OverwatchRole } from '../types'
+import { cn } from '../../../lib/cn'
 
 const POSITIONS: { role: OverwatchRole; label: string }[] = [
     { role: 'TNK', label: 'TNK' },
@@ -185,10 +186,10 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
                                     {/* 그룹 헤더 */}
                                     <div className="flex items-center gap-2 px-1">
                                         <span
-                                            className={[
+                                            className={cn(
                                                 'rounded px-2 py-0.5 text-[10px] font-bold',
                                                 badgeClass,
-                                            ].join(' ')}
+                                            )}
                                         >
                                             {groupLabel}
                                         </span>
@@ -217,12 +218,12 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
                                                         key={r}
                                                         type="button"
                                                         onClick={() => handleUpdatePosition(p.id, r)}
-                                                        className={[
+                                                        className={cn(
                                                             'rounded px-1.5 py-0.5 text-[10px] font-semibold transition',
                                                             p.position === r
                                                                 ? POSITION_COLORS[r]
                                                                 : POSITION_BADGE_INACTIVE[r],
-                                                        ].join(' ')}
+                                                        )}
                                                     >
                                                         {label}
                                                     </button>
@@ -231,16 +232,16 @@ export function ParticipantEditor({ participants: initialParticipants, onSave, i
                                             <button
                                                 type="button"
                                                 onClick={() => handleToggleCaptain(p.id)}
-                                                className={[
+                                                className={cn(
                                                     'cursor-pointer rounded p-1 transition',
                                                     p.isCaptain
                                                         ? 'bg-amber-100 text-amber-500 dark:bg-amber-900/30'
                                                         : 'text-gray-400 hover:bg-gray-100 hover:text-amber-500 dark:text-[#6b6b7a] dark:hover:bg-[#2e2e38] dark:hover:text-amber-400',
-                                                ].join(' ')}
+                                                )}
                                                 aria-label={`${p.name} 팀장 토글`}
                                                 title={p.isCaptain ? '팀장 해제' : '팀장 지정'}
                                             >
-                                    <Crown className={['h-4 w-4', p.isCaptain ? 'fill-current' : ''].join(' ')} />
+                                    <Crown className={cn('h-4 w-4', p.isCaptain ? 'fill-current' : '')} />
                                             </button>
                                             <button
                                                 type="button"

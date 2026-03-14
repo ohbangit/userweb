@@ -5,6 +5,7 @@ import { resolveParticipants, sortParticipants } from '../utils/participant'
 import { ParticipantStack } from './ParticipantStack'
 import partnerMark from '../../../assets/mark.png'
 import { BroadcastTypeBadge } from './BroadcastTypeBadge'
+import { cn } from '../../../lib/cn'
 
 export interface DailyBroadcastItemProps {
     broadcast: Broadcast
@@ -30,17 +31,17 @@ function DailyBroadcastItemComponent({ broadcast, onClick }: DailyBroadcastItemP
         <button
             type="button"
             onClick={onClick}
-            className={[
+            className={cn(
                 'group relative flex w-full cursor-pointer gap-3 overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card via-card to-bg-secondary/70 p-3 text-left transition-all sm:p-4',
                 'hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_14px_34px_rgba(0,0,0,0.35)]',
                 'before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:bg-[radial-gradient(circle_at_top,rgba(0,255,163,0.12),transparent_60%)] before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100',
-            ].join(' ')}
+            )}
         >
             <div
-                className={[
+                className={cn(
                     'w-1 shrink-0 self-stretch rounded-full bg-gradient-to-b',
                     broadcast.isCollab ? 'from-collab/90 via-collab/60 to-collab/20' : 'from-primary/90 via-primary/60 to-primary/20',
-                ].join(' ')}
+                )}
             />
 
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">

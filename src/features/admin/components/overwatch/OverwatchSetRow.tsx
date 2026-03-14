@@ -1,6 +1,7 @@
 import type { OverwatchMapType, SetResult } from '../../../schedule/types/overwatch'
 import { OVERWATCH_MAP_TYPE_CONFIG } from '../../../schedule/utils/overwatchMaps'
 import type { OverwatchSetInput } from '../../types'
+import { cn } from '../../../../lib/cn'
 
 const MAP_TYPES: readonly OverwatchMapType[] = ['쟁탈', '혼합', '밀기', '호위'] as const
 
@@ -36,12 +37,12 @@ export function OverwatchSetRow({ set, homeTeam, awayTeam, onChange }: Overwatch
 
     return (
         <div
-            className={[
+            className={cn(
                 'grid items-center gap-2 rounded-xl border px-3 py-2',
                 set.isPlayed
                     ? 'border-gray-200 bg-white dark:border-[#3a3a44] dark:bg-[#1e1e28]'
                     : 'border-dashed border-gray-200 bg-gray-50/50 opacity-60 dark:border-[#3a3a44] dark:bg-[#1a1a23]',
-            ].join(' ')}
+            )}
             style={{ gridTemplateColumns: '2rem 5rem 1fr 6rem 2.5rem' }}
         >
             {/* 세트 번호 */}
@@ -52,10 +53,10 @@ export function OverwatchSetRow({ set, homeTeam, awayTeam, onChange }: Overwatch
                 <select
                     value={set.mapType}
                     onChange={(e) => handleMapTypeChange(e.target.value as OverwatchMapType)}
-                    className={[
+                    className={cn(
                         'cursor-pointer w-full appearance-none rounded-lg border-0 px-2 py-1 pr-6 text-center text-xs font-semibold',
                         MAP_TYPE_BADGE_CLASS[set.mapType],
-                    ].join(' ')}
+                    )}
                 >
                     {MAP_TYPES.map((type) => (
                         <option key={type} value={type}>

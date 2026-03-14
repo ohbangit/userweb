@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { F1CircuitContent, F1CircuitItem } from '../types'
+import { cn } from '../../../lib/cn'
 
 interface F1CircuitPanelEditorProps {
     content: Record<string, unknown>
@@ -127,12 +128,12 @@ export function F1CircuitPanelEditor({ content, onSave, isSaving }: F1CircuitPan
                         key={c.id}
                         type="button"
                         onClick={() => setActiveId(c.id)}
-                        className={[
+                        className={cn(
                             'cursor-pointer rounded-full px-3 py-1 text-xs font-semibold transition',
                             c.id === activeId
                                 ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300'
                                 : 'bg-white text-gray-500 hover:text-gray-700 dark:bg-[#26262e] dark:text-[#adadb8]',
-                        ].join(' ')}
+                        )}
                     >
                         {idx + 1}. {c.circuitName || '서킷'}
                     </button>

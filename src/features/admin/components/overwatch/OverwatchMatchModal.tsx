@@ -4,7 +4,8 @@ import type { Broadcast } from '../../../schedule/types'
 import type { OverwatchMatchInput, OverwatchSetInput } from '../../types'
 import { useOverwatchMatch, useUpsertOverwatchMatch, useDeleteOverwatchMatch, useAdminToast } from '../../hooks'
 import { OverwatchSetRow } from './OverwatchSetRow'
-import { ApiError } from '../../../../lib/apiClient'
+import { getErrorMessage } from '../../utils/error'
+import { cn } from '../../../../lib/cn'
 
 const FORMAT_OPTIONS: readonly MatchFormat[] = ['bo3', 'bo5', 'bo7'] as const
 const FORMAT_LABEL: Record<MatchFormat, string> = {
@@ -48,11 +49,6 @@ function matchInfoToInput(info: ReturnType<typeof useOverwatchMatch>['data']): O
             roundScore: s.roundScore,
         })),
     }
-}
-
-function getErrorMessage(error: unknown): string | null {
-    if (!(error instanceof Error)) return null
-    return error instanceof ApiError ? error.message : '오류가 발생했습니다.'
 }
 
 interface OverwatchMatchModalProps {
@@ -191,12 +187,12 @@ export function OverwatchMatchModal({ broadcast, onClose }: OverwatchMatchModalP
                                         key={f}
                                         type="button"
                                         onClick={() => handleFormatChange(f)}
-                                        className={[
+                                        className={cn(
                                             'cursor-pointer rounded-xl border px-5 py-2 text-sm font-semibold transition',
                                             format === f
                                                 ? 'border-blue-500 bg-blue-500 text-white'
                                                 : 'border-gray-300 text-gray-600 hover:border-gray-400 dark:border-[#3a3a44] dark:text-[#adadb8]',
-                                        ].join(' ')}
+                                        )}
                                     >
                                         {FORMAT_LABEL[f]}
                                     </button>
@@ -290,11 +286,11 @@ export function OverwatchMatchModal({ broadcast, onClose }: OverwatchMatchModalP
                             <button
                                 type="button"
                                 onClick={() => setIsCompleted((prev) => !prev)}
-                                className={[
+                                className={cn(
                                     'cursor-pointer flex h-6 w-12 shrink-0 items-center rounded-full px-0.5 transition-colors',
                                     isCompleted ? 'justify-end' : 'justify-start',
                                     isCompleted ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-[#3a3a44]',
-                                ].join(' ')}
+                                )}
                                 aria-label="경기 완료 토글"
                             >
                                 <span className="h-5 w-5 rounded-full bg-white shadow" />

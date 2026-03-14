@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChevronDown, Zap } from 'lucide-react'
 import type { F1StandingsContent } from '../types'
+import { cn } from '../../../lib/cn'
 
 interface Props {
     title: string
@@ -34,7 +35,7 @@ export function F1StandingsPanelView({ title, content, defaultExpanded = false }
             >
                 <h2 className="font-f1 text-5xl font-black tracking-tight uppercase text-[#e8f4fd]">{title}</h2>
                 <ChevronDown
-                    className={['h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : ''].join(' ')}
+                    className={cn('h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : '')}
                 />
             </button>
             <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
@@ -73,10 +74,10 @@ export function F1StandingsPanelView({ title, content, defaultExpanded = false }
                                                 <div className="h-px w-full bg-gradient-to-r from-transparent via-[#1e3a5f]/55 to-transparent" />
                                             )}
                                             <div
-                                                className={[
+                                                className={cn(
                                                     'grid grid-cols-[2.5rem_1fr_4rem] sm:grid-cols-[3rem_1fr_5rem_3rem_3rem_3rem] items-center gap-2 px-4 py-3 transition',
                                                     isTop3 ? 'bg-[#0a0305]' : '',
-                                                ].join(' ')}
+                                                )}
                                             >
                                                 {/* 순위 */}
                                                 <span className="text-center text-lg">
@@ -93,10 +94,10 @@ export function F1StandingsPanelView({ title, content, defaultExpanded = false }
                                                         <img
                                                             src={entry.avatarUrl}
                                                             alt={entry.name}
-                                                            className={[
+                                                            className={cn(
                                                                 'h-8 w-8 shrink-0 rounded-full object-cover',
                                                                 isTop3 ? 'ring-2 ring-[#E10600]/50' : 'ring-1 ring-[#1e3a5f]',
-                                                            ].join(' ')}
+                                                            )}
                                                             loading="lazy"
                                                         />
                                                     ) : (
@@ -109,10 +110,10 @@ export function F1StandingsPanelView({ title, content, defaultExpanded = false }
                                                         {/* 포인트 바 */}
                                                         <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-[#1e3a5f]/40">
                                                             <div
-                                                                className={[
+                                                                className={cn(
                                                                     'h-full rounded-full transition-all duration-500',
                                                                     isTop3 ? 'bg-[#E10600]' : 'bg-[#6aadcc]/60',
-                                                                ].join(' ')}
+                                                                )}
                                                                 style={{ width: `${pointsRatio * 100}%` }}
                                                             />
                                                         </div>
@@ -124,10 +125,10 @@ export function F1StandingsPanelView({ title, content, defaultExpanded = false }
 
                                                 {/* 누적 포인트 */}
                                                 <span
-                                                    className={[
+                                                    className={cn(
                                                         'text-center text-base font-black',
                                                         isTop3 ? 'text-[#F5C842]' : 'text-[#e8f4fd]',
-                                                    ].join(' ')}
+                                                    )}
                                                 >
                                                     {entry.totalPoints}
                                                 </span>

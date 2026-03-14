@@ -1,4 +1,5 @@
 import type { AffiliationItem } from './affiliation'
+import type { Broadcast } from '../../schedule/types'
 
 export type BroadcastType = '합방' | '대회' | '콘텐츠' | '내전'
 
@@ -89,4 +90,36 @@ export interface AdminBroadcastParticipantInput {
 
 export interface BroadcastMutationResponse {
     id: string
+}
+
+export type ViewMode = 'weekly' | 'monthly'
+
+export type BroadcastDraftParticipant = {
+    name: string
+    streamerId?: number
+    isHost?: boolean
+    avatarUrl?: string
+    isPartner?: boolean
+    affiliations?: AffiliationItem[]
+}
+
+export interface BroadcastFormState {
+    title: string
+    broadcastType: string
+    categoryId: number | null
+    startDate: string
+    startHour: string
+    startMinute: string
+    endDate: string
+    endHour: string
+    endMinute: string
+    tags: string
+    isVisible: boolean
+    isChzzkSupport: boolean
+    participants: BroadcastDraftParticipant[]
+}
+
+export interface BroadcastDateGroup {
+    date: string
+    broadcasts: Broadcast[]
 }

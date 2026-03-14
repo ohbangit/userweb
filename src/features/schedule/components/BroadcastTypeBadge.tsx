@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import type { Broadcast } from '../types/schedule'
+import { cn } from '../../../lib/cn'
 
 type BroadcastTypeTone = 'collab' | 'internal' | 'tournament' | 'content'
 
@@ -36,9 +37,7 @@ function BroadcastTypeBadgeComponent({ broadcast, className }: BroadcastTypeBadg
     if (!tone) return null
     return (
         <span
-            className={['shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold', TYPE_BADGE_CLASS[tone], className ?? '']
-                .filter(Boolean)
-                .join(' ')}
+            className={cn('shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold', TYPE_BADGE_CLASS[tone], className ?? '')}
         >
             {TYPE_BADGE_LABEL[tone]}
         </span>

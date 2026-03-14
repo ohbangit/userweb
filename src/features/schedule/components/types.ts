@@ -1,5 +1,5 @@
 import type { Dayjs } from 'dayjs'
-import type { ViewMode } from '../../../features/schedule/types'
+import type { ViewMode } from '../types'
 
 export interface NavButtonProps {
     direction: 'prev' | 'next'

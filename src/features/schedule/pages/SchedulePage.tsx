@@ -3,17 +3,16 @@ import type { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
-import { useViewMode } from '../../../hooks/useViewMode'
-import { useSchedule } from '../hooks'
+import { useSchedule, useViewMode } from '../hooks'
 import { addDays, addMonths, isSameDay } from '../utils'
 import {
     DailySchedule,
     WeeklySchedule,
     MonthlySchedule,
     ScheduleSeoHead,
-    } from '../components'
-import { DateControlPanel } from '../../../components/schedule'
-import { BannerCarousel, usePublicBanners } from '../../banner'
+    DateControlPanel,
+} from '../components'
+import { BannerCarousel, usePublicBanners } from '../../../components/banner'
 
 export default function SchedulePage() {
     const [searchParams, setSearchParams] = useSearchParams()

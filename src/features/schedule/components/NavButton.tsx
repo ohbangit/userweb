@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '../ui'
+import { Button } from '../../../components/ui'
 import type { NavButtonProps } from './types'
 
 /**

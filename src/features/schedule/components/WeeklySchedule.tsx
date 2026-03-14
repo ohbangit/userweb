@@ -8,6 +8,7 @@ import { WeeklyDateTabs } from './WeeklyDateTabs'
 import { WeeklyBroadcastRow } from './WeeklyBroadcastRow'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
 import { trackEvent } from '../../../utils/analytics'
+import { cn } from '../../../lib/cn'
 
 interface WeeklyScheduleProps {
     broadcasts: Broadcast[]
@@ -121,13 +122,13 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
                             >
                                 {/* 날짜 섹션 헤더 */}
                                 <div
-                                    className={['flex items-center justify-between px-4 py-3', today ? 'bg-primary/[0.03]' : ''].join(' ')}
+                                    className={cn('flex items-center justify-between px-4 py-3', today ? 'bg-primary/[0.03]' : '')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        <span className={['text-xs font-bold', today ? 'text-primary' : 'text-text-muted'].join(' ')}>
+                                        <span className={cn('text-xs font-bold', today ? 'text-primary' : 'text-text-muted')}>
                                             {getDayName(day)}요일
                                         </span>
-                                        <span className={['text-xs', today ? 'text-primary/70' : 'text-text-dim'].join(' ')}>
+                                        <span className={cn('text-xs', today ? 'text-primary/70' : 'text-text-dim')}>
                                             {day.month() + 1}/{day.date()}
                                         </span>
                                         {today && (

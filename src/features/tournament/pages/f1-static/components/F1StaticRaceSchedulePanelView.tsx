@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChevronDown, Flag, MapPin, Clock } from 'lucide-react'
 import type { F1RaceScheduleContent, F1RaceStatus } from '../../../types'
+import { cn } from '../../../../../lib/cn'
 
 interface Props {
     title: string
@@ -56,7 +57,7 @@ export function F1StaticRaceSchedulePanelView({ title, content, defaultExpanded 
             >
                 <h2 className="font-f1 text-5xl font-black tracking-tight uppercase text-[#e8f4fd]">{title}</h2>
                 <ChevronDown
-                    className={['h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : ''].join(' ')}
+                    className={cn('h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : '')}
                 />
             </button>
             <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
@@ -75,14 +76,14 @@ export function F1StaticRaceSchedulePanelView({ title, content, defaultExpanded 
                                 return (
                                     <li
                                         key={race.id}
-                                        className={[
+                                        className={cn(
                                             'flex items-start gap-4 rounded-xl border p-4 transition',
                                             isCompleted
                                                 ? 'border-[#E10600]/20 bg-[#120608]/60'
                                                 : isCancelled
                                                   ? 'border-gray-700/30 bg-gray-900/40 opacity-50'
                                                   : 'border-[#1e3a5f] bg-[#041524]/60',
-                                        ].join(' ')}
+                                        )}
                                     >
                                         {/* 라운드 번호 */}
                                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E10600]/10 ring-1 ring-[#E10600]/30">
@@ -94,18 +95,18 @@ export function F1StaticRaceSchedulePanelView({ title, content, defaultExpanded 
                                             <div className="flex flex-wrap items-center gap-2">
                                                 <Flag className="h-3.5 w-3.5 shrink-0 text-[#E10600]" />
                                                 <span
-                                                    className={[
+                                                    className={cn(
                                                         'text-base font-bold leading-tight',
                                                         isCancelled ? 'text-gray-500 line-through' : 'text-[#e8f4fd]',
-                                                    ].join(' ')}
+                                                    )}
                                                 >
                                                     {race.title}
                                                 </span>
                                                 <span
-                                                    className={[
+                                                    className={cn(
                                                         'rounded-full border px-2 py-0.5 text-xs font-semibold',
                                                         statusConfig.className,
-                                                    ].join(' ')}
+                                                    )}
                                                 >
                                                     {statusConfig.label}
                                                 </span>

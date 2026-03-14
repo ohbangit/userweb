@@ -9,6 +9,7 @@ import flashpointSrc from '../../../assets/flashpoint.svg'
 import hybridSrc from '../../../assets/hybrid.svg'
 import pushSrc from '../../../assets/push.webp'
 import type { OverwatchSetMap, ScheduleContent, ScheduleMatch, TournamentOverwatchMapType, TournamentTeam } from '../types'
+import { cn } from '../../../lib/cn'
 
 const ROLE_ORDER: Record<string, number> = {
     TNK: 0,
@@ -166,16 +167,16 @@ function MatchCard({ match, teams, isOverwatch }: MatchCardProps) {
                             return (
                                 <div
                                     key={setMap.setNumber}
-                                    className={[
+                                    className={cn(
                                         'inline-flex max-w-full min-w-0 flex-wrap items-center gap-1.5 rounded-lg border px-2.5 py-1',
                                         winnerTone !== null ? winnerTone : 'border-[#1e3a5f] bg-[#041524]',
-                                    ].join(' ')}
+                                    )}
                                 >
                                     <span
-                                        className={[
+                                        className={cn(
                                             'inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-semibold',
                                             MAP_TYPE_CLASS[setMap.mapType],
-                                        ].join(' ')}
+                                        )}
                                     >
                                         <img
                                             src={MAP_TYPE_ICON[setMap.mapType]}
@@ -225,10 +226,10 @@ function MatchCard({ match, teams, isOverwatch }: MatchCardProps) {
                             return (
                                 <div
                                     key={player.id}
-                                    className={[
+                                    className={cn(
                                         'relative grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
                                         mvpCount > 0 ? 'ring-1 ring-amber-300/50' : '',
-                                    ].join(' ')}
+                                    )}
                                 >
                                     <span
                                         className={`flex h-6 w-6 items-center justify-center rounded ${ROLE_TONE[player.slot] ?? 'bg-[#041524] ring-[#1e3a5f]/40'} ring-1 ${isDimmed ? 'opacity-55' : ''}`}
@@ -313,10 +314,10 @@ function MatchCard({ match, teams, isOverwatch }: MatchCardProps) {
                             return (
                                 <div
                                     key={player.id}
-                                    className={[
+                                    className={cn(
                                         'relative grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-[#1e3a5f]/70 bg-[#041524]/65 px-2 py-1.5',
                                         mvpCount > 0 ? 'ring-1 ring-amber-300/50' : '',
-                                    ].join(' ')}
+                                    )}
                                 >
                                     <div className="hidden sm:block">
                                         {player.avatarUrl !== null ? (
@@ -374,7 +375,7 @@ export function SchedulePanelView({ title, content, teams, isOverwatch = false, 
             >
                 <h2 className="text-3xl font-bold text-[#e8f4fd]">{title}</h2>
                 <ChevronDown
-                    className={['h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : ''].join(' ')}
+                    className={cn('h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : '')}
                 />
             </button>
             <div className="mt-6 h-px w-full bg-gradient-to-r from-[#0596e8]/60 via-[#1e3a5f]/40 to-transparent" />
@@ -412,10 +413,10 @@ export function SchedulePanelView({ title, content, teams, isOverwatch = false, 
                                         )}
                                     </div>
                                     <ChevronDown
-                                        className={[
+                                        className={cn(
                                             'h-5 w-5 text-[#6aadcc] transition-transform duration-200',
                                             isGroupCollapsed ? '-rotate-90' : '',
-                                        ].join(' ')}
+                                        )}
                                     />
                                 </button>
 

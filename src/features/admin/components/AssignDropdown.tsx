@@ -6,6 +6,7 @@ import {
 } from '../hooks'
 import type { SlotType } from '../types'
 import { getErrorMessage } from '../utils'
+import { cn } from '../../../lib/cn'
 
 interface AssignDropdownProps {
     tournamentId: number
@@ -92,12 +93,12 @@ export function AssignDropdown({
                         key={m}
                         type="button"
                         onClick={() => setMode(m)}
-                        className={[
+                        className={cn(
                             'flex-1 rounded-md py-1 text-xs font-medium transition',
                             mode === m
                                 ? 'bg-white text-gray-900 shadow-sm dark:bg-[#2e2e38] dark:text-[#efeff1]'
                                 : 'text-gray-500 dark:text-[#adadb8]',
-                        ].join(' ')}
+                        )}
                     >
                         {m === 'streamer' ? '관리 스트리머' : '외부인사'}
                     </button>

@@ -20,6 +20,7 @@ import type { LucideIcon } from 'lucide-react'
 import { useAdminAuth } from '../hooks'
 import { useTheme } from '../../../hooks/useTheme'
 import { AdminToastProvider } from './AdminToastProvider'
+import { cn } from '../../../lib/cn'
 
 interface AdminLayoutProps {
     children: ReactNode
@@ -84,16 +85,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <AdminToastProvider>
             <div className="flex min-h-screen bg-gray-50 dark:bg-[#0e0e10]">
                 <aside
-                    className={[
+                    className={cn(
                         'flex flex-col border-r border-gray-300 bg-white transition-all duration-200 dark:border-[#3a3a44] dark:bg-[#1a1a23]',
                         sidebarCollapsed ? 'w-14' : 'w-56',
-                    ].join(' ')}
+                    )}
                 >
                     <div
-                        className={[
+                        className={cn(
                             'flex h-14 items-center border-b border-gray-300 dark:border-[#3a3a44]',
                             sidebarCollapsed ? 'justify-center px-0' : 'justify-between px-5',
-                        ].join(' ')}
+                        )}
                     >
                         {!sidebarCollapsed && <span className="text-sm font-bold text-gray-900 dark:text-[#efeff1]">어드민</span>}
                         <div className="flex items-center gap-1">
@@ -147,10 +148,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         {NAV_SECTIONS.map((section, sectionIndex) => (
                             <div
                                 key={section.title}
-                                className={[
+                                className={cn(
                                     'space-y-1',
                                     sectionIndex > 0 ? 'mt-3 border-t border-gray-300 pt-3 dark:border-[#3a3a44]' : '',
-                                ].join(' ')}
+                                )}
                             >
                                 {!sidebarCollapsed && (
                                     <div className="mb-2 px-3 text-xs font-semibold text-gray-400 dark:text-gray-500">{section.title}</div>
@@ -161,13 +162,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                                         to={item.to}
                                         title={sidebarCollapsed ? item.label : undefined}
                                         className={({ isActive }) =>
-                                            [
+                                            cn(
                                                 'flex items-center rounded-lg px-3 py-2 text-sm font-medium transition',
                                                 sidebarCollapsed ? 'justify-center' : 'gap-2',
                                                 isActive
                                                     ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
                                                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]',
-                                            ].join(' ')
+                                            )
                                         }
                                     >
                                         <item.icon className="h-4 w-4 shrink-0" />
@@ -182,10 +183,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         <button
                             onClick={handleLogout}
                             title={sidebarCollapsed ? '로그아웃' : undefined}
-                            className={[
+                            className={cn(
                                 'flex w-full cursor-pointer items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 dark:text-[#adadb8] dark:hover:bg-[#2e2e38] dark:hover:text-[#efeff1]',
                                 sidebarCollapsed ? 'justify-center' : 'gap-2',
-                            ].join(' ')}
+                            )}
                         >
                             <LogOut className="h-4 w-4 shrink-0" />
                             {!sidebarCollapsed && <span>로그아웃</span>}

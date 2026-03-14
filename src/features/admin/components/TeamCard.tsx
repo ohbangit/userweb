@@ -11,6 +11,7 @@ import type {
 } from '../types'
 import { getErrorMessage } from '../utils'
 import { MemberRow } from './MemberRow'
+import { cn } from '../../../lib/cn'
 
 interface TeamCardProps {
     tournamentId: number
@@ -103,12 +104,12 @@ export function TeamCard({ tournamentId, team }: TeamCardProps) {
                 </p>
 
                 <span
-                    className={[
+                    className={cn(
                         'shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold',
                         playerCount >= 5
                             ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
                             : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400',
-                    ].join(' ')}
+                    )}
                 >
                     {playerCount}/5
                 </span>

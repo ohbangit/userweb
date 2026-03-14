@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 import partnerMark from '../../../assets/mark.png'
-import { ApiError } from '../../../lib/apiClient'
 import {
     useAdminToast,
     useCrawlBroadcasts,
@@ -9,18 +8,15 @@ import {
     useRegisterStreamer,
 } from '../hooks'
 import type { CrawledBroadcast, CrawledParticipant } from '../types'
-
-function getErrorMessage(error: unknown): string | null {
-    if (!(error instanceof Error)) return null
-    return error instanceof ApiError ? error.message : '오류가 발생했습니다.'
-}
+import { getErrorMessage } from '../utils/error'
+import { cn } from '../../../lib/cn'
+import { DAY_NAMES_SHORT } from '../../../constants/date'
 
 function formatDateLabel(isoString: string): string {
     const d = new Date(isoString)
     const month = d.getMonth() + 1
     const day = d.getDate()
-    const dayNames = ['일', '월', '화', '수', '목', '금', '토']
-    const dayName = dayNames[d.getDay()]
+    const dayName = DAY_NAMES_SHORT[d.getDay()]
     return `${month}월 ${day}일 (${dayName})`
 }
 
@@ -171,18 +167,18 @@ function ParticipantChip({
                     onRegisterClick(participant)
                 }
             }}
-            className={[
+            className={cn(
                 'flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition',
                 participant.isManaged
                     ? 'cursor-default bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400'
                     : 'cursor-pointer bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30',
-            ].join(' ')}
+            )}
         >
             <span
-                className={[
+                className={cn(
                     'inline-block h-1.5 w-1.5 shrink-0 rounded-full',
                     participant.isManaged ? 'bg-emerald-500' : 'bg-amber-400',
-                ].join(' ')}
+                )}
             />
             {participant.channelImageUrl !== null && (
                 <img
@@ -212,12 +208,12 @@ function BroadcastRow({
 }: BroadcastRowProps) {
     return (
         <tr
-            className={[
+            className={cn(
                 'border-b border-gray-200 last:border-0 transition dark:border-[#3a3a44]',
                 checked
                     ? 'bg-blue-50/50 dark:bg-blue-900/10'
                     : 'hover:bg-gray-50 dark:hover:bg-[#26262e]',
-            ].join(' ')}
+            )}
             onClick={onToggle}
         >
             <td className="w-12 px-4 py-3.5">

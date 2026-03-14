@@ -6,6 +6,7 @@ import { resolveParticipants, sortParticipants } from '../utils/participant'
 import { ParticipantStack } from './ParticipantStack'
 import partnerMark from '../../../assets/mark.png'
 import { BroadcastTypeBadge, getBroadcastTypeTone } from './BroadcastTypeBadge'
+import { cn } from '../../../lib/cn'
 
 interface WeeklyBroadcastRowProps {
     broadcast: Broadcast
@@ -51,10 +52,10 @@ function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowP
         <button
             type="button"
             onClick={onClick}
-            className={[
+            className={cn(
                 'group flex w-full cursor-pointer items-center gap-2.5 rounded-xl border border-transparent px-3 py-2.5 text-left transition-all hover:border-border/40 hover:bg-card sm:gap-3',
                 TYPE_ROW_BG_CLASS[typeTone],
-            ].join(' ')}
+            )}
         >
             <span className="w-10 shrink-0 text-sm font-bold tabular-nums text-text-muted sm:w-11">{startTime}</span>
 

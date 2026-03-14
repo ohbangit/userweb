@@ -5,6 +5,7 @@ import { useAdminToast, useDeleteTournamentMember, useUpsertTournamentMember } f
 import type { SlotType, TournamentAdminMember } from '../types'
 import { getErrorMessage } from '../utils'
 import { AssignDropdown } from './AssignDropdown'
+import { cn } from '../../../lib/cn'
 
 interface MemberRowProps {
     tournamentId: number
@@ -51,15 +52,15 @@ export function MemberRow({ tournamentId, teamId, slot, label, member, isFirst, 
     }
 
     return (
-        <tr className={['group', !isFirst ? 'border-t border-gray-100 dark:border-[#2e2e38]' : ''].join(' ')}>
+        <tr className={cn('group', !isFirst ? 'border-t border-gray-100 dark:border-[#2e2e38]' : '')}>
             <td className="w-16 py-2 pl-4 pr-2">
                 <span
-                    className={[
+                    className={cn(
                         'inline-block rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wide',
                         isStaff
                             ? 'bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-300'
                             : 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300',
-                    ].join(' ')}
+                    )}
                 >
                     {label}
                 </span>
@@ -122,15 +123,15 @@ export function MemberRow({ tournamentId, teamId, slot, label, member, isFirst, 
                                 }}
                                 disabled={upsertMember.isPending}
                                 title={member.isCaptain ? '팀장 해제' : '팀장 지정'}
-                                className={[
+                                className={cn(
                                     'cursor-pointer rounded p-1 transition disabled:opacity-40',
                                     member.isCaptain
                                         ? 'bg-amber-100 text-amber-500 dark:bg-amber-900/30'
                                         : 'text-gray-300 hover:bg-gray-100 hover:text-amber-500 dark:text-[#3a3a44] dark:hover:bg-[#2e2e38] dark:hover:text-amber-400',
-                                ].join(' ')}
+                                )}
                                 aria-label={member.isCaptain ? '팀장 해제' : '팀장 지정'}
                             >
-                                <Crown className={['h-3.5 w-3.5', member.isCaptain ? 'fill-current' : ''].join(' ')} />
+                                <Crown className={cn('h-3.5 w-3.5', member.isCaptain ? 'fill-current' : '')} />
                             </button>
                         )}
                         <button

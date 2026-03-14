@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { ViewMode } from '../features/schedule/types'
+import type { ViewMode } from '../types'
 
 const STORAGE_KEY = 'ohbangit-view-mode'
 const DEFAULT_MODE: ViewMode = 'weekly'

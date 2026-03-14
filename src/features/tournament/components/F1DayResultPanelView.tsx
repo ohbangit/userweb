@@ -1,6 +1,7 @@
 import partnerMark from '../../../assets/mark.png'
 import { getF1TeamThemes } from '../data/f1TeamDraft'
 import type { F1DayQualifyingEntry, F1DayRaceEntry, F1DayDriverStanding, F1DayTeamStanding, F1DayResultContent, F1Driver } from '../types'
+import { cn } from '../../../lib/cn'
 
 interface Props {
     title?: string
@@ -25,7 +26,7 @@ function getRankColor(rank: number | null, dnf: boolean): string {
 function RankBadge({ rank, dnf }: { rank: number | null; dnf?: boolean }) {
     const isDnf = dnf ?? false
     return (
-        <span className={['text-center text-sm font-black tabular-nums', getRankColor(rank, isDnf)].join(' ')}>
+        <span className={cn('text-center text-sm font-black tabular-nums', getRankColor(rank, isDnf))}>
             {isDnf ? 'DNF' : (rank ?? '-')}
         </span>
     )
@@ -50,7 +51,7 @@ function DriverCell({ driver, dnf }: DriverCellProps) {
             ) : (
                 <div className="h-6 w-6 shrink-0 rounded-full bg-[#1e3a5f]/60" />
             )}
-            <span className={['truncate text-xs font-semibold', isDnf ? 'text-gray-500 line-through' : 'text-[#e8f4fd]'].join(' ')}>
+            <span className={cn('truncate text-xs font-semibold', isDnf ? 'text-gray-500 line-through' : 'text-[#e8f4fd]')}>
                 {driver != null ? (driver.nickname ?? driver.name) : '—'}
             </span>
             {driver?.isPartner === true && <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />}
@@ -67,13 +68,13 @@ function TeamIcon({ teamIndex }: { teamIndex: number }) {
     if (theme.logoUrl != null) {
         return (
             <div
-                className={['h-6 w-6 shrink-0 rounded-full flex items-center justify-center overflow-hidden', theme.logoBgClass].join(' ')}
+                className={cn('h-6 w-6 shrink-0 rounded-full flex items-center justify-center overflow-hidden', theme.logoBgClass)}
             >
                 <img src={theme.logoUrl} alt={theme.teamNameKo} className="h-5 w-5 object-contain" loading="lazy" />
             </div>
         )
     }
-    return <div className={['h-6 w-6 shrink-0 rounded-full', theme.logoBgClass].join(' ')} />
+    return <div className={cn('h-6 w-6 shrink-0 rounded-full', theme.logoBgClass)} />
 }
 
 function EmptyResult({ label }: { label: string }) {
@@ -182,10 +183,10 @@ function RaceTable({ entries, driversById, label }: RaceTableProps) {
                                 </div>
                                 <span className="text-center text-[10px] text-[#6aadcc]/60 tabular-nums">{entry.grid ?? '—'}</span>
                                 <span
-                                    className={[
+                                    className={cn(
                                         'text-right font-mono text-xs',
                                         entry.fastestLap ? 'text-[#a855f7]' : 'text-[#e8f4fd]/60',
-                                    ].join(' ')}
+                                    )}
                                 >
                                     {entry.lapTime ?? '—'}
                                 </span>
@@ -208,24 +209,24 @@ function TeamStandingCard({ standing }: { standing: F1DayTeamStanding }) {
     const isFirst = standing.rank === 1
 
     return (
-        <div className={['relative overflow-hidden rounded-xl', isFirst ? 'ring-1 ring-white/20' : ''].join(' ')}>
+        <div className={cn('relative overflow-hidden rounded-xl', isFirst ? 'ring-1 ring-white/20' : '')}>
             {/* 그라디언트 배경 레이어 */}
-            <div className={['absolute inset-0 bg-gradient-to-r opacity-30', theme.stripeClass].join(' ')} />
+            <div className={cn('absolute inset-0 bg-gradient-to-r opacity-30', theme.stripeClass)} />
             {/* 어두운 dim 레이어 */}
             <div className="absolute inset-0 bg-[#020d18]/65" />
 
             {/* 콘텐츠 */}
             <div
-                className={[
+                className={cn(
                     'relative grid items-center gap-3 px-4 py-3',
                     standing.r1Points != null || standing.r2Points != null
                         ? 'grid-cols-[2rem_1fr_3.5rem_auto]'
                         : 'grid-cols-[2rem_1fr_3.5rem]',
-                ].join(' ')}
+                )}
             >
                 {/* 등수 */}
                 <span
-                    className={['text-xl font-black tabular-nums text-center', isFirst ? 'text-[#F5C842]' : 'text-[#e8f4fd]/50'].join(' ')}
+                    className={cn('text-xl font-black tabular-nums text-center', isFirst ? 'text-[#F5C842]' : 'text-[#e8f4fd]/50')}
                 >
                     {standing.rank}
                 </span>
@@ -234,15 +235,15 @@ function TeamStandingCard({ standing }: { standing: F1DayTeamStanding }) {
                 <div className="flex min-w-0 items-center gap-2">
                     {theme.logoUrl != null ? (
                         <div
-                            className={[
+                            className={cn(
                                 'h-8 w-8 shrink-0 rounded-full flex items-center justify-center overflow-hidden',
                                 theme.logoBgClass,
-                            ].join(' ')}
+                            )}
                         >
                             <img src={theme.logoUrl} alt={theme.teamNameKo} className="h-6 w-6 object-contain" loading="lazy" />
                         </div>
                     ) : (
-                        <div className={['h-8 w-8 shrink-0 rounded-full', theme.logoBgClass].join(' ')} />
+                        <div className={cn('h-8 w-8 shrink-0 rounded-full', theme.logoBgClass)} />
                     )}
                     <span className="truncate text-sm font-bold text-[#e8f4fd]">{theme.teamNameKo}</span>
                 </div>
@@ -250,7 +251,7 @@ function TeamStandingCard({ standing }: { standing: F1DayTeamStanding }) {
                 {/* 총 포인트 */}
                 <div className="text-center">
                     <span className="block text-[10px] font-bold uppercase tracking-widest text-[#6aadcc]/60">PTS</span>
-                    <span className={['text-xl font-black tabular-nums', isFirst ? 'text-[#F5C842]' : 'text-[#e8f4fd]'].join(' ')}>
+                    <span className={cn('text-xl font-black tabular-nums', isFirst ? 'text-[#F5C842]' : 'text-[#e8f4fd]')}>
                         {standing.totalPoints}
                     </span>
                 </div>
@@ -310,7 +311,7 @@ function DriverStandingsTable({ standings, driversById }: DriverStandingsTablePr
                             {index > 0 && <div className="h-px w-full bg-gradient-to-r from-transparent via-[#1e3a5f]/40 to-transparent" />}
                             <div className="grid grid-cols-[2.5rem_1fr_3rem_3.5rem] items-center gap-2 px-4 py-2.5">
                                 {/* 순위 */}
-                                <span className={['text-center text-sm font-black tabular-nums', getRankColor(rank, false)].join(' ')}>
+                                <span className={cn('text-center text-sm font-black tabular-nums', getRankColor(rank, false))}>
                                     {rank}
                                 </span>
 
@@ -343,10 +344,10 @@ function DriverStandingsTable({ standings, driversById }: DriverStandingsTablePr
                                     {theme != null ? (
                                         theme.logoUrl != null ? (
                                             <div
-                                                className={[
+                                                className={cn(
                                                     'h-7 w-7 rounded-full flex items-center justify-center overflow-hidden',
                                                     theme.logoBgClass,
-                                                ].join(' ')}
+                                                )}
                                             >
                                                 <img
                                                     src={theme.logoUrl}
@@ -356,7 +357,7 @@ function DriverStandingsTable({ standings, driversById }: DriverStandingsTablePr
                                                 />
                                             </div>
                                         ) : (
-                                            <div className={['h-7 w-7 rounded-full', theme.logoBgClass].join(' ')} />
+                                            <div className={cn('h-7 w-7 rounded-full', theme.logoBgClass)} />
                                         )
                                     ) : (
                                         <div className="h-7 w-7 rounded-full bg-[#1e3a5f]/40" />
@@ -365,10 +366,10 @@ function DriverStandingsTable({ standings, driversById }: DriverStandingsTablePr
 
                                 {/* 포인트 */}
                                 <span
-                                    className={[
+                                    className={cn(
                                         'text-center text-base font-black tabular-nums',
                                         rank <= 3 ? 'text-[#F5C842]' : 'text-[#e8f4fd]',
-                                    ].join(' ')}
+                                    )}
                                 >
                                     {standing.points}
                                 </span>
@@ -400,7 +401,7 @@ export function F1DayResultPanelView({ title, content, drivers, showRace2 = true
         </div>
     ) : (
         <>
-            <div className={['mt-8 grid grid-cols-1 gap-6', showRace2 ? 'md:grid-cols-3' : 'md:grid-cols-2'].join(' ')}>
+            <div className={cn('mt-8 grid grid-cols-1 gap-6', showRace2 ? 'md:grid-cols-3' : 'md:grid-cols-2')}>
                 <div>
                     <SectionHeader label="Qualifying" />
                     <QualifyingTable entries={content.qualifying} driversById={driversById} />

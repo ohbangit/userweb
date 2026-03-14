@@ -1,5 +1,6 @@
 import type { OverwatchSet } from '../../types/overwatch'
 import { MapTypeBadge } from './MapTypeBadge'
+import { cn } from '../../../../lib/cn'
 
 interface MatchSetRowProps {
     set: OverwatchSet
@@ -13,9 +14,9 @@ export function MatchSetRow({ set, homeTeam, awayTeam }: MatchSetRowProps) {
     const isPending = !set.isPlayed
 
     return (
-        <div className={['grid grid-cols-[44px_52px_1fr_auto] items-center gap-2 py-1.5 text-xs', isPending ? 'opacity-40' : ''].join(' ')}>
+        <div className={cn('grid grid-cols-[44px_52px_1fr_auto] items-center gap-2 py-1.5 text-xs', isPending ? 'opacity-40' : '')}>
             {/* SET N */}
-            <span className={['text-[10px] font-bold tracking-wider', isOngoing ? 'text-primary' : 'text-text-dim'].join(' ')}>
+            <span className={cn('text-[10px] font-bold tracking-wider', isOngoing ? 'text-primary' : 'text-text-dim')}>
                 SET {set.setNumber}
             </span>
 
@@ -25,7 +26,7 @@ export function MatchSetRow({ set, homeTeam, awayTeam }: MatchSetRowProps) {
             </div>
 
             {/* 맵 이름 */}
-            <span className={['truncate font-medium', isPending ? 'text-text-muted/50' : 'text-text-muted'].join(' ')}>
+            <span className={cn('truncate font-medium', isPending ? 'text-text-muted/50' : 'text-text-muted')}>
                 {isPending ? '—' : (set.mapName ?? 'TBD')}
             </span>
 

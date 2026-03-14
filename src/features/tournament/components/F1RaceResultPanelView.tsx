@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChevronDown, ChevronRight, Zap } from 'lucide-react'
 import type { F1RaceResultContent } from '../types'
+import { cn } from '../../../lib/cn'
 
 interface Props {
     title: string
@@ -61,7 +62,7 @@ export function F1RaceResultPanelView({ title, content, defaultExpanded = false 
             >
                 <h2 className="font-f1 text-5xl font-black tracking-tight uppercase text-[#e8f4fd]">{title}</h2>
                 <ChevronDown
-                    className={['h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : ''].join(' ')}
+                    className={cn('h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : '')}
                 />
             </button>
             <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
@@ -97,10 +98,10 @@ export function F1RaceResultPanelView({ title, content, defaultExpanded = false 
                                                 {sorted.length > 0 && <span className="text-xs text-[#6aadcc]/60">{sorted.length}명</span>}
                                             </div>
                                             <ChevronRight
-                                                className={[
+                                                className={cn(
                                                     'h-4 w-4 text-[#6aadcc]/60 transition-transform duration-200',
                                                     isExpanded ? 'rotate-90' : '',
-                                                ].join(' ')}
+                                                )}
                                             />
                                         </button>
 
@@ -128,10 +129,10 @@ export function F1RaceResultPanelView({ title, content, defaultExpanded = false 
                                                                     <div className="grid grid-cols-[2.5rem_1fr_3rem_3.5rem] items-center gap-2 px-4 py-2.5">
                                                                         {/* 순위 */}
                                                                         <span
-                                                                            className={[
+                                                                            className={cn(
                                                                                 'text-center text-base font-black',
                                                                                 getPositionColor(result.position, result.dnf),
-                                                                            ].join(' ')}
+                                                                            )}
                                                                         >
                                                                             {result.dnf
                                                                                 ? 'DNF'
@@ -140,10 +141,10 @@ export function F1RaceResultPanelView({ title, content, defaultExpanded = false 
 
                                                                         {/* 이름 */}
                                                                         <span
-                                                                            className={[
+                                                                            className={cn(
                                                                                 'truncate text-sm font-semibold',
                                                                                 result.dnf ? 'text-gray-500' : 'text-[#e8f4fd]',
-                                                                            ].join(' ')}
+                                                                            )}
                                                                         >
                                                                             {result.name}
                                                                         </span>

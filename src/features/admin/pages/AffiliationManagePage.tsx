@@ -1,14 +1,9 @@
 import { useState } from 'react'
-import { ApiError } from '../../../lib/apiClient'
 import { useAdminToast, useAffiliations, useCreateAffiliation, useUpdateAffiliation, useDeleteAffiliation } from '../hooks'
 import type { AffiliationItem } from '../types'
 import { getAffiliationColor } from '../types'
 import { AFFILIATION_COLOR_PALETTE } from '../../../types/affiliation'
-
-function getErrorMessage(error: unknown): string | null {
-    if (!(error instanceof Error)) return null
-    return error instanceof ApiError ? error.message : '오류가 발생했습니다.'
-}
+import { getErrorMessage } from '../utils/error'
 
 // ─── 색상 프리셋 팔레트 ────────────────────────────────────────────────────────
 

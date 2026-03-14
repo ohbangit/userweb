@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import partnerMark from '../../../assets/mark.png'
-import { ApiError } from '../../../lib/apiClient'
 import {
     useAdminToast,
     useCreateStreamerExclusion,
@@ -11,13 +10,7 @@ import {
     useStreamerExclusions,
 } from '../hooks'
 import type { DiscoveryCandidate, DiscoveryCursor } from '../types'
-
-function getErrorMessage(error: unknown): string | null {
-    if (!(error instanceof Error)) {
-        return null
-    }
-    return error instanceof ApiError ? error.message : '오류가 발생했습니다.'
-}
+import { getErrorMessage } from '../utils/error'
 
 function mergeCandidates({
     current,

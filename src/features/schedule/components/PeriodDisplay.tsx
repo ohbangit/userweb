@@ -1,4 +1,4 @@
-import { getWeekNumber, getWeekRange, formatFullDate } from '../../features/schedule/utils'
+import { getWeekNumber, getWeekRange, formatFullDate } from '../utils'
 import type { PeriodDisplayProps } from './types'
 
 export function PeriodDisplay({ currentDate, viewMode }: PeriodDisplayProps) {

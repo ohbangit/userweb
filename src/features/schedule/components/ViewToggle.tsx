@@ -1,4 +1,4 @@
-import { cn } from '../../lib/cn'
+import { cn } from '../../../lib/cn'
 import type { ViewToggleProps } from './types'
 
 /** 뷰 모드 전환 세그먼트 컨트롤 (일간 / 주간 / 월간) */

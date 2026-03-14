@@ -1,7 +1,7 @@
 import { NavButton } from './NavButton'
 import { PeriodDisplay } from './PeriodDisplay'
 import { ViewToggle } from './ViewToggle'
-import { cn } from '../../lib/cn'
+import { cn } from '../../../lib/cn'
 import type { DateControlPanelProps } from './types'
 
 /**
