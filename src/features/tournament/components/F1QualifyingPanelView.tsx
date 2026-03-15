@@ -1,5 +1,6 @@
 import partnerMark from '../../../assets/mark.png'
 import type { F1QualifyingContent } from '../types'
+import { cn } from '../../../lib/cn'
 
 interface Props {
     title: string
@@ -60,10 +61,10 @@ function QualifyingTable({ drivers }: QualifyingTableProps) {
                 return (
                     <li
                         key={driver.driverId}
-                        className={[
+                        className={cn(
                             'flex items-center gap-3 rounded-xl border px-4 py-3 transition',
                             isDnq ? 'border-gray-700/30 bg-[#020d18]/60 opacity-50' : 'border-[#1e3a5f]/60 bg-[#041524]/70',
-                        ].join(' ')}
+                        )}
                     >
                         {/* 순위 */}
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E10600]/10 ring-1 ring-[#E10600]/30">
@@ -97,7 +98,7 @@ function QualifyingTable({ drivers }: QualifyingTableProps) {
                         {/* 랩타임 / 통과 여부 */}
                         <div className="shrink-0 text-right">
                             {driver.lapTime !== null && <span className="block text-xs font-mono text-[#6aadcc]/70">{driver.lapTime}</span>}
-                            <span className={['text-xs font-semibold', isQualified ? 'text-[#4ade80]' : 'text-gray-500'].join(' ')}>
+                            <span className={cn('text-xs font-semibold', isQualified ? 'text-[#4ade80]' : 'text-gray-500')}>
                                 {isQualified ? 'Q' : 'DNQ'}
                             </span>
                         </div>

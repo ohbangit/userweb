@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react'
 import type { Broadcast } from '../types/schedule'
 import { getMonthDays, isSameMonth, isToday, isSameDay, formatFullDate } from '../utils/date'
 import { WeeklyBroadcastRow } from './WeeklyBroadcastRow'
+import { cn } from '../../../lib/cn'
+import { DAY_NAMES_SHORT } from '../../../constants/date'
 
 interface MonthlyScheduleProps {
     broadcasts: Broadcast[]
@@ -11,7 +13,7 @@ interface MonthlyScheduleProps {
     onSelectDay?: (day: Dayjs) => void
 }
 
-const DAY_HEADERS = ['일', '월', '화', '수', '목', '금', '토']
+const DAY_HEADERS = DAY_NAMES_SHORT
 
 export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: MonthlyScheduleProps) {
     const broadcastsByDate = useMemo(() => {
@@ -84,13 +86,13 @@ export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: Monthl
                                         type="button"
                                         key={day.format('YYYY-MM-DD')}
                                         onClick={() => setSelectedDay(day)}
-                                        className={[
+                                        className={cn(
                                             'flex min-h-[64px] cursor-pointer flex-col items-center justify-center gap-1 py-2 transition-colors hover:bg-card-hover/50 md:min-h-[76px]',
                                             isSelected ? 'bg-primary/10' : inMonth ? 'bg-bg' : 'bg-bg-secondary/50',
-                                        ].join(' ')}
+                                        )}
                                     >
                                         <span
-                                            className={[
+                                            className={cn(
                                                 'flex h-7 w-7 items-center justify-center rounded-full text-sm',
                                                 today
                                                     ? 'bg-primary font-bold text-bg'
@@ -99,7 +101,7 @@ export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: Monthl
                                                       : inMonth
                                                         ? 'font-medium text-text'
                                                         : 'text-text-dim',
-                                            ].join(' ')}
+                                            )}
                                         >
                                             {day.date()}
                                         </span>
@@ -109,7 +111,7 @@ export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: Monthl
                                                 {Array.from({ length: dotCount }, (_, i) => (
                                                     <span
                                                         key={i}
-                                                        className={[
+                                                        className={cn(
                                                             'h-1.5 w-1.5 rounded-full',
                                                             i === 0 && hasCollab
                                                                 ? 'bg-collab'
@@ -118,7 +120,7 @@ export function MonthlySchedule({ broadcasts, currentDate, onSelectDay }: Monthl
                                                                   : dotCount === 2
                                                                     ? 'bg-primary/70'
                                                                     : 'bg-primary',
-                                                        ].join(' ')}
+                                                        )}
                                                     />
                                                 ))}
                                             </div>

@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { ChevronDown, Radio } from 'lucide-react'
 import { MatchSetsPanel } from '../../../../schedule/components/overwatch/MatchSetsPanel'
 import type { Broadcast } from '../../../../schedule/types/schedule'
+import { cn } from '../../../../../lib/cn'
 
 interface OverwatchScheduleSectionProps {
     days: Array<{
@@ -89,7 +90,7 @@ export function OverwatchScheduleSection({ days, isLoading, error }: OverwatchSc
             >
                 <h2 className="text-xl font-bold text-white">일정</h2>
                 <ChevronDown
-                    className={['h-5 w-5 text-[#6b7280] transition-transform duration-200 group-hover:text-[#9ca3af]', collapsed ? '-rotate-90' : ''].join(' ')}
+                    className={cn('h-5 w-5 text-[#6b7280] transition-transform duration-200 group-hover:text-[#9ca3af]', collapsed ? '-rotate-90' : '')}
                 />
             </button>
 

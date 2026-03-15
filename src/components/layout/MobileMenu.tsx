@@ -1,4 +1,5 @@
 import { ChevronRight } from 'lucide-react'
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router-dom'
 import { cn } from '../../lib/cn'
@@ -8,7 +9,9 @@ import type { MobileMenuProps } from './types'
  * 모바일 네비게이션 메뉴 패널
  * 햄버거 버튼 클릭 시 헤더 아래로 펼쳐지는 풀스크린 오버레이 메뉴입니다.
  */
-export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+export function MobileMenu({ isOpen, onClose, items }: MobileMenuProps) {
+    const [openParentId, setOpenParentId] = useState<number | null>(null)
+
     if (!isOpen) return null
 
     const mobileNavItemClass = ({ isActive }: { isActive: boolean }) =>
@@ -30,28 +33,75 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 id="mobile-nav-menu"
                 role="navigation"
                 aria-label="모바일 메뉴"
-                className="absolute left-0 right-0 top-full z-50 border-b border-border/30 bg-bg shadow-lg md:hidden animate-fade-in"
+                className="absolute left-0 right-0 top-full z-50 animate-fade-in border-b border-border/30 bg-bg shadow-lg lg:hidden"
             >
                 <div className="flex flex-col py-2">
-                    {/* 방송일정 */}
-                    <NavLink to="/" end className={mobileNavItemClass} onClick={onClose}>
-                        방송일정
-                        <ChevronRight className="h-4 w-4 text-text-muted" />
-                    </NavLink>
+                    {items.map((item) => {
+                        const hasChildren = item.children.length > 0
 
-                    {/* 구분선 */}
-                    <div className="mx-4 my-2 border-t border-border/30" />
+                        if (hasChildren) {
+                            const isOpenParent = openParentId === item.id
 
-                    <NavLink to="/tournament/overwatch-vs-talon" className={mobileNavItemClass} onClick={onClose}>
-                        오버워치 RIVAL CLASH
-                        <ChevronRight className="h-4 w-4 text-text-muted" />
-                    </NavLink>
+                            return (
+                                <div key={item.id} className="px-2">
+                                    <button
+                                        type="button"
+                                        className="flex w-full cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-left text-base font-medium text-text transition-colors hover:bg-border/10"
+                                        onClick={() => setOpenParentId((current) => (current === item.id ? null : item.id))}
+                                        aria-expanded={isOpenParent}
+                                    >
+                                        <span>{item.label}</span>
+                                        <ChevronRight className={cn('h-4 w-4 text-text-muted transition-transform', isOpenParent && 'rotate-90')} />
+                                    </button>
 
-                    {/* F1 레이싱 */}
-                    <NavLink to="/tournament/chzzk-racing4th" className={mobileNavItemClass} onClick={onClose}>
-                        2026 치레동 F1
-                        <ChevronRight className="h-4 w-4 text-text-muted" />
-                    </NavLink>
+                                    {isOpenParent && (
+                                        <div className="flex animate-fade-in flex-col gap-1 pb-2 pl-4">
+                                            {item.children.map((child) =>
+                                                child.path ? (
+                                                    <NavLink
+                                                        key={child.id}
+                                                        to={child.path}
+                                                        end={child.path === '/'}
+                                                        className={mobileNavItemClass}
+                                                        onClick={onClose}
+                                                    >
+                                                        {child.label}
+                                                        <ChevronRight className="h-4 w-4 text-text-muted" />
+                                                    </NavLink>
+                                                ) : (
+                                                    <span
+                                                        key={child.id}
+                                                        className="flex w-full cursor-default items-center justify-between rounded-lg px-4 py-3 text-left text-base font-medium text-text-muted"
+                                                    >
+                                                        {child.label}
+                                                    </span>
+                                                ),
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        }
+
+                        if (item.path) {
+                            return (
+                                <div key={item.id} className="px-2">
+                                    <NavLink to={item.path} end={item.path === '/'} className={mobileNavItemClass} onClick={onClose}>
+                                        {item.label}
+                                        <ChevronRight className="h-4 w-4 text-text-muted" />
+                                    </NavLink>
+                                </div>
+                            )
+                        }
+
+                        return (
+                            <div key={item.id} className="px-2">
+                                <span className="flex w-full cursor-default items-center justify-between rounded-lg px-4 py-3 text-left text-base font-medium text-text-muted">
+                                    {item.label}
+                                </span>
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
         </>

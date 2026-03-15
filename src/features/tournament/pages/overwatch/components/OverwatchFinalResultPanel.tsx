@@ -182,17 +182,6 @@ export function OverwatchFinalResultPanel({ slug }: OverwatchFinalResultPanelPro
         return Array.from(mvpMap.values()).sort((a, b) => b.count - a.count)
     }, [completedMatches])
 
-    // 3.5 Final MVP (from champion team)
-    const finalMvp = useMemo(() => {
-        if (!isTournamentComplete || !championName || mvpLeaderboard.length === 0) return null
-        const championTeam = teams.find((t) => t.name === championName)
-        if (!championTeam) return null
-        const playerNames = new Set(
-            championTeam.members.filter((m) => m.slot === 'TNK' || m.slot === 'DPS' || m.slot === 'SPT').map((m) => m.name),
-        )
-        return mvpLeaderboard.find((mvp) => playerNames.has(mvp.name)) ?? null
-    }, [isTournamentComplete, championName, teams, mvpLeaderboard])
-
     // 4. Tournament Stats Cards
     const stats = useMemo(() => {
         let totalSets = 0
@@ -257,43 +246,6 @@ export function OverwatchFinalResultPanel({ slug }: OverwatchFinalResultPanelPro
                                 <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{championName}</h2>
                             </div>
                         </div>
-                        {finalMvp && (
-                            <>
-                                <div className="hidden h-20 w-px bg-white/[0.08] sm:block" />
-                                <div className="flex flex-col items-center gap-1.5">
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-amber-500/80">Final MVP</div>
-                                    <div className="relative">
-                                        {ROLE_IMG[finalMvp.position] && (
-                                            <div
-                                                className="absolute -left-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full"
-                                                style={{ backgroundColor: `${ROLE_COLOR[finalMvp.position]}30` }}
-                                            >
-                                                <img src={ROLE_IMG[finalMvp.position]} alt={finalMvp.position} className="h-3 w-3" />
-                                            </div>
-                                        )}
-                                        <HexAvatar
-                                            url={finalMvp.avatarUrl}
-                                            name={finalMvp.name}
-                                            size={56}
-                                            borderColor={ROLE_COLOR[finalMvp.position] ?? '#6b7280'}
-                                        />
-                                    </div>
-                                    <span className="text-sm font-bold italic text-[#d1d5db]">{finalMvp.name}</span>
-                                    <span
-                                        className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"
-                                        style={{
-                                            backgroundColor: `${ROLE_COLOR[finalMvp.position]}20`,
-                                            color: ROLE_COLOR[finalMvp.position],
-                                        }}
-                                    >
-                                        {ROLE_IMG[finalMvp.position] && (
-                                            <img src={ROLE_IMG[finalMvp.position]} alt={finalMvp.position} className="h-3 w-3" />
-                                        )}
-                                        {finalMvp.position}
-                                    </span>
-                                </div>
-                            </>
-                        )}
                     </div>
                 ) : (
                     <div className="relative z-10 flex flex-col items-center gap-4 text-center">

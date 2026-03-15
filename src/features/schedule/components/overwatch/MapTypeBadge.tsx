@@ -1,4 +1,5 @@
 import type { OverwatchMapType } from '../../types/overwatch'
+import { cn } from '../../../../lib/cn'
 
 const MAP_TYPE_STYLES: Record<OverwatchMapType, string> = {
     쟁탈: 'bg-violet-500/15 text-violet-400 border-violet-500/30',
@@ -17,11 +18,11 @@ export function MapTypeBadge({ mapType, size = 'md' }: MapTypeBadgeProps) {
 
     return (
         <span
-            className={[
+            className={cn(
                 'inline-flex items-center rounded-md border font-medium',
                 size === 'sm' ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-xs',
                 style,
-            ].join(' ')}
+            )}
         >
             {mapType}
         </span>

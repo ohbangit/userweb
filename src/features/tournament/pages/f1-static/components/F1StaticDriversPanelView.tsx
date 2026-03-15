@@ -1,6 +1,7 @@
 import partnerMark from '../../../../../assets/mark.png'
 import { Star, Trophy, Users } from 'lucide-react'
 import type { F1DriversContent, F1Driver } from '../../../types'
+import { cn } from '../../../../../lib/cn'
 
 interface Props {
     title?: string
@@ -122,10 +123,10 @@ function DriverCard({ driver, color }: DriverCardProps) {
 
     const inner = (
         <div
-            className={[
+            className={cn(
                 'group relative flex items-center gap-3 rounded-xl border border-[#2e1a1a] bg-[#0d0205] px-3 py-3 transition hover:border-[#E10600]/30 hover:bg-[#130407]',
                 isQualifyingEliminated ? 'opacity-55' : '',
-            ].join(' ')}
+            )}
         >
             {isQualifyingEliminated && (
                 <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/25">

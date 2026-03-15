@@ -6,7 +6,8 @@ import partnerMark from '../../../assets/mark.png'
 import tnkSrc from '../../../assets/tnk.svg'
 import dpsSrc from '../../../assets/dps.svg'
 import sptSrc from '../../../assets/spt.svg'
-import type { OverwatchRole, TournamentTeam } from '../types'
+import type { OverwatchRole, TournamentTeam, DraftParticipant } from '../types'
+import { cn } from '../../../lib/cn'
 
 const ROLE_IMG: Record<OverwatchRole, string> = {
     TNK: tnkSrc,
@@ -30,20 +31,10 @@ const SLOT_LABEL: Record<string, string> = {
     COACH: '코치',
 }
 
-interface DraftParticipantPreview {
-    id: string
-    name: string
-    channelId: string | null
-    position: OverwatchRole | null
-    avatarUrl: string | null
-    isPartner: boolean
-    isCaptain: boolean
-}
-
 interface Props {
     title: string
     teams: TournamentTeam[]
-    participants?: DraftParticipantPreview[]
+    participants?: DraftParticipant[]
     defaultExpanded?: boolean
 }
 
@@ -103,7 +94,7 @@ export function PlayerListPanelView({ title, teams, participants = [], defaultEx
             <button type="button" onClick={() => setCollapsed((prev) => !prev)} className="flex w-full items-center justify-between">
                 <h2 className="text-3xl font-bold text-[#e8f4fd]">{normalizedTitle}</h2>
                 <ChevronDown
-                    className={['h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : ''].join(' ')}
+                    className={cn('h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : '')}
                 />
             </button>
             {/* 디바이더 */}

@@ -4,6 +4,7 @@ import { formatTime } from '../utils/date'
 import { sortParticipants, getParticipantLabel } from '../utils/participant'
 import { BroadcastTypeBadge } from './BroadcastTypeBadge'
 import { MapTypeBadge } from './overwatch'
+import { cn } from '../../../lib/cn'
 
 interface BroadcastCardProps {
     broadcast: Broadcast
@@ -54,12 +55,12 @@ function BroadcastCardComponent({ broadcast, variant = 'compact', onClick }: Bro
     return (
         <Wrapper
             {...(onClick ? { type: 'button' as const, onClick } : {})}
-            className={[
+            className={cn(
                 'group relative flex w-full flex-col overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card via-card to-bg-secondary/70 p-2.5 text-left transition-all',
                 onClick ? 'cursor-pointer' : '',
                 'hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_12px_32px_rgba(0,0,0,0.35)]',
                 'before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:bg-[radial-gradient(circle_at_top,rgba(0,255,163,0.12),transparent_60%)] before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100',
-            ].join(' ')}
+            )}
         >
             <div className="flex min-w-0 flex-col gap-1">
                 <h3 className="truncate text-xs font-bold leading-snug text-text">{broadcast.title}</h3>

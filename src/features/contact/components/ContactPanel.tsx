@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MessageSquare, X } from 'lucide-react'
 import { useSubmitInquiry, mapInquiryType } from '../hooks/useSubmitInquiry'
+import { cn } from '../../../lib/cn'
 
 const inquiryTypes = ['일정 제보', '기타 건의'] as const
 
@@ -79,12 +80,12 @@ export function ContactPanel() {
                 />
             )}
             <div
-                className={[
+                className={cn(
                     'fixed bottom-16 left-5 right-5 z-[70] origin-bottom transition-all duration-200 ease-out sm:bottom-20 sm:left-auto sm:right-8 sm:w-[360px] sm:origin-bottom-right',
                     isOpen
                         ? 'pointer-events-auto translate-y-0 scale-100 opacity-100'
                         : 'pointer-events-none translate-y-3 scale-95 opacity-0',
-                ].join(' ')}
+                )}
             >
                 <div className="overflow-hidden rounded-2xl border border-border/40 bg-bg shadow-[0_20px_60px_rgba(0,0,0,0.2)]">
                     <div className="border-b border-border/30 px-4 py-3">

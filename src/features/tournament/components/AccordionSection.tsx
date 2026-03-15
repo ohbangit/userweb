@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { cn } from '../../../lib/cn'
 
 interface Props {
     id?: string
@@ -36,10 +37,10 @@ export function AccordionSection({ id, title, defaultOpen = true, children }: Pr
             <div className="mt-6 h-px w-full bg-gradient-to-r from-[#E10600]/60 via-[#7a0300]/40 to-transparent" />
             <div
                 id={contentId}
-                className={[
+                className={cn(
                     'overflow-hidden transition-all duration-300',
                     isOpen ? 'mt-6 max-h-[5000px] opacity-100' : 'max-h-0 opacity-0',
-                ].join(' ')}
+                )}
             >
                 <div className="min-h-0 overflow-hidden">{children}</div>
             </div>

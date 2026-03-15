@@ -4,6 +4,7 @@ import f1CarSrc from '../../../assets/f1_car.svg'
 import partnerMark from '../../../assets/mark.png'
 
 import { trackEvent } from '../../../utils/analytics'
+import { cn } from '../../../lib/cn'
 
 interface TournamentLink {
     label: string
@@ -115,9 +116,9 @@ function PersonRow({
     const inner = (
         <div className="flex items-center gap-2">
             {avatarUrl !== null && (
-                <img src={avatarUrl} alt={name} className={['h-8 w-8 rounded-full ring-2', ringClass].join(' ')} loading="lazy" />
+                <img src={avatarUrl} alt={name} className={cn('h-8 w-8 rounded-full ring-2', ringClass)} loading="lazy" />
             )}
-            <span className={['text-sm font-semibold text-white transition-colors', nameHoverClass].join(' ')}>{name}</span>
+            <span className={cn('text-sm font-semibold text-white transition-colors', nameHoverClass)}>{name}</span>
             {isPartner && (
                 <span className="inline-flex items-center" aria-label="파트너 스트리머" title="파트너 스트리머">
                     <img src={partnerMark} alt="파트너" className="h-3.5 w-3.5" loading="lazy" />
@@ -191,33 +192,33 @@ export function TournamentHero({
             {/* 배경 처리 */}
             {hasBanner ? (
                 <div
-                    className={[
+                    className={cn(
                         'absolute inset-0 bg-gradient-to-b',
                         isF1 ? 'from-[#2a0304]/55 via-[#17050a]/72 to-[#05080f]' : 'from-[#020d18]/60 via-[#020d18]/70 to-[#020d18]',
-                    ].join(' ')}
+                    )}
                 />
             ) : (
                 <div
-                    className={[
+                    className={cn(
                         'absolute inset-0 bg-gradient-to-br',
                         isF1 ? 'from-[#2a0304] via-[#16070f] to-[#020d18]' : 'from-[#031a2e] via-[#052040] to-[#020d18]',
-                    ].join(' ')}
+                    )}
                 />
             )}
 
             {/* 장식 요소 */}
             <div className="absolute inset-0 overflow-hidden">
                 <div
-                    className={[
+                    className={cn(
                         'absolute -right-24 -top-24 h-64 w-64 rounded-full blur-3xl',
                         isF1 ? 'bg-[#E10600]/5' : 'bg-[#0596e8]/5',
-                    ].join(' ')}
+                    )}
                 />
                 <div
-                    className={[
+                    className={cn(
                         'absolute -left-16 bottom-0 h-48 w-48 rounded-full blur-3xl',
                         isF1 ? 'bg-[#F5C842]/5' : 'bg-[#f4930d]/5',
-                    ].join(' ')}
+                    )}
                 />
             </div>
 
@@ -235,7 +236,7 @@ export function TournamentHero({
 
                     {/* 텍스트 태그 */}
                     {tags.map((tag) => (
-                        <div key={tag} className={['rounded-full border px-3 py-1 text-xs', tagClass].join(' ')}>
+                        <div key={tag} className={cn('rounded-full border px-3 py-1 text-xs', tagClass)}>
                             {tag}
                         </div>
                     ))}
@@ -275,7 +276,7 @@ export function TournamentHero({
                 {/* 기간 */}
                 {(startedAt !== null || endedAt !== null) && (
                     <div className="mt-3 flex items-center gap-2 text-sm text-[#6aadcc]">
-                        <Calendar className={['h-4 w-4', calendarIconClass].join(' ')} />
+                        <Calendar className={cn('h-4 w-4', calendarIconClass)} />
                         <span>
                             {startedAt !== null ? formatDate(startedAt) : '?'}
                             {endedAt !== null ? ` ~ ${formatDate(endedAt)}` : ''}
@@ -285,10 +286,10 @@ export function TournamentHero({
 
                 {/* 하단 구분선 */}
                 <div
-                    className={[
+                    className={cn(
                         'mt-6 h-px w-full bg-gradient-to-r to-transparent',
                         isF1 ? 'from-[#E10600]/60 via-[#7a0300]/40' : 'from-[#0596e8]/60 via-[#1e3a5f]/40',
-                    ].join(' ')}
+                    )}
                 />
 
                 {/* 주최자 / 중계 / 해설진 정보 */}
@@ -342,10 +343,10 @@ export function TournamentHero({
                         {hasCommentators && (
                             <div className="flex items-start gap-3">
                                 <span
-                                    className={[
+                                    className={cn(
                                         'flex w-16 shrink-0 items-center gap-1.5 pt-1 text-xs font-semibold',
                                         accentLabelClass,
-                                    ].join(' ')}
+                                    )}
                                 >
                                     <Mic2 className="h-3 w-3" />
                                     해설
@@ -384,10 +385,10 @@ export function TournamentHero({
                                         link_url: link.url,
                                     })
                                 }}
-                                className={[
+                                className={cn(
                                     'flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors',
                                     linkClass,
-                                ].join(' ')}
+                                )}
                             >
                                 <ExternalLink className="h-3 w-3" />
                                 {link.label}

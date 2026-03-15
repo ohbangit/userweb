@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Gauge, CornerUpRight, Clock, MapPin } from 'lucide-react'
 import type { F1CircuitContent } from '../types'
+import { cn } from '../../../lib/cn'
 
 interface Props {
     title: string
@@ -31,12 +32,12 @@ export function F1CircuitPanelView({ title, content }: Props) {
                                 key={c.id}
                                 type="button"
                                 onClick={() => setActiveIdx(idx)}
-                                className={[
+                                className={cn(
                                     'cursor-pointer rounded-full px-3 py-1 text-xs font-bold transition',
                                     idx === activeIdx
                                         ? 'bg-[#E10600]/20 text-[#E10600] ring-1 ring-[#E10600]/40'
                                         : 'text-[#6aadcc]/70 hover:bg-[#1a0608]/60 hover:text-[#6aadcc]',
-                                ].join(' ')}
+                                )}
                             >
                                 {idx + 1}. {c.circuitName}
                             </button>
@@ -65,10 +66,10 @@ export function F1CircuitPanelView({ title, content }: Props) {
                                 type="button"
                                 onClick={() => setActiveIdx(idx)}
                                 aria-label={`${idx + 1}번 서킷`}
-                                className={[
+                                className={cn(
                                     'h-1.5 cursor-pointer rounded-full transition-all duration-300',
                                     idx === activeIdx ? 'w-6 bg-[#E10600]' : 'w-1.5 bg-[#6aadcc]/30 hover:bg-[#6aadcc]/50',
-                                ].join(' ')}
+                                )}
                             />
                         ))}
                     </div>

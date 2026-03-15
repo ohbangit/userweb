@@ -7,6 +7,7 @@ import tnkSrc from '../../../assets/tnk.svg'
 import dpsSrc from '../../../assets/dps.svg'
 import sptSrc from '../../../assets/spt.svg'
 import type { OverwatchRole, TournamentTeam } from '../types'
+import { cn } from '../../../lib/cn'
 
 interface Props {
     title: string
@@ -95,7 +96,7 @@ export function TeamsPanelView({ title, teams, defaultExpanded = false }: Props)
             >
                 <h2 className="text-3xl font-bold text-[#e8f4fd]">{title}</h2>
                 <ChevronDown
-                    className={['h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : ''].join(' ')}
+                    className={cn('h-6 w-6 text-[#6aadcc] transition-transform duration-200', collapsed ? '-rotate-90' : '')}
                 />
             </button>
             <div className="mt-6 h-px w-full bg-gradient-to-r from-[#0596e8]/60 via-[#1e3a5f]/40 to-transparent" />

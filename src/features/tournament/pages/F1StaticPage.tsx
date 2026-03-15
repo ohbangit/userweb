@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { ChevronUp } from 'lucide-react'
-import { Header } from '../../../components/layout'
 import { AccordionSection, F1TeamDraftPanelView, TournamentHero, F1DayResultPanelView } from '../components'
 import { F1StaticCircuitPanelView, F1StaticDriversPanelView } from './f1-static/components'
 import { F1_CIRCUIT_DATA } from '../data/f1Circuit'
@@ -118,8 +117,6 @@ export default function F1StaticPage() {
                 <meta property="og:description" content={SEO_DESC} />
                 <meta name="robots" content="index,follow" />
             </Helmet>
-
-            <Header />
 
             <div>
                 <div className="font-f1">

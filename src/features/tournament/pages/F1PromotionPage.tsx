@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { ChevronUp } from 'lucide-react'
-import { Header } from '../../../components/layout'
 import { TournamentHero } from '../components/TournamentHero'
 import {
     F1DriversPanelView,
@@ -216,8 +215,6 @@ export default function F1PromotionPage() {
                 <meta property="og:description" content={SEO_DESC} />
                 <meta name="robots" content="index,follow" />
             </Helmet>
-
-            <Header />
 
             <div className="font-koverwatch italic">
                 <TournamentHero

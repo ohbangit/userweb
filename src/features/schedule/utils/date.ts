@@ -1,9 +1,8 @@
 import dayjs, { Dayjs } from 'dayjs'
-
-const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
+import { DAY_NAMES_SHORT } from '../../../constants/date'
 
 export function getDayName(date: Dayjs): string {
-    return DAY_NAMES[date.day()]
+    return DAY_NAMES_SHORT[date.day()]
 }
 
 export function getWeekDays(date: Dayjs): Dayjs[] {

@@ -9,6 +9,7 @@ import flashpointSrc from '../../../../../assets/flashpoint.svg'
 import tnkSrc from '../../../../../assets/tnk.svg'
 import dpsSrc from '../../../../../assets/dps.svg'
 import sptSrc from '../../../../../assets/spt.svg'
+import { cn } from '../../../../../lib/cn'
 
 const MAP_TYPE_ICON: Record<OverwatchMapType, string> = {
     쟁탈: controlSrc,
@@ -87,14 +88,14 @@ function TeamSide({ team, isWinner }: { team: BracketTeamSlot | null; isWinner: 
                 <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-white/[0.08]">
                     <img src={team.logoUrl} alt={team.name} className="h-full w-full object-cover" />
                 </div>
-                <span className={['text-center text-sm font-bold', isWinner ? 'text-white' : 'text-[#9ca3af]'].join(' ')}>{team.name}</span>
+                <span className={cn('text-center text-sm font-bold', isWinner ? 'text-white' : 'text-[#9ca3af]')}>{team.name}</span>
             </div>
         )
     }
 
     return (
         <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
-            <span className={['text-center text-xl font-extrabold tracking-tight', isWinner ? 'text-white' : 'text-[#9ca3af]'].join(' ')}>
+            <span className={cn('text-center text-xl font-extrabold tracking-tight', isWinner ? 'text-white' : 'text-[#9ca3af]')}>
                 {team.name}
             </span>
         </div>
@@ -116,13 +117,13 @@ function ScoreHeader({ match }: { match: BracketMatch }) {
                 {s1 !== null && s2 !== null ? (
                     <>
                         <span
-                            className={['text-4xl font-black italic tabular-nums', t1Won ? 'text-[#f99e1a]' : 'text-[#6b7280]'].join(' ')}
+                            className={cn('text-4xl font-black italic tabular-nums', t1Won ? 'text-[#f99e1a]' : 'text-[#6b7280]')}
                         >
                             {s1}
                         </span>
                         <span className="text-lg text-[#4b5563]">:</span>
                         <span
-                            className={['text-4xl font-black italic tabular-nums', t2Won ? 'text-[#f99e1a]' : 'text-[#6b7280]'].join(' ')}
+                            className={cn('text-4xl font-black italic tabular-nums', t2Won ? 'text-[#f99e1a]' : 'text-[#6b7280]')}
                         >
                             {s2}
                         </span>
@@ -148,31 +149,31 @@ function SetsGrid({ sets, team1Name, team2Name }: { sets: BracketMatchSet[]; tea
 
                 return (
                     <div key={set.setNumber} className="contents">
-                        <span className={['py-2.5 text-[10px] font-bold tracking-wider text-[#6b7280]', rowBorder].join(' ')}>
+                        <span className={cn('py-2.5 text-[10px] font-bold tracking-wider text-[#6b7280]', rowBorder)}>
                             {set.setNumber}
                         </span>
 
-                        <span className={['py-2.5', rowBorder].join(' ')}>
+                        <span className={cn('py-2.5', rowBorder)}>
                             <span
-                                className={[
+                                className={cn(
                                     'inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold',
                                     MAP_TYPE_STYLE[set.mapType],
-                                ].join(' ')}
+                                )}
                             >
                                 <img src={MAP_TYPE_ICON[set.mapType]} alt="" aria-hidden="true" className="h-3 w-3 shrink-0" />
                                 <span className="hidden sm:inline">{set.mapType}</span>
                             </span>
                         </span>
 
-                        <span className={['min-w-0 truncate py-2.5 text-xs font-medium text-[#b9dfff]', rowBorder].join(' ')}>
+                        <span className={cn('min-w-0 truncate py-2.5 text-xs font-medium text-[#b9dfff]', rowBorder)}>
                             {flag} {set.mapName ?? 'TBD'}
                         </span>
 
-                        <span className={['py-2.5 text-center text-xs font-bold italic tabular-nums text-[#aab0b6]', rowBorder].join(' ')}>
+                        <span className={cn('py-2.5 text-center text-xs font-bold italic tabular-nums text-[#aab0b6]', rowBorder)}>
                             {hasScore ? `${set.score1}:${set.score2}` : '–'}
                         </span>
 
-                        <span className={['flex items-center gap-1.5 py-2.5 text-[11px]', rowBorder].join(' ')}>
+                        <span className={cn('flex items-center gap-1.5 py-2.5 text-[11px]', rowBorder)}>
                             {winnerName !== null && <span className="font-semibold text-[#f99e1a]">{winnerName} ✓</span>}
                             {set.roundScore != null && <span className="text-[#6b7280]">({set.roundScore})</span>}
                         </span>
