@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { Header } from '../components/layout'
 import { SeoHead } from './components/SeoHead'
 import { ContactPanel } from '../features/contact/components'
@@ -8,15 +8,12 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics'
 
-const AdminRoutes = lazy(() => import('../features/admin/AdminRoutes'))
 const OverwatchTournamentPage = lazy(() => import('../features/tournament/pages/overwatch/OverwatchTournamentPage'))
 const TournamentPromotionPage = lazy(() => import('../features/tournament/pages/TournamentPromotionPage'))
 const F1StaticPage = lazy(() => import('../features/tournament/pages/F1StaticPage'))
 
 function App() {
     useGoogleAnalytics()
-    const { pathname } = useLocation()
-    const isAdmin = pathname.startsWith('/admin')
 
     return (
         <div className="min-h-screen bg-bg">
@@ -24,7 +21,7 @@ function App() {
             <Analytics mode={import.meta.env.PROD ? 'production' : 'development'} debug={import.meta.env.DEV} />
             <SpeedInsights />
 
-            {!isAdmin && <Header />}
+            <Header />
 
             <Routes>
                 <Route
@@ -34,14 +31,6 @@ function App() {
                             <SchedulePage />
                             <ContactPanel />
                         </main>
-                    }
-                />
-                <Route
-                    path="/admin/*"
-                    element={
-                        <Suspense fallback={null}>
-                            <AdminRoutes />
-                        </Suspense>
                     }
                 />
                 <Route
