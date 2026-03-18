@@ -33,14 +33,15 @@ export interface Broadcast {
     streamerIsPartner?: boolean
     category?: Category | null
     tags?: string[]
-    participants?: Participant[]
-    startTime: string
+    streamers?: Participant[]
+    startTime: string | null
     endTime?: string
     isLive: boolean
     isCollab: boolean
     collabPartners?: string[]
     thumbnailUrl?: string
     isVisible?: boolean
+    isDrops?: boolean
     isChzzkSupport?: boolean
     overwatchMatch?: OverwatchMatchInfo | null
 }

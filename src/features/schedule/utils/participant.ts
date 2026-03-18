@@ -26,13 +26,13 @@ export function sortParticipants(participants: Participant[]): Participant[] {
  * streamerNickname: 폴백 참가자 표시용 닉네임
  */
 export function resolveParticipants(
-    participants: Participant[] | undefined,
+    streamers: Participant[] | undefined,
     streamerName: string,
     streamerNickname: string,
     streamerProfileUrl?: string | null,
 ): Participant[] {
-    if (participants && participants.length > 0) {
-        return participants.map((participant) => {
+    if (streamers && streamers.length > 0) {
+        return streamers.map((participant) => {
             if (participant.avatarUrl) return participant
             if (participant.name === streamerName && streamerProfileUrl) {
                 return { ...participant, avatarUrl: streamerProfileUrl }

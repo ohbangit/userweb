@@ -18,7 +18,8 @@ function formatDateLabel(date: string): string {
     return dayjs(date).format('YYYY.MM.DD ddd')
 }
 
-function formatTimeLabel(value: string): string {
+function formatTimeLabel(value: string | null): string {
+    if (value === null) return '미정'
     return dayjs(value).format('HH:mm')
 }
 

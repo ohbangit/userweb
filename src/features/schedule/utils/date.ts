@@ -34,11 +34,13 @@ export function getMonthDays(date: Dayjs): Dayjs[] {
     return days
 }
 
-export function formatTime(isoString: string): string {
+export function formatTime(isoString: string | null): string {
+    if (isoString === null) return '미정'
     return dayjs(isoString).format('HH:mm')
 }
 
-export function formatTimeRange(startTime: string, endTime?: string): string {
+export function formatTimeRange(startTime: string | null, endTime?: string): string {
+    if (startTime === null) return '미정'
     const start = formatTime(startTime)
     if (!endTime) return `${start}~`
     const end = formatTime(endTime)

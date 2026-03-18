@@ -10,6 +10,7 @@ import chzzkIcon from '../../../assets/chzzk_icon.png'
 import youtubeIcon from '../../../assets/youtube.png'
 import cafeIcon from '../../../assets/cafe.png'
 import partnerMark from '../../../assets/mark.png'
+import { Badge } from '../../../components/ui/Badge'
 import { AffiliationBadge } from '../../../app/components/AffiliationBadge'
 import { MatchSetsPanel } from './overwatch'
 
@@ -155,8 +156,8 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
     const sortedParticipants = useMemo(() => {
         if (!displayBroadcast) return []
         const participants: Participant[] =
-            displayBroadcast.participants && displayBroadcast.participants.length > 0
-                ? displayBroadcast.participants
+            displayBroadcast.streamers && displayBroadcast.streamers.length > 0
+                ? displayBroadcast.streamers
                 : [
                       {
                           name: displayBroadcast.streamerName,
@@ -213,26 +214,17 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                             </InfoRow>
                             {categoryName !== undefined && (
                                 <InfoRow icon={Gamepad2} label="카테고리">
-                                    <span className="inline-block rounded-md border border-border/40 bg-category px-2 py-0.5 text-xs font-semibold text-text-muted">
-                                        {categoryName}
-                                    </span>
+                                    <Badge variant="default">{categoryName}</Badge>
                                 </InfoRow>
                             )}
                             {(displayBroadcast.isChzzkSupport === true || tags.length > 0) && (
                                 <InfoRow icon={Hash} label="태그">
                                     <div className="flex flex-wrap gap-1.5">
                                         {displayBroadcast.isChzzkSupport === true && (
-                                            <span className="rounded-md border border-primary/60 bg-bg-secondary px-2 py-0.5 text-xs font-medium text-primary">
-                                                치지직 제작지원
-                                            </span>
+                                            <Badge variant="primary">치지직 제작지원</Badge>
                                         )}
                                         {tags.map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="rounded-md border border-border/30 bg-bg-secondary px-2 py-0.5 text-xs text-text-dim"
-                                            >
-                                                #{tag}
-                                            </span>
+                                            <Badge key={tag} variant="outline">#{tag}</Badge>
                                         ))}
                                     </div>
                                 </InfoRow>
