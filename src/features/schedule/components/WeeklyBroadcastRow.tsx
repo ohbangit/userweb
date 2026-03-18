@@ -75,7 +75,7 @@ function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowP
                 {getBroadcastTypeTone(broadcast) !== null && (
                     <BroadcastTypeBadge broadcast={broadcast} />
                 )}
-                <span className="truncate text-sm font-semibold text-text transition-colors duration-200 group-hover:text-white">{broadcast.title}</span>
+                <span className="truncate text-sm font-semibold text-text transition-colors duration-200 dark:group-hover:text-white">{broadcast.title}</span>
                 {broadcast.isDrops === true && <Badge variant="primary" size="sm">드롭스</Badge>}
                 {broadcast.isChzzkSupport === true && <Badge variant="primary" size="sm">치지직 제작지원</Badge>}
             </div>

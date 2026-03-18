@@ -27,9 +27,11 @@ function TodayButton({ isToday, onToday }: { isToday: boolean; onToday: () => vo
 function MobilePanel({ currentDate, viewMode, isToday, onPrev, onNext, onToday, onViewModeChange }: DateControlPanelProps) {
     return (
         <div className="rounded-xl border border-border/30 bg-card/40 px-4 py-3">
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center">
                 <NavButton direction="prev" onClick={onPrev} />
-                <PeriodDisplay currentDate={currentDate} viewMode={viewMode} />
+                <div className="flex flex-1 justify-center">
+                    <PeriodDisplay currentDate={currentDate} viewMode={viewMode} />
+                </div>
                 <NavButton direction="next" onClick={onNext} />
             </div>
             <div className="mt-2.5 flex items-center justify-between">

@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { Gamepad2 } from 'lucide-react'
 import type { Broadcast } from '../types/schedule'
 import { formatTime } from '../utils/date'
 import { resolveParticipants, sortParticipants } from '../utils/participant'
@@ -63,7 +64,7 @@ function DailyBroadcastItemComponent({ broadcast, onClick }: DailyBroadcastItemP
             )}
         >
             <div className="flex items-center justify-between gap-3">
-                <h3 className="min-w-0 truncate text-[15px] font-bold leading-tight text-text transition-colors duration-200 group-hover:text-white">
+                <h3 className="min-w-0 truncate text-base font-extrabold leading-tight text-text transition-colors duration-200 dark:group-hover:text-white">
                     {broadcast.title}
                 </h3>
                 {isUndecided ? (
@@ -94,14 +95,15 @@ function DailyBroadcastItemComponent({ broadcast, onClick }: DailyBroadcastItemP
             {hasMetadata && (
                 <div className="flex flex-wrap items-center gap-1 pt-0.5">
                     {categoryName !== undefined && (
-                        <span className="rounded-md bg-bg-secondary/80 px-1.5 py-0.5 text-[10px] font-medium text-text-muted">
+                        <span className="inline-flex items-center gap-1 rounded-md bg-bg-secondary/80 px-1.5 py-0.5 text-[10px] font-medium text-text-muted">
+                            <Gamepad2 className="h-2.5 w-2.5" />
                             {categoryName}
                         </span>
                     )}
                     {tags.map((tag) => (
                         <span
                             key={tag}
-                            className="rounded-md bg-border/15 px-1.5 py-0.5 text-[10px] text-text-dim"
+                            className="rounded-md bg-border/30 px-1.5 py-0.5 text-[10px] text-text-muted"
                         >
                             {tag}
                         </span>
