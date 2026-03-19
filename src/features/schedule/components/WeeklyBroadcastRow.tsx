@@ -1,5 +1,7 @@
 import { memo, useMemo } from 'react'
 import type { Broadcast } from '../types/schedule'
+import type { CardTone } from '../constants/cardTone'
+import { toneBg } from '../constants/cardTone'
 import { formatTime } from '../utils/date'
 import { resolveParticipants, sortParticipants } from '../utils/participant'
 import { ParticipantStack } from './ParticipantStack'
@@ -13,17 +15,8 @@ interface WeeklyBroadcastRowProps {
     onClick: () => void
 }
 
-type RowTone = 'collab' | 'internal' | 'tournament' | 'content' | 'default'
-
-const toneBg: Record<RowTone, string> = {
-    collab: 'bg-[linear-gradient(270deg,rgba(139,92,246,0.1)_0%,rgba(139,92,246,0.015)_100%)]',
-    internal: 'bg-[linear-gradient(270deg,rgba(244,63,94,0.1)_0%,rgba(244,63,94,0.015)_100%)]',
-    tournament: 'bg-[linear-gradient(270deg,rgba(245,158,11,0.1)_0%,rgba(245,158,11,0.015)_100%)]',
-    content: 'bg-[linear-gradient(270deg,rgba(14,165,233,0.1)_0%,rgba(14,165,233,0.015)_100%)]',
-    default: 'bg-[linear-gradient(270deg,rgba(148,163,184,0.07)_0%,rgba(148,163,184,0.01)_100%)]',
-}
-
-const toneHover: Record<RowTone, string> = {
+/** 주간 행 호버 — 유형별 border 색상 */
+const toneHover: Record<CardTone, string> = {
     collab: 'hover:border-collab/25',
     internal: 'hover:border-rose-500/25',
     tournament: 'hover:border-amber-500/25',
@@ -31,10 +24,14 @@ const toneHover: Record<RowTone, string> = {
     default: 'hover:border-border/40',
 }
 
+/**
+ * 주간 방송 행 (레거시 — 현재 미사용, 향후 재활용 가능)
+ * 1행 인라인: 시간 + 유형뱃지 + 제목 + 드롭스/제작지원 + 참여자
+ */
 function WeeklyBroadcastRowComponent({ broadcast, onClick }: WeeklyBroadcastRowProps) {
     const startTime = formatTime(broadcast.startTime)
     const isUndecided = broadcast.startTime === null
-    const tone: RowTone = getBroadcastTypeTone(broadcast) ?? 'default'
+    const tone: CardTone = getBroadcastTypeTone(broadcast) ?? 'default'
 
     const { sortedParticipants, representativeName, remaining, isRepresentativePartner } = useMemo(() => {
         const participants = resolveParticipants(

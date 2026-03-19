@@ -1,6 +1,8 @@
 import { memo } from 'react'
 import { Gamepad2 } from 'lucide-react'
 import type { Broadcast } from '../types/schedule'
+import type { CardTone } from '../constants/cardTone'
+import { toneBg } from '../constants/cardTone'
 import { formatTime } from '../utils/date'
 import { resolveParticipants, sortParticipants } from '../utils/participant'
 import { ParticipantStack } from './ParticipantStack'
@@ -14,16 +16,7 @@ export interface DailyBroadcastItemProps {
     onClick: () => void
 }
 
-type CardTone = 'collab' | 'internal' | 'tournament' | 'content' | 'default'
-
-const toneBg: Record<CardTone, string> = {
-    collab: 'bg-[linear-gradient(270deg,rgba(139,92,246,0.1)_0%,rgba(139,92,246,0.015)_100%)]',
-    internal: 'bg-[linear-gradient(270deg,rgba(244,63,94,0.1)_0%,rgba(244,63,94,0.015)_100%)]',
-    tournament: 'bg-[linear-gradient(270deg,rgba(245,158,11,0.1)_0%,rgba(245,158,11,0.015)_100%)]',
-    content: 'bg-[linear-gradient(270deg,rgba(14,165,233,0.1)_0%,rgba(14,165,233,0.015)_100%)]',
-    default: 'bg-[linear-gradient(270deg,rgba(148,163,184,0.07)_0%,rgba(148,163,184,0.01)_100%)]',
-}
-
+/** 일간 카드 호버 — 유형별 24px shadow */
 const toneHover: Record<CardTone, string> = {
     collab: 'hover:shadow-[0_8px_24px_rgba(139,92,246,0.1)]',
     internal: 'hover:shadow-[0_8px_24px_rgba(244,63,94,0.1)]',
@@ -32,6 +25,10 @@ const toneHover: Record<CardTone, string> = {
     default: 'hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)]',
 }
 
+/**
+ * 일간 방송 카드
+ * 3줄 레이아웃: 제목+시간 / 참여자+유형뱃지 / 메타 칩(카테고리·태그·드롭스·제작지원)
+ */
 function DailyBroadcastItemComponent({ broadcast, onClick }: DailyBroadcastItemProps) {
     const startTime = formatTime(broadcast.startTime)
     const isUndecided = broadcast.startTime === null

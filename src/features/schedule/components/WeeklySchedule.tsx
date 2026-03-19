@@ -2,10 +2,9 @@ import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Broadcast } from '../types/schedule'
-import { getWeekDays, getDayName, isToday } from '../utils/date'
-import { Zap } from 'lucide-react'
+import { getWeekDays, getDayName, isToday, getRelativeLabel } from '../utils/date'
 import { WeeklyDateTabs } from './WeeklyDateTabs'
-import { WeeklyBroadcastRow } from './WeeklyBroadcastRow'
+import { WeeklyBroadcastCard } from './WeeklyBroadcastCard'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
 import { trackEvent } from '../../../utils/analytics'
 import { cn } from '../../../lib/cn'
@@ -15,6 +14,10 @@ interface WeeklyScheduleProps {
     currentDate: Dayjs
 }
 
+/**
+ * 주간 스케줄 뷰
+ * 미니 캘린더 스트립 + 어젠다 리스트 (sticky 헤더, 양방향 스크롤 싱크)
+ */
 export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps) {
     const [selectedBroadcast, setSelectedBroadcast] = useState<Broadcast | null>(null)
     const [activeDateKey, setActiveDateKey] = useState<string>(() => currentDate.format('YYYY-MM-DD'))
@@ -26,13 +29,15 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
 
     const sectionRefs = useRef<Map<string, HTMLDivElement>>(new Map())
     const scrollContainerRef = useRef<HTMLDivElement>(null)
+    const initialScrollDone = useRef(false)
 
     const weekDays = useMemo(() => getWeekDays(currentDate), [currentDate])
 
     const broadcastsByDate = useMemo(() => {
         const map = new Map<string, Broadcast[]>()
         for (const b of broadcasts) {
-            const key = dayjs(b.startTime).format('YYYY-MM-DD')
+            const key = b.startTime ? dayjs(b.startTime).format('YYYY-MM-DD') : 'undecided'
+            if (key === 'undecided') continue
             const arr = map.get(key)
             if (arr) arr.push(b)
             else map.set(key, [b])
@@ -82,9 +87,25 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
         return () => container.removeEventListener('scroll', handleScroll)
     }, [weekDays])
 
+    // 마운트 시 오늘 섹션으로 자동 스크롤
+    useEffect(() => {
+        if (initialScrollDone.current) return
+        const todayKey = dayjs().format('YYYY-MM-DD')
+        const sectionEl = sectionRefs.current.get(todayKey)
+        const containerEl = scrollContainerRef.current
+        if (sectionEl && containerEl) {
+            const containerRect = containerEl.getBoundingClientRect()
+            const sectionRect = sectionEl.getBoundingClientRect()
+            const scrollOffset = containerEl.scrollTop + (sectionRect.top - containerRect.top)
+            containerEl.scrollTo({ top: scrollOffset, behavior: 'instant' })
+            setActiveDateKey(todayKey)
+            initialScrollDone.current = true
+        }
+    })
+
     return (
-        <div className="-mx-4 overflow-hidden bg-bg sm:mx-0 sm:rounded-xl sm:border sm:border-border/40">
-            {/* 날짜 탭 바 */}
+        <div className="overflow-hidden bg-bg sm:rounded-xl sm:border sm:border-border/40">
+            {/* 미니 캘린더 스트립 */}
             <WeeklyDateTabs
                 weekDays={weekDays}
                 broadcastCountByDate={broadcastCountByDate}
@@ -92,24 +113,13 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
                 onSelectDate={handleSelectDate}
             />
 
-            {/* Legend */}
-            <div className="flex items-center gap-3 border-b border-border/20 px-4 py-1.5">
-                <span className="flex items-center gap-1 text-[10px] text-text-dim">
-                    <span className="h-1.5 w-1.5 rounded-full bg-live" />
-                    LIVE
-                </span>
-                <span className="flex items-center gap-1 text-[10px] text-text-dim">
-                    <Zap className="h-3 w-3 fill-primary text-primary" />
-                    치지직 제작지원
-                </span>
-            </div>
-
-            {/* 내부 스크롤 영역 — 탭은 항상 위에 고정 */}
+            {/* 어젠다 스크롤 영역 */}
             <div ref={scrollContainerRef} className="max-h-[70vh] overflow-y-auto scrollbar-hide">
                 <div className="divide-y divide-border/20">
                     {weekDays.map((day) => {
                         const key = day.format('YYYY-MM-DD')
                         const today = isToday(day)
+                        const relativeLabel = getRelativeLabel(day)
                         const dayBroadcasts = broadcastsByDate.get(key) ?? []
 
                         return (
@@ -120,22 +130,32 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
                                     else sectionRefs.current.delete(key)
                                 }}
                             >
-                                {/* 날짜 섹션 헤더 */}
+                                {/* 날짜 섹션 헤더 — sticky */}
                                 <div
-                                    className={cn('flex items-center justify-between px-4 py-3', today ? 'bg-primary/[0.03]' : '')}
+                                    className={cn(
+                                        'sticky top-0 z-10 flex items-center justify-between border-b border-border/10 px-4 py-2.5 backdrop-blur-sm',
+                                        today ? 'bg-primary/[0.04]' : 'bg-bg/95',
+                                    )}
                                 >
                                     <div className="flex items-center gap-2">
-                                        <span className={cn('text-xs font-bold', today ? 'text-primary' : 'text-text-muted')}>
-                                            {getDayName(day)}요일
-                                        </span>
-                                        <span className={cn('text-xs', today ? 'text-primary/70' : 'text-text-dim')}>
-                                            {day.month() + 1}/{day.date()}
-                                        </span>
-                                        {today && (
-                                            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                                                오늘
+                                        {relativeLabel && (
+                                            <span
+                                                className={cn(
+                                                    'rounded-full px-2 py-0.5 text-[11px] font-bold',
+                                                    today
+                                                        ? 'bg-primary/10 text-primary'
+                                                        : 'bg-bg-secondary text-text-muted',
+                                                )}
+                                            >
+                                                {relativeLabel}
                                             </span>
                                         )}
+                                        <span className={cn('text-sm font-semibold', today ? 'text-primary' : 'text-text')}>
+                                            {getDayName(day)}요일
+                                        </span>
+                                        <span className={cn('text-xs', today ? 'text-primary/60' : 'text-text-dim')}>
+                                            {day.month() + 1}/{day.date()}
+                                        </span>
                                     </div>
                                     {dayBroadcasts.length > 0 && (
                                         <span className="rounded-full bg-bg-secondary px-2 py-0.5 text-[10px] font-medium text-text-dim">
@@ -144,11 +164,11 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
                                     )}
                                 </div>
 
-                                {/* 방송 행 목록 */}
+                                {/* 방송 카드 목록 */}
                                 {dayBroadcasts.length > 0 ? (
-                                    <div className="space-y-1.5 px-2 pb-3">
+                                    <div className="space-y-1.5 px-3 py-2.5 sm:px-4">
                                         {dayBroadcasts.map((broadcast) => (
-                                            <WeeklyBroadcastRow
+                                            <WeeklyBroadcastCard
                                                 key={broadcast.id}
                                                 broadcast={broadcast}
                                                 onClick={() => {
@@ -163,9 +183,7 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="flex items-center justify-center py-6">
-                                        <span className="text-xs text-text-dim">방송 없음</span>
-                                    </div>
+                                    <p className="px-4 py-4 text-center text-xs text-text-dim">방송 없음</p>
                                 )}
                             </div>
                         )

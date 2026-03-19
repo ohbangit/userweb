@@ -98,3 +98,15 @@ export function formatFullDate(date: Dayjs): string {
     const dayName = getDayName(date)
     return `${month}월 ${day}일 (${dayName})`
 }
+
+/**
+ * 오늘/내일 등 상대 날짜 라벨을 반환합니다.
+ * @param day 비교할 날짜 (Dayjs)
+ * @returns '오늘' | '내일' | null
+ */
+export function getRelativeLabel(day: Dayjs): string | null {
+    const now = dayjs()
+    if (day.isSame(now, 'day')) return '오늘'
+    if (day.isSame(now.add(1, 'day'), 'day')) return '내일'
+    return null
+}
