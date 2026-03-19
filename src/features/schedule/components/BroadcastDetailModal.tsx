@@ -74,9 +74,9 @@ function ParticipantCard({
     const hasChannels = channelUrl || participant.youtubeUrl || participant.fanCafeUrl
 
     return (
-        <div className="flex w-32 shrink-0 flex-col items-center gap-2 rounded-2xl bg-bg-secondary/50 px-3 py-3.5 sm:w-36">
+        <div className="flex w-32 shrink-0 flex-col items-center gap-2 rounded-2xl border border-border/20 bg-bg-secondary/40 px-3 py-3.5 shadow-sm backdrop-blur-sm sm:w-36">
             {/* 아바타 */}
-            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-border/40 bg-bg-secondary">
+            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-border/30 bg-bg-secondary ring-2 ring-primary/20">
                 {avatarUrl ? (
                     <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" loading="lazy" />
                 ) : (
@@ -111,7 +111,7 @@ function ParticipantCard({
 
             {/* 채널 아이콘 */}
             {hasChannels && (
-                <div className="flex items-center gap-1">
+                <div className="mt-auto flex items-center gap-1">
                     {channelUrl && <ChannelLink href={channelUrl} icon={chzzkIcon} alt="치지직" />}
                     {participant.youtubeUrl && <ChannelLink href={participant.youtubeUrl} icon={youtubeIcon} alt="유튜브" />}
                     {participant.fanCafeUrl && <ChannelLink href={participant.fanCafeUrl} icon={cafeIcon} alt="팬카페" />}
@@ -230,6 +230,8 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                 </div>
 
                 {/* ─── 스크롤 콘텐츠 ─── */}
+                <div className="h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+
                 <div className="flex-1 overflow-y-auto scrollbar-hide">
                     <div className="space-y-5 px-5 py-4">
                         {/* § 오버워치 매치 */}
@@ -245,10 +247,13 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
 
                         {/* § 참여자 — 가로 스크롤 */}
                         <section>
-                            <h3 className="mb-2.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
+                            <div className="mb-2.5 flex items-center gap-2">
+                                <div className="h-4 w-1 rounded-full bg-primary/60" />
+                                <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
                                 <Users className="h-3.5 w-3.5" />
                                 참여자 ({sortedParticipants.length})
                             </h3>
+                            </div>
                             <div className="-mx-5 px-5">
                                 <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
                                     {sortedParticipants.map((participant, index) => (

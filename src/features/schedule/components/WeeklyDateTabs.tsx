@@ -45,7 +45,7 @@ function WeeklyDateTabsComponent({ weekDays, broadcastCountByDate, activeDateKey
     const weekLabel = `${refDay.month() + 1}월 ${getWeekNumber(refDay)}주차`
 
     return (
-        <div className="mx-3 mt-3 mb-2 rounded-2xl bg-bg-secondary/30 px-3 py-2.5 sm:mx-4">
+        <div className="mt-3 mb-2 bg-bg-secondary/30 px-3 py-2.5 sm:mx-4 sm:rounded-2xl">
             {/* 주차 헤더 */}
             <p className="mb-2 text-center text-xs font-medium text-text-muted">{weekLabel}</p>
 
