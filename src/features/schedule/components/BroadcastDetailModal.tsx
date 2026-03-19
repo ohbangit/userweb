@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import dayjs from 'dayjs'
-import { X, Gamepad2, Users, Crown } from 'lucide-react'
+import { X, Gamepad2, Users, Crown, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Broadcast, Participant } from '../types/schedule'
 import type { CardTone } from '../constants/cardTone'
 import { useBroadcastDetail } from '../hooks/useBroadcastDetail'
@@ -116,6 +116,81 @@ function ParticipantCard({
                     {participant.youtubeUrl && <ChannelLink href={participant.youtubeUrl} icon={youtubeIcon} alt="유튜브" />}
                     {participant.fanCafeUrl && <ChannelLink href={participant.fanCafeUrl} icon={cafeIcon} alt="팬카페" />}
                 </div>
+            )}
+        </div>
+    )
+}
+
+
+// ---------------------------------------------------------------------------
+// 참여자 가로 스크롤 컨테이너 (드래그 + 네비 버튼)
+// ---------------------------------------------------------------------------
+
+function ParticipantScroller({ children }: { children: React.ReactNode }) {
+    const scrollRef = useRef<HTMLDivElement>(null)
+    const [isDragging, setIsDragging] = useState(false)
+    const [startX, setStartX] = useState(0)
+    const [scrollLeft, setScrollLeft] = useState(0)
+    const [canScrollLeft, setCanScrollLeft] = useState(false)
+    const [canScrollRight, setCanScrollRight] = useState(false)
+
+    const updateScrollState = useCallback(() => {
+        const el = scrollRef.current
+        if (!el) return
+        setCanScrollLeft(el.scrollLeft > 4)
+        setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4)
+    }, [])
+
+    const handleMouseDown = useCallback((e: React.MouseEvent) => {
+        const el = scrollRef.current
+        if (!el) return
+        setIsDragging(true)
+        setStartX(e.pageX - el.offsetLeft)
+        setScrollLeft(el.scrollLeft)
+    }, [])
+
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        if (!isDragging) return
+        e.preventDefault()
+        const el = scrollRef.current
+        if (!el) return
+        const x = e.pageX - el.offsetLeft
+        el.scrollLeft = scrollLeft - (x - startX)
+    }, [isDragging, startX, scrollLeft])
+
+    const handleMouseUp = useCallback(() => setIsDragging(false), [])
+
+    const scroll = useCallback((dir: 'left' | 'right') => {
+        const el = scrollRef.current
+        if (!el) return
+        el.scrollBy({ left: dir === 'right' ? 150 : -150, behavior: 'smooth' })
+    }, [])
+
+    const navBtn = 'absolute top-1/2 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/60 p-1.5 text-white opacity-0 backdrop-blur-sm transition-all duration-200 group-hover/scroll:opacity-100 hover:bg-black/80 active:scale-95'
+
+    return (
+        <div className="group/scroll relative -mx-5 px-5">
+            <div
+                ref={scrollRef}
+                className={cn('flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide', isDragging ? 'cursor-grabbing' : 'cursor-grab')}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onScroll={updateScrollState}
+                onMouseEnter={updateScrollState}
+            >
+                {children}
+            </div>
+            {canScrollLeft && (
+                <button type="button" onClick={() => scroll('left')} className={cn(navBtn, 'left-2')} aria-label="왼쪽으로 스크롤">
+                    <ChevronLeft className="h-4 w-4" />
+                </button>
+            )}
+            {canScrollRight && (
+                <button type="button" onClick={() => scroll('right')} className={cn(navBtn, 'right-2')} aria-label="오른쪽으로 스크롤">
+                    <ChevronRight className="h-4 w-4" />
+                </button>
             )}
         </div>
     )
@@ -254,8 +329,7 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                                 참여자 ({sortedParticipants.length})
                             </h3>
                             </div>
-                            <div className="-mx-5 px-5">
-                                <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
+                            <ParticipantScroller>
                                     {sortedParticipants.map((participant, index) => (
                                         <ParticipantCard
                                             key={`${participant.name}-${index}`}
@@ -272,8 +346,7 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                                             }
                                         />
                                     ))}
-                                </div>
-                            </div>
+                                </ParticipantScroller>
                         </section>
 
                         {/* § 추후 섹션 자리 (시청자 수, 출처, 썸네일, 다시보기 등) */}
