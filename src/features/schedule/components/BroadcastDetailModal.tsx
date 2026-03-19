@@ -1,10 +1,12 @@
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
-import { X, Calendar, Clock, Gamepad2, Hash, Users, Crown } from 'lucide-react'
+import { X, Gamepad2, Users, Crown } from 'lucide-react'
 import type { Broadcast, Participant } from '../types/schedule'
+import type { CardTone } from '../constants/cardTone'
 import { useBroadcastDetail } from '../hooks/useBroadcastDetail'
 import { formatTime, getDayName } from '../utils/date'
 import { getInitial, sortParticipants } from '../utils/participant'
+import { getBroadcastTypeTone } from './BroadcastTypeBadge'
 import { useModalKeydown } from '../../../hooks/useModalKeydown'
 import chzzkIcon from '../../../assets/chzzk_icon.png'
 import youtubeIcon from '../../../assets/youtube.png'
@@ -13,141 +15,120 @@ import partnerMark from '../../../assets/mark.png'
 import { Badge } from '../../../components/ui/Badge'
 import { AffiliationBadge } from '../../../app/components/AffiliationBadge'
 import { MatchSetsPanel } from './overwatch'
+import { cn } from '../../../lib/cn'
 
 interface BroadcastDetailModalProps {
     broadcast: Broadcast | null
     onClose: () => void
 }
 
-function StatusIndicator({ broadcast }: { broadcast: Broadcast }) {
-    if (broadcast.isCollab) {
-        return (
-            <span className="inline-flex items-center gap-1 rounded-full border border-collab/30 bg-collab/15 px-2.5 py-1 text-xs font-medium text-collab">
-                합방
-            </span>
-        )
-    }
+// ---------------------------------------------------------------------------
+// Hero 그라데이션 — 카드 톤의 강화 버전
+// ---------------------------------------------------------------------------
+
+const heroGradient: Record<CardTone, string> = {
+    collab: 'bg-[linear-gradient(180deg,rgba(139,92,246,0.15)_0%,transparent_100%)]',
+    internal: 'bg-[linear-gradient(180deg,rgba(244,63,94,0.15)_0%,transparent_100%)]',
+    tournament: 'bg-[linear-gradient(180deg,rgba(245,158,11,0.15)_0%,transparent_100%)]',
+    content: 'bg-[linear-gradient(180deg,rgba(14,165,233,0.15)_0%,transparent_100%)]',
+    default: 'bg-[linear-gradient(180deg,rgba(148,163,184,0.08)_0%,transparent_100%)]',
+}
+
+// ---------------------------------------------------------------------------
+// 참여자 카드 (가로 스크롤용)
+// ---------------------------------------------------------------------------
+
+/** 채널 링크 아이콘 버튼 */
+function ChannelLink({ href, icon, alt }: { href: string; icon: string; alt: string }) {
     return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-            예정
-        </span>
+        <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="flex h-7 w-7 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
+            aria-label={`${alt} 열기`}
+        >
+            <img src={icon} alt={alt} className="h-3.5 w-3.5" loading="lazy" />
+        </a>
     )
 }
 
-function ParticipantRow({
+/**
+ * 참여자 카드 — 가로 스크롤 컨테이너 내 개별 카드
+ * 아바타 · 이름 · 주최/파트너/소속 · 채널 아이콘
+ */
+function ParticipantCard({
     participant,
-    isHost,
-    isPartner,
-    affiliations,
-    channelUrl,
-    youtubeUrl,
-    fanCafeUrl,
-    avatarFallbackUrl,
+    fallbackAvatarUrl,
+    fallbackChannelUrl,
 }: {
     participant: Participant
-    isHost?: boolean
-    isPartner?: boolean
-    affiliations?: Participant['affiliations']
-    channelUrl?: string
-    youtubeUrl?: string
-    fanCafeUrl?: string
-    avatarFallbackUrl?: string
+    fallbackAvatarUrl?: string
+    fallbackChannelUrl?: string
 }) {
-    const avatarUrl = participant.avatarUrl ?? avatarFallbackUrl
+    const avatarUrl = participant.avatarUrl ?? fallbackAvatarUrl
+    const displayName = participant.nickname ?? participant.name
+    const channelUrl = participant.channelUrl ?? fallbackChannelUrl
+    const affiliations = participant.affiliations ?? []
+    const hasChannels = channelUrl || participant.youtubeUrl || participant.fanCafeUrl
+
     return (
-        <div className="flex items-center gap-3 rounded-xl bg-bg-secondary/60 px-3 py-3">
-            <div className="relative h-9 w-9 overflow-hidden rounded-full border border-border/60 bg-bg-secondary text-sm font-semibold text-text">
+        <div className="flex w-32 shrink-0 flex-col items-center gap-2 rounded-2xl bg-bg-secondary/50 px-3 py-3.5 sm:w-36">
+            {/* 아바타 */}
+            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-border/40 bg-bg-secondary">
                 {avatarUrl ? (
-                    <img
-                        src={avatarUrl}
-                        alt={participant.nickname ?? participant.name}
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                    />
+                    <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" loading="lazy" />
                 ) : (
-                    <span className="flex h-full w-full items-center justify-center">
-                        {getInitial(participant.nickname ?? participant.name)}
+                    <span className="flex h-full w-full items-center justify-center text-sm font-semibold text-text-dim">
+                        {getInitial(displayName)}
                     </span>
                 )}
             </div>
-            <div className="flex min-w-0 flex-1 flex-col">
-                <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-semibold text-text">{participant.nickname ?? participant.name}</span>
-                    {isHost && (
-                        <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                            <Crown className="h-2.5 w-2.5" />
-                            주최
-                        </span>
+
+            {/* 이름 + 뱃지 */}
+            <div className="flex flex-col items-center gap-1">
+                <div className="flex items-center gap-1">
+                    <span className="max-w-[100px] truncate text-xs font-semibold text-text">{displayName}</span>
+                    {participant.isPartner && (
+                        <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />
                     )}
-                    {isPartner && <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />}
                 </div>
-                {Array.isArray(affiliations) && affiliations.length > 0 && (
-                    <div className="mt-1 flex flex-wrap gap-1">
-                        {affiliations.map((affiliation) => (
-                            <AffiliationBadge key={affiliation.id} affiliation={affiliation} size="sm" />
+                {participant.isHost && (
+                    <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-semibold text-primary">
+                        <Crown className="h-2.5 w-2.5" />
+                        주최
+                    </span>
+                )}
+                {affiliations.length > 0 && (
+                    <div className="flex flex-wrap justify-center gap-0.5">
+                        {affiliations.map((aff) => (
+                            <AffiliationBadge key={aff.id} affiliation={aff} size="sm" />
                         ))}
                     </div>
                 )}
             </div>
-            <div className="flex items-center gap-1.5">
-                {channelUrl && (
-                    <a
-                        href={channelUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
-                        aria-label={`${participant.nickname ?? participant.name} 치지직 채널 열기`}
-                    >
-                        <img src={chzzkIcon} alt="치지직" className="h-4 w-4" loading="lazy" />
-                    </a>
-                )}
-                {youtubeUrl && (
-                    <a
-                        href={youtubeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
-                        aria-label={`${participant.nickname ?? participant.name} 유튜브 채널 열기`}
-                    >
-                        <img src={youtubeIcon} alt="유튜브" loading="lazy" />
-                    </a>
-                )}
-                {fanCafeUrl && (
-                    <a
-                        href={fanCafeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/40 bg-card/70 transition-colors hover:border-primary/40 hover:bg-primary/10"
-                        aria-label={`${participant.nickname ?? participant.name} 팬카페 열기`}
-                    >
-                        <img src={cafeIcon} alt="팬카페" className="h-4 w-4" loading="lazy" />
-                    </a>
-                )}
-            </div>
+
+            {/* 채널 아이콘 */}
+            {hasChannels && (
+                <div className="flex items-center gap-1">
+                    {channelUrl && <ChannelLink href={channelUrl} icon={chzzkIcon} alt="치지직" />}
+                    {participant.youtubeUrl && <ChannelLink href={participant.youtubeUrl} icon={youtubeIcon} alt="유튜브" />}
+                    {participant.fanCafeUrl && <ChannelLink href={participant.fanCafeUrl} icon={cafeIcon} alt="팬카페" />}
+                </div>
+            )}
         </div>
     )
 }
 
-function InfoRow({
-    icon: Icon,
-    label,
-    children,
-}: {
-    icon: React.ComponentType<{ className?: string }>
-    label: string
-    children: React.ReactNode
-}) {
-    return (
-        <div className="flex items-start gap-3">
-            <div className="flex w-20 shrink-0 items-center gap-1.5 pt-0.5">
-                <Icon className="h-3.5 w-3.5 text-text-dim" />
-                <span className="text-xs font-medium text-text-dim">{label}</span>
-            </div>
-            <div className="min-w-0 flex-1 text-sm text-text">{children}</div>
-        </div>
-    )
-}
+// ---------------------------------------------------------------------------
+// 메인 모달
+// ---------------------------------------------------------------------------
 
+/**
+ * 방송 상세 모달
+ * hero 헤더(유형별 그라데이션 + 제목 + 시간 + 메타 칩) + 섹션 기반 스크롤 콘텐츠
+ */
 export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModalProps) {
     const { data: detailData } = useBroadcastDetail(broadcast?.id ?? null)
     const displayBroadcast: Broadcast | null = detailData ?? broadcast
@@ -171,11 +152,12 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
 
     const date = dayjs(displayBroadcast.startTime)
     const startTime = formatTime(displayBroadcast.startTime)
-    const endTime = displayBroadcast.endTime ? formatTime(displayBroadcast.endTime) : undefined
+    const isUndecided = displayBroadcast.startTime === null
     const dayName = getDayName(date)
-    const dateLabel = `${date.month() + 1}월 ${date.date()}일 (${dayName})`
+    const dateLabel = isUndecided ? '날짜 미정' : `${date.month() + 1}월 ${date.date()}일 (${dayName})`
     const categoryName = displayBroadcast.category?.name ?? undefined
     const tags = displayBroadcast.tags ?? []
+    const tone: CardTone = getBroadcastTypeTone(displayBroadcast) ?? 'default'
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
@@ -187,92 +169,113 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                 aria-modal="true"
                 aria-label={displayBroadcast.title}
             >
-                <div className="flex items-center justify-between border-b border-border/30 px-5 py-4">
-                    <StatusIndicator broadcast={displayBroadcast} />
-                    <button
-                        onClick={onClose}
-                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-text-muted transition-colors hover:bg-card-hover hover:text-text"
-                        aria-label="닫기"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
+                {/* ─── Hero 헤더 ─── */}
+                <div className={cn('relative shrink-0 px-5 pt-4 pb-4', heroGradient[tone])}>
+                    {/* 유형 뱃지 + 닫기 */}
+                    <div className="mb-3 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                            {tone !== 'default' && (
+                                <Badge
+                                    variant={tone === 'collab' ? 'collab' : tone === 'internal' ? 'internal' : tone === 'tournament' ? 'tournament' : 'content'}
+                                    size="md"
+                                >
+                                    {tone === 'collab' ? '합방' : tone === 'internal' ? '내전' : tone === 'tournament' ? '대회' : '콘텐츠'}
+                                </Badge>
+                            )}
+                            {displayBroadcast.isDrops === true && <Badge variant="primary" size="sm">드롭스</Badge>}
+                            {displayBroadcast.isChzzkSupport === true && <Badge variant="primary" size="sm">제작지원</Badge>}
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-text-muted transition-colors hover:bg-card-hover hover:text-text"
+                            aria-label="닫기"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    </div>
+
+                    {/* 제목 */}
+                    <h2 className="text-lg font-bold leading-snug text-text sm:text-xl">
+                        {displayBroadcast.title}
+                    </h2>
+
+                    {/* 날짜 · 시간 · 카테고리 인라인 */}
+                    <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-muted">
+                        <span>{dateLabel}</span>
+                        <span className="text-border">·</span>
+                        {isUndecided ? (
+                            <span className="font-semibold text-amber-400">시간 미정</span>
+                        ) : (
+                            <span className="font-semibold text-text">{startTime}</span>
+                        )}
+                        {categoryName !== undefined && (
+                            <>
+                                <span className="text-border">·</span>
+                                <span className="inline-flex items-center gap-1">
+                                    <Gamepad2 className="h-3.5 w-3.5" />
+                                    {categoryName}
+                                </span>
+                            </>
+                        )}
+                    </div>
+
+                    {/* 태그 칩 */}
+                    {tags.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                            {tags.map((tag) => (
+                                <Badge key={tag} variant="outline">#{tag}</Badge>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
+                {/* ─── 스크롤 콘텐츠 ─── */}
                 <div className="flex-1 overflow-y-auto scrollbar-hide">
-                    <div className="space-y-5 px-5 py-5">
-                        <div>
-                            <h2 className="text-lg font-bold leading-snug text-text sm:text-xl">{displayBroadcast.title}</h2>
-                        </div>
-
-                        <div className="space-y-3">
-                            <InfoRow icon={Calendar} label="날짜">
-                                {dateLabel}
-                            </InfoRow>
-                            <InfoRow icon={Clock} label="시간">
-                                <span className="font-semibold">{startTime}</span>
-                                {endTime && <span className="text-text-muted"> – {endTime}</span>}
-                            </InfoRow>
-                            {categoryName !== undefined && (
-                                <InfoRow icon={Gamepad2} label="카테고리">
-                                    <Badge variant="default">{categoryName}</Badge>
-                                </InfoRow>
-                            )}
-                            {(displayBroadcast.isChzzkSupport === true || tags.length > 0) && (
-                                <InfoRow icon={Hash} label="태그">
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {displayBroadcast.isChzzkSupport === true && (
-                                            <Badge variant="primary">치지직 제작지원</Badge>
-                                        )}
-                                        {tags.map((tag) => (
-                                            <Badge key={tag} variant="outline">#{tag}</Badge>
-                                        ))}
-                                    </div>
-                                </InfoRow>
-                            )}
-                        </div>
-
+                    <div className="space-y-5 px-5 py-4">
+                        {/* § 오버워치 매치 */}
                         {displayBroadcast.overwatchMatch != null && (
-                            <div className="space-y-2">
-                                <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
+                            <section>
+                                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
                                     <span>⚔</span>
-                                    <span>세트 구성</span>
+                                    세트 구성
                                 </h3>
                                 <MatchSetsPanel match={displayBroadcast.overwatchMatch} />
-                            </div>
+                            </section>
                         )}
-                        <div className="space-y-2.5">
-                            <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
+
+                        {/* § 참여자 — 가로 스크롤 */}
+                        <section>
+                            <h3 className="mb-2.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
                                 <Users className="h-3.5 w-3.5" />
                                 참여자 ({sortedParticipants.length})
                             </h3>
-                            <div className="space-y-1.5">
-                                {sortedParticipants.map((participant, index) => (
-                                    <ParticipantRow
-                                        key={`${participant.name}-${index}`}
-                                        participant={participant}
-                                        channelUrl={
-                                            participant.channelUrl ??
-                                            (participant.name === displayBroadcast.streamerName
-                                                ? (displayBroadcast.streamerChannelUrl ?? undefined)
-                                                : undefined)
-                                        }
-                                        isHost={participant.isHost ?? false}
-                                        isPartner={participant.isPartner ?? false}
-                                        affiliations={participant.affiliations}
-                                        youtubeUrl={participant.youtubeUrl ?? undefined}
-                                        fanCafeUrl={participant.fanCafeUrl ?? undefined}
-                                        avatarFallbackUrl={
-                                            participant.name === displayBroadcast.streamerName
-                                                ? (displayBroadcast.streamerProfileUrl ?? undefined)
-                                                : undefined
-                                        }
-                                    />
-                                ))}
+                            <div className="-mx-5 px-5">
+                                <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
+                                    {sortedParticipants.map((participant, index) => (
+                                        <ParticipantCard
+                                            key={`${participant.name}-${index}`}
+                                            participant={participant}
+                                            fallbackAvatarUrl={
+                                                participant.name === displayBroadcast.streamerName
+                                                    ? (displayBroadcast.streamerProfileUrl ?? undefined)
+                                                    : undefined
+                                            }
+                                            fallbackChannelUrl={
+                                                participant.name === displayBroadcast.streamerName
+                                                    ? (displayBroadcast.streamerChannelUrl ?? undefined)
+                                                    : undefined
+                                            }
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        </section>
+
+                        {/* § 추후 섹션 자리 (시청자 수, 출처, 썸네일, 다시보기 등) */}
                     </div>
                 </div>
 
+                {/* ─── 모바일 닫기 버튼 ─── */}
                 <div className="border-t border-border/30 px-5 py-4 sm:hidden">
                     <button
                         onClick={onClose}
