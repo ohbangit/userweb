@@ -1,8 +1,9 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import { useMemo, useState } from 'react'
+import { CalendarOff } from 'lucide-react'
 import type { Broadcast } from '../types/schedule'
-import { isSameDay } from '../utils/date'
+import { isSameDay, isToday } from '../utils/date'
 import { BroadcastDetailModal } from './BroadcastDetailModal'
 import { DailyBroadcastItem } from './DailyBroadcastItem'
 import { trackEvent } from '../../../utils/analytics'
@@ -29,15 +30,26 @@ export function DailySchedule({ broadcasts, currentDate }: DailyScheduleProps) {
     )
 
     if (dayBroadcasts.length === 0) {
+        const today = isToday(currentDate)
         return (
-            <div className="flex min-h-[200px] items-center justify-center rounded-xl border border-border/40 bg-card sm:min-h-[280px]">
-                <div className="text-center">
-                    <p className="text-sm text-text-muted">
-                        예정된 방송이 없습니다
-                    </p>
-                    <p className="mt-1 text-xs text-text-dim">
-                        다른 날짜를 확인해 보세요
-                    </p>
+            <div className="flex min-h-[50vh] items-center justify-center rounded-xl border border-border/40 bg-card">
+                <div className="flex flex-col items-center gap-3 text-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-bg-secondary/60">
+                        <CalendarOff className="h-6 w-6 text-text-dim" />
+                    </div>
+                    <div>
+                        <p className="text-sm font-medium text-text-muted">
+                            {today ? '오늘은 일정이 없어요' : '예정된 방송이 없습니다'}
+                        </p>
+                        <p className="mt-1 text-xs text-text-dim">
+                            다른 날짜를 확인해 보세요
+                        </p>
+                    </div>
+                    <div className="mt-2 w-full max-w-xs space-y-2 opacity-30">
+                        <div className="h-16 rounded-xl bg-bg-secondary/80" />
+                        <div className="h-16 rounded-xl bg-bg-secondary/60" />
+                        <div className="h-16 rounded-xl bg-bg-secondary/40" />
+                    </div>
                 </div>
             </div>
         )

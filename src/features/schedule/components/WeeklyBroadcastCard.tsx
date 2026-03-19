@@ -1,0 +1,89 @@
+import { memo } from 'react'
+import type { Broadcast } from '../types/schedule'
+import type { CardTone } from '../constants/cardTone'
+import { toneBg } from '../constants/cardTone'
+import { formatTime } from '../utils/date'
+import { resolveParticipants, sortParticipants } from '../utils/participant'
+import { ParticipantStack } from './ParticipantStack'
+import partnerMark from '../../../assets/mark.png'
+import { BroadcastTypeBadge, getBroadcastTypeTone } from './BroadcastTypeBadge'
+import { cn } from '../../../lib/cn'
+
+interface WeeklyBroadcastCardProps {
+    broadcast: Broadcast
+    onClick: () => void
+}
+
+/** 주간·월간 카드 호버 — 유형별 18px shadow */
+const toneHover: Record<CardTone, string> = {
+    collab: 'hover:shadow-[0_6px_18px_rgba(139,92,246,0.1)]',
+    internal: 'hover:shadow-[0_6px_18px_rgba(244,63,94,0.1)]',
+    tournament: 'hover:shadow-[0_6px_18px_rgba(245,158,11,0.1)]',
+    content: 'hover:shadow-[0_6px_18px_rgba(14,165,233,0.1)]',
+    default: 'hover:shadow-[0_6px_18px_rgba(0,0,0,0.15)]',
+}
+
+/**
+ * 주간·월간 방송 카드 (컴팩트 2줄)
+ * 1줄: 제목 + 시간, 2줄: 참여자 스택 + 이름 + 유형뱃지
+ */
+function WeeklyBroadcastCardComponent({ broadcast, onClick }: WeeklyBroadcastCardProps) {
+    const startTime = formatTime(broadcast.startTime)
+    const isUndecided = broadcast.startTime === null
+    const participants = resolveParticipants(
+        broadcast.streamers,
+        broadcast.streamerName,
+        broadcast.streamerNickname,
+        broadcast.streamerProfileUrl,
+    )
+    const sortedParticipants = sortParticipants(participants)
+    const representative = sortedParticipants.find((p) => p.isHost) ?? sortedParticipants[0]
+    const representativeName = representative ? (representative.nickname ?? representative.name) : ''
+    const remaining = sortedParticipants.length - 1
+    const tone: CardTone = getBroadcastTypeTone(broadcast) ?? 'default'
+
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={cn(
+                'group flex w-full cursor-pointer flex-col gap-1.5 rounded-xl p-2.5 text-left transition-all duration-200 sm:p-3',
+                toneBg[tone],
+                toneHover[tone],
+                'hover:-translate-y-0.5',
+                'active:translate-y-0 active:scale-[0.99] active:shadow-none',
+            )}
+        >
+            <div className="flex items-center justify-between gap-3">
+                <h3 className="min-w-0 truncate text-sm font-bold leading-tight text-text transition-colors duration-200 dark:group-hover:text-white">
+                    {broadcast.title}
+                </h3>
+                {isUndecided ? (
+                    <span className="shrink-0 rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-amber-400">
+                        미정
+                    </span>
+                ) : (
+                    <span className="shrink-0 text-xs font-bold tabular-nums text-text-muted">
+                        {startTime}
+                    </span>
+                )}
+            </div>
+
+            <div className="flex items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center gap-1.5">
+                    <ParticipantStack participants={sortedParticipants} maxVisible={3} size="sm" />
+                    <span className="flex min-w-0 items-center gap-1 text-[11px] text-text-dim">
+                        <span className="truncate font-medium">{representativeName}</span>
+                        {representative?.isPartner === true && (
+                            <img src={partnerMark} alt="파트너" className="h-3 w-3 shrink-0" loading="lazy" />
+                        )}
+                        {remaining > 0 && <span className="shrink-0 opacity-60">외 {remaining}명</span>}
+                    </span>
+                </div>
+                <BroadcastTypeBadge broadcast={broadcast} className="shrink-0" />
+            </div>
+        </button>
+    )
+}
+
+export const WeeklyBroadcastCard = memo(WeeklyBroadcastCardComponent)

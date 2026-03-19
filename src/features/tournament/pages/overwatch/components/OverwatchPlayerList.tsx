@@ -5,6 +5,7 @@ import dpsIcon from '../../../../../assets/dps.svg'
 import sptIcon from '../../../../../assets/spt.svg'
 import partnerMark from '../../../../../assets/mark.png'
 import type { OWPlayerPosition, OWPlayerPublicItem } from '../types'
+import { cn } from '../../../../../lib/cn'
 
 const POSITION_META: Record<OWPlayerPosition, { icon: string; label: string; order: number }> = {
     TNK: { icon: tnkIcon, label: 'TANK', order: 0 },
@@ -54,12 +55,12 @@ function PlayerCard({ player }: { player: OWPlayerPublicItem }) {
         <PlayerLink player={player} className="flex flex-col items-center gap-2 transition-all duration-200 hover:scale-105">
             <div className="relative">
                 <div
-                    className={[
+                    className={cn(
                         'rounded-full p-[3px] transition-shadow duration-200',
                         player.isCaptain
                             ? 'bg-gradient-to-b from-[#f99e1a] to-[#f99e1a]/40 shadow-[0_0_16px_rgba(249,158,26,0.25)] group-hover:shadow-[0_0_24px_rgba(249,158,26,0.4)]'
                             : 'bg-gradient-to-b from-white/20 to-white/[0.06] group-hover:from-white/30 group-hover:to-white/10',
-                    ].join(' ')}
+                    )}
                 >
                     <div className="h-[76px] w-[76px] shrink-0 overflow-hidden rounded-full bg-white/[0.06]">
                         {player.avatarUrl ? (

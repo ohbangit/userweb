@@ -8,6 +8,7 @@ import { OverwatchFinalResultPanel } from './OverwatchFinalResultPanel'
 import { OverwatchPlayerList } from './OverwatchPlayerList'
 import { OverwatchTeamsPanel } from './OverwatchTeamsPanel'
 import type { OWMetaGroupViewModel, OWPanelPublicItem, OWPanelType, OWPlayerPublicItem, OWStaffPublicItem } from '../types'
+import { cn } from '../../../../../lib/cn'
 
 const PANEL_TITLE: Record<OWPanelType, string> = {
     DRAFT: '드래프트',
@@ -138,12 +139,12 @@ export function OverwatchContentTabs({
                         key={tab.id}
                         type="button"
                         onClick={() => setActiveTabId(tab.id)}
-                        className={[
+                        className={cn(
                             'shrink-0 cursor-pointer -skew-x-6 border-b-2 px-5 py-2.5 text-center text-sm font-bold uppercase tracking-wide transition-all duration-150',
                             activeTabId === tab.id
                                 ? 'border-[#f99e1a] bg-[#f99e1a]/20 text-white'
                                 : 'border-transparent bg-white/[0.06] text-[#6b7280] hover:bg-white/[0.10] hover:text-[#d1d5db]',
-                        ].join(' ')}
+                        )}
                     >
                         <span className="inline-block skew-x-6">{tab.label}</span>
                     </button>

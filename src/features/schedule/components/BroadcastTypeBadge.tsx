@@ -1,5 +1,7 @@
 import { memo } from 'react'
 import type { Broadcast } from '../types/schedule'
+import { Badge } from '../../../components/ui/Badge'
+import type { BadgeVariant } from '../../../components/ui/Badge'
 
 type BroadcastTypeTone = 'collab' | 'internal' | 'tournament' | 'content'
 
@@ -19,11 +21,11 @@ const TYPE_BADGE_LABEL: Record<BroadcastTypeTone, string> = {
     content: '콘텐츠',
 }
 
-const TYPE_BADGE_CLASS: Record<BroadcastTypeTone, string> = {
-    collab: 'bg-collab/10 text-collab',
-    internal: 'bg-rose-500/10 text-rose-500',
-    tournament: 'bg-amber-500/10 text-amber-500',
-    content: 'bg-sky-500/10 text-sky-500',
+const TONE_TO_VARIANT: Record<BroadcastTypeTone, BadgeVariant> = {
+    collab: 'collab',
+    internal: 'internal',
+    tournament: 'tournament',
+    content: 'content',
 }
 
 interface BroadcastTypeBadgeProps {
@@ -35,13 +37,9 @@ function BroadcastTypeBadgeComponent({ broadcast, className }: BroadcastTypeBadg
     const tone = getBroadcastTypeTone(broadcast)
     if (!tone) return null
     return (
-        <span
-            className={['shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold', TYPE_BADGE_CLASS[tone], className ?? '']
-                .filter(Boolean)
-                .join(' ')}
-        >
+        <Badge variant={TONE_TO_VARIANT[tone]} size="sm" className={className}>
             {TYPE_BADGE_LABEL[tone]}
-        </span>
+        </Badge>
     )
 }
 

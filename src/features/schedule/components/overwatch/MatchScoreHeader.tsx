@@ -1,4 +1,5 @@
 import type { OverwatchMatchInfo } from '../../types/overwatch'
+import { cn } from '../../../../lib/cn'
 
 interface MatchScoreHeaderProps {
     match: OverwatchMatchInfo
@@ -15,7 +16,7 @@ export function MatchScoreHeader({ match }: MatchScoreHeaderProps) {
             <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold tracking-wider text-text-dim">{formatLabel}</span>
                 <span className="text-[10px] text-text-dim">·</span>
-                <span className={['text-[10px] font-medium', match.isCompleted ? 'text-text-dim' : 'text-primary'].join(' ')}>
+                <span className={cn('text-[10px] font-medium', match.isCompleted ? 'text-text-dim' : 'text-primary')}>
                     {statusLabel}
                 </span>
             </div>

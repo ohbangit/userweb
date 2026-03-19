@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async'
 import { AlertCircle } from 'lucide-react'
-import { Header } from '../../../../components/layout'
 import { toOWTournamentViewModel } from './adapters'
 import { OverwatchMetaSection, OverwatchContentTabs } from './components'
 import { useOWTournamentDetail, useOWTournamentPlayers } from './hooks'
@@ -65,8 +64,6 @@ export default function OverwatchTournamentPage() {
                 <meta property="og:description" content={description} />
                 <meta name="robots" content="index,follow" />
             </Helmet>
-
-            <Header />
 
             <div className="font-koverwatch italic">
                 {isLoading && <MetaSectionSkeleton />}

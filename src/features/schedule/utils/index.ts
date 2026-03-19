@@ -14,6 +14,7 @@ export {
     addDays,
     addMonths,
     isSameMonth,
+    getRelativeLabel,
 } from './date'
 
 export { getInitial, sortParticipants, resolveParticipants, getParticipantLabel } from './participant'

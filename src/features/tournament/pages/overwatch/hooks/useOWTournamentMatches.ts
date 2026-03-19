@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { apiGet } from '../../../../../lib/apiClient'
-import type { OWBracketResponse } from '../types'
+import type { OWBracketResponse } from '../types/owTournament'
+import { OW_STATIC_MATCHES } from '../data/overwatchStaticData'
 
-export function useOWTournamentMatches(slug: string) {
-    return useQuery({
-        queryKey: ['ow', slug, 'matches'],
-        queryFn: () => apiGet<OWBracketResponse>(`/api/ow/${slug}/matches`),
-        retry: false,
+export function useOWTournamentMatches(_slug: string) {
+    return useQuery<OWBracketResponse, Error>({
+        queryKey: ['ow-static-matches'],
+        queryFn: () => OW_STATIC_MATCHES,
+        initialData: OW_STATIC_MATCHES,
+        staleTime: Infinity,
     })
 }

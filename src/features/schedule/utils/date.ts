@@ -1,9 +1,8 @@
 import dayjs, { Dayjs } from 'dayjs'
-
-const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
+import { DAY_NAMES_SHORT } from '../../../constants/date'
 
 export function getDayName(date: Dayjs): string {
-    return DAY_NAMES[date.day()]
+    return DAY_NAMES_SHORT[date.day()]
 }
 
 export function getWeekDays(date: Dayjs): Dayjs[] {
@@ -35,11 +34,13 @@ export function getMonthDays(date: Dayjs): Dayjs[] {
     return days
 }
 
-export function formatTime(isoString: string): string {
+export function formatTime(isoString: string | null): string {
+    if (isoString === null) return '미정'
     return dayjs(isoString).format('HH:mm')
 }
 
-export function formatTimeRange(startTime: string, endTime?: string): string {
+export function formatTimeRange(startTime: string | null, endTime?: string): string {
+    if (startTime === null) return '미정'
     const start = formatTime(startTime)
     if (!endTime) return `${start}~`
     const end = formatTime(endTime)
@@ -96,4 +97,16 @@ export function formatFullDate(date: Dayjs): string {
     const day = date.date()
     const dayName = getDayName(date)
     return `${month}월 ${day}일 (${dayName})`
+}
+
+/**
+ * 오늘/내일 등 상대 날짜 라벨을 반환합니다.
+ * @param day 비교할 날짜 (Dayjs)
+ * @returns '오늘' | '내일' | null
+ */
+export function getRelativeLabel(day: Dayjs): string | null {
+    const now = dayjs()
+    if (day.isSame(now, 'day')) return '오늘'
+    if (day.isSame(now.add(1, 'day'), 'day')) return '내일'
+    return null
 }

@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { apiGet } from '../../../../../lib/apiClient'
-import type { OWTeamsResponse } from '../types'
+import type { OWTeamsResponse } from '../types/owTournament'
+import { OW_STATIC_TEAMS } from '../data/overwatchStaticData'
 
-export function useOWTournamentTeams(slug: string) {
-    return useQuery({
-        queryKey: ['ow', slug, 'teams'],
-        queryFn: () => apiGet<OWTeamsResponse>(`/api/ow/${slug}/teams`),
-        retry: false,
+export function useOWTournamentTeams(_slug: string) {
+    return useQuery<OWTeamsResponse, Error>({
+        queryKey: ['ow-static-teams'],
+        queryFn: () => OW_STATIC_TEAMS,
+        initialData: OW_STATIC_TEAMS,
+        staleTime: Infinity,
     })
 }

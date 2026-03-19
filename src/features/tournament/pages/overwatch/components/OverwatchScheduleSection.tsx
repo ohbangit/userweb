@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { ChevronDown, Radio } from 'lucide-react'
 import { MatchSetsPanel } from '../../../../schedule/components/overwatch/MatchSetsPanel'
 import type { Broadcast } from '../../../../schedule/types/schedule'
+import { cn } from '../../../../../lib/cn'
 
 interface OverwatchScheduleSectionProps {
     days: Array<{
@@ -17,7 +18,8 @@ function formatDateLabel(date: string): string {
     return dayjs(date).format('YYYY.MM.DD ddd')
 }
 
-function formatTimeLabel(value: string): string {
+function formatTimeLabel(value: string | null): string {
+    if (value === null) return '미정'
     return dayjs(value).format('HH:mm')
 }
 
@@ -89,7 +91,7 @@ export function OverwatchScheduleSection({ days, isLoading, error }: OverwatchSc
             >
                 <h2 className="text-xl font-bold text-white">일정</h2>
                 <ChevronDown
-                    className={['h-5 w-5 text-[#6b7280] transition-transform duration-200 group-hover:text-[#9ca3af]', collapsed ? '-rotate-90' : ''].join(' ')}
+                    className={cn('h-5 w-5 text-[#6b7280] transition-transform duration-200 group-hover:text-[#9ca3af]', collapsed ? '-rotate-90' : '')}
                 />
             </button>
 

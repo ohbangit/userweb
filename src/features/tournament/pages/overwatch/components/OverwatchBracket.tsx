@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react'
 import type { BracketMatch, BracketTeamSlot } from '../types'
 import { useOWTournamentMatches } from '../hooks/useOWTournamentMatches'
 import { OverwatchMatchDetailModal } from './OverwatchMatchDetailModal'
+import { cn } from '../../../../../lib/cn'
 
 const UPPER_CONNECTIONS: Array<{ from: string; to: string }> = [
     { from: 'ub-sf-1', to: 'ub-f' },
@@ -82,10 +83,10 @@ function TeamRow({ team, isWinner }: { team: BracketTeamSlot | null; isWinner: b
 
     return (
         <div
-            className={[
+            className={cn(
                 'flex h-10 items-center gap-2 border-b border-white/[0.06] px-3 last:border-b-0',
                 isWinner ? 'bg-white/[0.06]' : 'bg-white/[0.02]',
-            ].join(' ')}
+            )}
         >
             <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded bg-white/[0.08]">
                 {team.logoUrl ? (
@@ -94,10 +95,10 @@ function TeamRow({ team, isWinner }: { team: BracketTeamSlot | null; isWinner: b
                     <span className="text-[10px] font-bold text-[#6b7280]">{team.name.slice(0, 1)}</span>
                 )}
             </div>
-            <span className={['min-w-0 truncate text-xs font-semibold', isWinner ? 'text-white' : 'text-[#9ca3af]'].join(' ')}>
+            <span className={cn('min-w-0 truncate text-xs font-semibold', isWinner ? 'text-white' : 'text-[#9ca3af]')}>
                 {team.name}
             </span>
-            <span className={['ml-auto shrink-0 text-sm font-bold tabular-nums', isWinner ? 'text-[#f99e1a]' : 'text-[#6b7280]'].join(' ')}>
+            <span className={cn('ml-auto shrink-0 text-sm font-bold tabular-nums', isWinner ? 'text-[#f99e1a]' : 'text-[#6b7280]')}>
                 {team.score ?? '–'}
             </span>
         </div>
@@ -117,7 +118,7 @@ function MatchNode({ match, onClick }: { match: BracketMatch; onClick?: () => vo
             {match.scheduledAt && (
                 <div className="mb-1 flex items-center gap-1.5">
                     {match.isLive && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#ef4444]" />}
-                    <span className={['text-[10px] font-bold', match.isLive ? 'text-[#ef4444]' : 'text-[#f99e1a]'].join(' ')}>
+                    <span className={cn('text-[10px] font-bold', match.isLive ? 'text-[#ef4444]' : 'text-[#f99e1a]')}>
                         {match.isLive ? 'LIVE' : formatSchedule(match.scheduledAt)}
                     </span>
                 </div>
@@ -137,10 +138,10 @@ function MatchNode({ match, onClick }: { match: BracketMatch; onClick?: () => vo
                           }
                         : undefined
                 }
-                className={[
+                className={cn(
                     'overflow-hidden rounded-lg border border-white/[0.08]',
                     isClickable ? 'cursor-pointer transition-colors hover:border-white/20 hover:bg-white/[0.03]' : '',
-                ].join(' ')}
+                )}
             >
                 <TeamRow team={match.team1} isWinner={t1Winner} />
                 <TeamRow team={match.team2} isWinner={t2Winner} />

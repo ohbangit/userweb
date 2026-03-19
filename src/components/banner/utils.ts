@@ -1,0 +1,42 @@
+import type { PublicBanner } from './types'
+
+const dateFormatter = new Intl.DateTimeFormat('ko-KR', {
+    month: 'numeric',
+    day: 'numeric',
+})
+
+export function parseDate(value: string): Date | null {
+    const date = new Date(`${value}T00:00:00`)
+    return Number.isNaN(date.getTime()) ? null : date
+}
+
+export function isBannerEnded(banner: PublicBanner): boolean {
+    if (banner.endedAt === null) return false
+    const endedDate = new Date(`${banner.endedAt}T23:59:59`)
+    if (Number.isNaN(endedDate.getTime())) return false
+    return endedDate.getTime() < Date.now()
+}
+
+export function formatScheduleText(banner: PublicBanner): string {
+    if (isBannerEnded(banner)) return '종료됨'
+
+    if (banner.startedAt !== null && banner.endedAt !== null) {
+        const startDate = parseDate(banner.startedAt)
+        const endDate = parseDate(banner.endedAt)
+        if (startDate !== null && endDate !== null) {
+            return `${dateFormatter.format(startDate)} - ${dateFormatter.format(endDate)}`
+        }
+    }
+
+    if (banner.startedAt !== null) {
+        const startDate = parseDate(banner.startedAt)
+        if (startDate !== null) return `${dateFormatter.format(startDate)} 시작`
+    }
+
+    if (banner.endedAt !== null) {
+        const endDate = parseDate(banner.endedAt)
+        if (endDate !== null) return `${dateFormatter.format(endDate)}까지`
+    }
+
+    return '일정 미정'
+}
