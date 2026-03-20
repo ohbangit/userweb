@@ -133,8 +133,8 @@ export function WeeklySchedule({ broadcasts, currentDate }: WeeklyScheduleProps)
                                 {/* 날짜 섹션 헤더 — sticky */}
                                 <div
                                     className={cn(
-                                        'sticky top-0 z-10 flex items-center justify-between border-b border-border/10 px-4 py-2.5 backdrop-blur-sm',
-                                        today ? 'bg-primary/[0.04]' : 'bg-bg/95',
+                                        'sticky top-0 z-10 flex items-center justify-between border-b border-border/10 bg-bg/80 px-4 py-2.5 backdrop-blur-sm',
+                                        today && 'bg-primary/[0.04]',
                                     )}
                                 >
                                     <div className="flex items-center gap-2">

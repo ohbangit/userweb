@@ -4,8 +4,6 @@ import { toOWTournamentViewModel } from './adapters'
 import { OverwatchMetaSection, OverwatchContentTabs } from './components'
 import { useOWTournamentDetail, useOWTournamentPlayers } from './hooks'
 
-const OVERWATCH_TOURNAMENT_SLUG = 'overwatch-vs-talon'
-
 function MetaSectionSkeleton() {
     return (
         <div>
@@ -48,8 +46,8 @@ function ErrorState({ message }: { message: string }) {
 }
 
 export default function OverwatchTournamentPage() {
-    const { data, isLoading, error } = useOWTournamentDetail(OVERWATCH_TOURNAMENT_SLUG)
-    const playersQuery = useOWTournamentPlayers(OVERWATCH_TOURNAMENT_SLUG)
+    const { data, isLoading, error } = useOWTournamentDetail()
+    const playersQuery = useOWTournamentPlayers()
 
     const meta = data ? toOWTournamentViewModel(data) : null
     const title = meta?.title ?? 'Overwatch Rival Clash'
@@ -73,7 +71,6 @@ export default function OverwatchTournamentPage() {
                         <OverwatchMetaSection meta={meta} />
                         <div className="mx-auto max-w-5xl px-4 pb-8 pt-6">
                             <OverwatchContentTabs
-                                slug={OVERWATCH_TOURNAMENT_SLUG}
                                 panels={data?.panels ?? []}
                                 staffGroups={meta.groups}
                                 description={meta.description}

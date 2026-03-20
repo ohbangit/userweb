@@ -56,13 +56,9 @@ function HexAvatar({ url, name, size, borderColor }: { url: string | null; name:
     )
 }
 
-interface OverwatchFinalResultPanelProps {
-    slug: string
-}
-
-export function OverwatchFinalResultPanel({ slug }: OverwatchFinalResultPanelProps) {
-    const { data: matchData, isLoading: isMatchesLoading, error: matchesError } = useOWTournamentMatches(slug)
-    const { data: teamData, isLoading: isTeamsLoading, error: teamsError } = useOWTournamentTeams(slug)
+export function OverwatchFinalResultPanel() {
+    const { data: matchData, isLoading: isMatchesLoading, error: matchesError } = useOWTournamentMatches()
+    const { data: teamData, isLoading: isTeamsLoading, error: teamsError } = useOWTournamentTeams()
 
     const isLoading = isMatchesLoading || isTeamsLoading
     const error = matchesError || teamsError

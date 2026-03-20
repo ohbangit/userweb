@@ -128,9 +128,6 @@ function ParticipantCard({
 
 function ParticipantScroller({ children }: { children: React.ReactNode }) {
     const scrollRef = useRef<HTMLDivElement>(null)
-    const [isDragging, setIsDragging] = useState(false)
-    const [startX, setStartX] = useState(0)
-    const [scrollLeft, setScrollLeft] = useState(0)
     const [canScrollLeft, setCanScrollLeft] = useState(false)
     const [canScrollRight, setCanScrollRight] = useState(false)
 
@@ -140,25 +137,6 @@ function ParticipantScroller({ children }: { children: React.ReactNode }) {
         setCanScrollLeft(el.scrollLeft > 4)
         setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4)
     }, [])
-
-    const handleMouseDown = useCallback((e: React.MouseEvent) => {
-        const el = scrollRef.current
-        if (!el) return
-        setIsDragging(true)
-        setStartX(e.pageX - el.offsetLeft)
-        setScrollLeft(el.scrollLeft)
-    }, [])
-
-    const handleMouseMove = useCallback((e: React.MouseEvent) => {
-        if (!isDragging) return
-        e.preventDefault()
-        const el = scrollRef.current
-        if (!el) return
-        const x = e.pageX - el.offsetLeft
-        el.scrollLeft = scrollLeft - (x - startX)
-    }, [isDragging, startX, scrollLeft])
-
-    const handleMouseUp = useCallback(() => setIsDragging(false), [])
 
     const scroll = useCallback((dir: 'left' | 'right') => {
         const el = scrollRef.current
@@ -172,11 +150,7 @@ function ParticipantScroller({ children }: { children: React.ReactNode }) {
         <div className="group/scroll relative -mx-5 px-5">
             <div
                 ref={scrollRef}
-                className={cn('flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide', isDragging ? 'cursor-grabbing' : 'cursor-grab')}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
+                className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide"
                 onScroll={updateScrollState}
                 onMouseEnter={updateScrollState}
             >

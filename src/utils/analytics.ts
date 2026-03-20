@@ -12,29 +12,11 @@ type GaEventMap = {
         banner_type: string
         destination_url: string
     }
-    /** 헤더 대회 메뉴에서 대회 페이지 진입 */
-    tournament_enter: {
-        slug: string
-        tournament_name: string
-        source: 'desktop_dropdown' | 'mobile_menu'
-    }
     /** 방송 카드/행 클릭 → 상세 모달 오픈 */
     broadcast_click: {
         broadcast_id: string | number
         broadcast_name: string
         view_mode: 'daily' | 'weekly' | 'monthly'
-    }
-    /** 대회 페이지 내 외부 링크 클릭 */
-    tournament_link_click: {
-        slug: string
-        link_label: string
-        link_url: string
-    }
-    /** 대회 페이지 우측 패널 네비게이션 클릭 */
-    tournament_panel_nav_click: {
-        slug: string
-        panel_label: string
-        panel_id: string
     }
 }
 

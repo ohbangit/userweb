@@ -5,7 +5,6 @@ export interface PublicBanner {
     description: string | null
     imageUrl: string
     linkUrl: string | null
-    tournamentSlug: string | null
     startedAt: string | null
     endedAt: string | null
     orderIndex: number

@@ -285,12 +285,8 @@ function TeamCard({ team, index }: { team: OWTeamPublicItem; index: number }) {
 
 /* ──────────────── 메인 컴포넌트 ──────────────── */
 
-interface OverwatchTeamsPanelProps {
-    slug: string
-}
-
-export function OverwatchTeamsPanel({ slug }: OverwatchTeamsPanelProps) {
-    const { data, isLoading, error } = useOWTournamentTeams(slug)
+export function OverwatchTeamsPanel() {
+    const { data, isLoading, error } = useOWTournamentTeams()
     const teams = data?.teams ?? []
 
     if (isLoading) {

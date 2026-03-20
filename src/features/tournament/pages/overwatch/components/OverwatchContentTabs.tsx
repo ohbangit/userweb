@@ -30,7 +30,6 @@ interface Tab {
 }
 
 interface OverwatchContentTabsProps {
-    slug: string
     panels: OWPanelPublicItem[]
     staffGroups: OWMetaGroupViewModel[]
     description: string | null
@@ -109,7 +108,6 @@ function TournamentInfoSection({ description, groups }: { description: string | 
 }
 
 export function OverwatchContentTabs({
-    slug,
     panels,
     staffGroups,
     description,
@@ -153,15 +151,15 @@ export function OverwatchContentTabs({
 
             <div className="mt-5">
                 {activeTabId === '_info' && <TournamentInfoSection description={description} groups={staffGroups} />}
-                {activeTabId === 'schedule' && <OverwatchBracket slug={slug} />}
+                {activeTabId === 'schedule' && <OverwatchBracket />}
                 {activePanel?.type === 'PLAYER_LIST' && (
                     <OverwatchPlayerList players={players} isLoading={isPlayersLoading} error={playersError} />
                 )}
                 {activePanel?.type === 'DRAFT' && (
                     <OverwatchDraftPanel players={players} isLoading={isPlayersLoading} error={playersError} />
                 )}
-                {activePanel?.type === 'TEAMS' && <OverwatchTeamsPanel slug={slug} />}
-                {activePanel?.type === 'FINAL_RESULT' && <OverwatchFinalResultPanel slug={slug} />}
+                {activePanel?.type === 'TEAMS' && <OverwatchTeamsPanel />}
+                {activePanel?.type === 'FINAL_RESULT' && <OverwatchFinalResultPanel />}
                 {activePanel !== undefined &&
                     activePanel.type !== 'PLAYER_LIST' &&
                     activePanel.type !== 'DRAFT' &&

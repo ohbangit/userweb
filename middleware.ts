@@ -18,11 +18,6 @@ interface OgMeta {
     imageUrl: string
 }
 
-interface TournamentDetail {
-    name: string
-    bannerUrl: string | null
-}
-
 declare const process: {
     env: Record<string, string | undefined>
 }
@@ -32,8 +27,6 @@ declare const process: {
 // ---------------------------------------------------------------------------
 const SITE_URL = (process.env.VITE_SITE_URL as string | undefined) ?? 'https://ohbang-it.kr'
 
-const API_BASE_URL = (process.env.VITE_API_BASE_URL as string | undefined) ?? 'http://localhost:3000'
-
 const DEFAULT_DESCRIPTION = '치지직 스트리밍 일정을 일간, 주간, 월간으로 확인하고 방송 상세 정보를 빠르게 확인하세요.'
 
 const DEFAULT_OG: OgMeta = {
@@ -41,6 +34,14 @@ const DEFAULT_OG: OgMeta = {
     description: DEFAULT_DESCRIPTION,
     url: SITE_URL,
     imageUrl: `${SITE_URL}/api/og`,
+}
+
+const STATIC_TOURNAMENT_OG: Record<string, Omit<OgMeta, 'url'>> = {
+    'overwatch-vs-talon': {
+        title: '오뱅잇 - RIVAL CLASH: 오버워치 vs 탈론',
+        description: 'RIVAL CLASH: 오버워치 vs 탈론의 대진, 드래프트, 참가자 정보를 오뱅잇에서 확인하세요.',
+        imageUrl: `${SITE_URL}/api/og?${new URLSearchParams({ title: '오뱅잇 - RIVAL CLASH: 오버워치 vs 탈론', description: 'RIVAL CLASH: 오버워치 vs 탈론의 대진, 드래프트, 참가자 정보를 오뱅잇에서 확인하세요.' }).toString()}`,
+    },
 }
 
 // ---------------------------------------------------------------------------
@@ -138,36 +139,20 @@ function buildScheduleOg(url: URL): OgMeta {
     }
 }
 
-/** 토너먼트 페이지: 백엔드 API 조회 (2초 타임아웃, 실패 시 기본값 반환) */
-async function buildTournamentOg(url: URL, slug: string): Promise<OgMeta> {
-    try {
-        const res = await fetch(`${API_BASE_URL}/api/tournaments/${slug}`, {
-            signal: AbortSignal.timeout(2000),
-            headers: { 'Content-Type': 'application/json' },
-        })
-
-        if (res.ok) {
-            const data = (await res.json()) as TournamentDetail
-            const title = `오뱅잇 - ${data.name}`
-            const description = `${data.name} 대회 정보와 일정을 오뱅잇에서 확인하세요.`
-            const ogParams = new URLSearchParams({ title, description })
-
-            return {
-                title,
-                description,
-                url: url.href,
-                imageUrl: data.bannerUrl ?? `${SITE_URL}/api/og?${ogParams.toString()}`,
-            }
+function buildTournamentOg(url: URL, slug: string): OgMeta {
+    const meta = STATIC_TOURNAMENT_OG[slug]
+    if (meta !== undefined) {
+        return {
+            ...meta,
+            url: url.href,
         }
-    } catch {
-        // 타임아웃 또는 네트워크 오류 → 기본값 사용
     }
 
     return {
         title: '오뱅잇 - 대회 정보',
-        description: '오뱅잇에서 대회 정보와 일정을 확인하세요.',
+        description: '오뱅잇에서 대회 정보를 확인하세요.',
         url: url.href,
-        imageUrl: `${SITE_URL}/api/og?${new URLSearchParams({ title: '오뱅잇 - 대회 정보', description: '오뱅잇에서 대회 정보와 일정을 확인하세요.' }).toString()}`,
+        imageUrl: `${SITE_URL}/api/og?${new URLSearchParams({ title: '오뱅잇 - 대회 정보', description: '오뱅잇에서 대회 정보를 확인하세요.' }).toString()}`,
     }
 }
 

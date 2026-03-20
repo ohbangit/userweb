@@ -186,12 +186,8 @@ function SvgOverlay({ paths }: { paths: string[] }) {
     )
 }
 
-interface OverwatchBracketProps {
-    slug: string
-}
-
-export function OverwatchBracket({ slug }: OverwatchBracketProps) {
-    const { data, isLoading, error } = useOWTournamentMatches(slug)
+export function OverwatchBracket() {
+    const { data, isLoading, error } = useOWTournamentMatches()
     const bracket = data?.bracket ?? null
 
     const upperRef = useRef<HTMLDivElement>(null)
