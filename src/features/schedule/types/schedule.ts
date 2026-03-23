@@ -43,6 +43,8 @@ export interface Broadcast {
     isVisible?: boolean
     isDrops?: boolean
     isChzzkSupport?: boolean
+    sourceUrl?: string | null
+    sourceImageUrl?: string | null
     overwatchMatch?: OverwatchMatchInfo | null
 }
 

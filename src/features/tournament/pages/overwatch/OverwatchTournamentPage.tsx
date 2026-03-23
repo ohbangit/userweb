@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import { AlertCircle } from 'lucide-react'
+import { ErrorBoundary } from '../../../../components/ErrorBoundary'
 import { toOWTournamentViewModel } from './adapters'
 import { OverwatchMetaSection, OverwatchContentTabs } from './components'
 import { useOWTournamentDetail, useOWTournamentPlayers } from './hooks'
@@ -64,23 +65,25 @@ export default function OverwatchTournamentPage() {
             </Helmet>
 
             <div className="font-koverwatch italic">
-                {isLoading && <MetaSectionSkeleton />}
-                {!isLoading && error instanceof Error && <ErrorState message={error.message} />}
-                {!isLoading && !error && meta && (
-                    <>
-                        <OverwatchMetaSection meta={meta} />
-                        <div className="mx-auto max-w-5xl px-4 pb-8 pt-6">
-                            <OverwatchContentTabs
-                                panels={data?.panels ?? []}
-                                staffGroups={meta.groups}
-                                description={meta.description}
-                                players={playersQuery.data?.players ?? []}
-                                isPlayersLoading={playersQuery.isLoading}
-                                playersError={playersQuery.error instanceof Error ? playersQuery.error : null}
-                            />
-                        </div>
-                    </>
-                )}
+                <ErrorBoundary>
+                    {isLoading && <MetaSectionSkeleton />}
+                    {!isLoading && error instanceof Error && <ErrorState message={error.message} />}
+                    {!isLoading && !error && meta && (
+                        <>
+                            <OverwatchMetaSection meta={meta} />
+                            <div className="mx-auto max-w-5xl px-4 pb-8 pt-6">
+                                <OverwatchContentTabs
+                                    panels={data?.panels ?? []}
+                                    staffGroups={meta.groups}
+                                    description={meta.description}
+                                    players={playersQuery.data?.players ?? []}
+                                    isPlayersLoading={playersQuery.isLoading}
+                                    playersError={playersQuery.error instanceof Error ? playersQuery.error : null}
+                                />
+                            </div>
+                        </>
+                    )}
+                </ErrorBoundary>
             </div>
         </div>
     )

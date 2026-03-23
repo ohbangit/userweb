@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import dayjs from 'dayjs'
-import { X, Gamepad2, Users, Crown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, Gamepad2, Users, Crown, ChevronLeft, ChevronRight, ExternalLink, ImageIcon, MessageSquare } from 'lucide-react'
 import type { Broadcast, Participant } from '../types/schedule'
 import type { CardTone } from '../constants/cardTone'
 import { useBroadcastDetail } from '../hooks/useBroadcastDetail'
@@ -323,7 +323,44 @@ export function BroadcastDetailModal({ broadcast, onClose }: BroadcastDetailModa
                                 </ParticipantScroller>
                         </section>
 
-                        {/* § 추후 섹션 자리 (시청자 수, 출처, 썸네일, 다시보기 등) */}
+                        {/* § 출처 */}
+                        {(displayBroadcast.sourceImageUrl || displayBroadcast.sourceUrl) && (
+                            <section>
+                                <div className="mb-2.5 flex items-center gap-2">
+                                    <div className="h-4 w-1 rounded-full bg-primary/60" />
+                                    <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-text-dim">
+                                        <ExternalLink className="h-3.5 w-3.5" />
+                                        출처
+                                    </h3>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    {displayBroadcast.sourceImageUrl && (
+                                        <a
+                                            href={displayBroadcast.sourceImageUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex cursor-pointer items-center gap-2 rounded-xl border border-border/20 bg-bg-secondary/40 px-3.5 py-2.5 text-sm text-text-dim transition-colors hover:border-primary/30 hover:text-primary"
+                                        >
+                                            <ImageIcon className="h-4 w-4 shrink-0" />
+                                            <span>원본 스케줄 이미지</span>
+                                            <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 opacity-50" />
+                                        </a>
+                                    )}
+                                    {displayBroadcast.sourceUrl && (
+                                        <a
+                                            href={displayBroadcast.sourceUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex cursor-pointer items-center gap-2 rounded-xl border border-border/20 bg-bg-secondary/40 px-3.5 py-2.5 text-sm text-text-dim transition-colors hover:border-primary/30 hover:text-primary"
+                                        >
+                                            <MessageSquare className="h-4 w-4 shrink-0" />
+                                            <span>치지직 커뮤니티</span>
+                                            <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 opacity-50" />
+                                        </a>
+                                    )}
+                                </div>
+                            </section>
+                        )}
                     </div>
                 </div>
 
